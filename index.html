@@ -140,7 +140,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .product-card .price{color:var(--accent);font-weight:700;font-size:16px}
 .cart-item{background:var(--white);padding:16px;display:flex;gap:12px;border-bottom:1px solid var(--border)}
 .gen-result-sheet{background:var(--white);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px;border:1px solid rgba(0,0,0,.04)}
-.gen-result-preview{background:#fff;aspect-ratio:1/1;min-height:360px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:6px}
+.gen-result-preview{background:#fff;aspect-ratio:1/1;min-height:360px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:0}
 .gen-result-legend{background:#fff;border-top:1px solid #ececf1;padding:10px 12px 12px}
 .gen-result-legend-grid{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
 .gen-result-legend-item{display:inline-flex;align-items:center;gap:4px;font-size:10px;line-height:1;white-space:nowrap;color:#555;background:#f7f7fa;border-radius:999px;padding:5px 8px}
@@ -3464,7 +3464,7 @@ function applySelectedBeadCandidate(candidate) {
   if (preview) {
     if (resultPreviewUrl) {
       currentGenResultCompositeUrl = buildGenResultCompositeUrl(resultPreviewUrl, legendItems) || resultPreviewUrl;
-      preview.innerHTML = `<img class="result-preview-image" src="${currentGenResultCompositeUrl}" alt="${candidate.title}">`;
+      preview.innerHTML = `<img class="result-preview-image" src="${resultPreviewUrl}" alt="${candidate.title}">`;
     } else {
       currentGenResultCompositeUrl = '';
       preview.textContent = candidate.preview;
