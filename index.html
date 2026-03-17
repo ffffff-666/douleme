@@ -139,14 +139,16 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .product-card .body{padding:10px}
 .product-card .price{color:var(--accent);font-weight:700;font-size:16px}
 .cart-item{background:var(--white);padding:16px;display:flex;gap:12px;border-bottom:1px solid var(--border)}
-.gen-result-sheet{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
-.gen-result-preview{background:linear-gradient(135deg,#f0e8f5,#ffe8ee);height:400px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.gen-result-legend{background:#f7f7fa;border-top:1px solid #ececf1;padding:8px 10px 7px}
-.gen-result-legend-grid{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
-.gen-result-legend-item{display:inline-flex;align-items:center;gap:4px;font-size:9px;line-height:1;white-space:nowrap;color:#555}
+.gen-result-sheet{background:var(--white);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px;border:1px solid rgba(0,0,0,.04)}
+.gen-result-preview{background:#fff;aspect-ratio:1/1;min-height:320px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:14px}
+.gen-result-chip{position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid rgba(0,0,0,.06);font-size:11px;font-weight:600;color:#6f5a89;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.gen-result-legend{background:#fff;border-top:1px solid #ececf1;padding:10px 12px 12px}
+.gen-result-legend-grid{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.gen-result-legend-item{display:inline-flex;align-items:center;gap:4px;font-size:10px;line-height:1;white-space:nowrap;color:#555;background:#f7f7fa;border-radius:999px;padding:5px 8px}
 .gen-result-legend-dot{width:8px;height:8px;border-radius:50%;border:1px solid rgba(0,0,0,.08);flex-shrink:0}
 .gen-result-legend-code{font-weight:700;color:#333}
 .gen-result-legend-count{color:#777}
+.gen-result-note{font-size:11px;color:var(--text2);text-align:center;line-height:1.6;margin:-2px auto 12px;max-width:320px}
 .cart-item .thumb{width:70px;height:70px;background:linear-gradient(135deg,#f0e8f5,#ffe8ee);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
 .cart-item .info{flex:1}
 .address-card{background:var(--white);border-radius:var(--radius);margin:8px 16px;padding:16px;box-shadow:var(--shadow);cursor:pointer}
@@ -617,8 +619,8 @@ input:focus,textarea:focus{border-color:var(--primary)}
   <div class="content" style="padding:16px">
     <div class="gen-result-sheet" id="gen-result-export-sheet">
       <div class="gen-result-preview" id="gen-result-preview-box">
+        <div class="gen-result-chip">🧩 工程拼豆预览</div>
         <div id="gen-result-preview" style="font-size:80px">🐕</div>
-        <div style="position:absolute;bottom:10px;font-size:11px;color:var(--text2)">最终效果图</div>
       </div>
       <div class="gen-result-legend" id="gen-result-legend">
         <div class="gen-result-legend-grid" id="gen-result-legend-grid"></div>
@@ -626,7 +628,8 @@ input:focus,textarea:focus{border-color:var(--primary)}
     </div>
     <div id="gen-result-title" style="font-size:18px;font-weight:700;text-align:center;margin-bottom:6px">推荐成品版</div>
     <div id="gen-result-desc" style="font-size:12px;color:var(--text2);text-align:center;line-height:1.6;margin:0 auto 12px;max-width:290px">系统已自动完成拼豆适配、颜色压缩和可制作性优化。</div>
-    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px">
+    <div class="gen-result-note">当前展示的是工程拼豆结果图，不是 AI 原图，便于直接判断成品效果。</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px">
       <span class="info-badge purple" id="gen-result-size">📐 58×58</span>
       <span class="info-badge pink" id="gen-result-colors">🎨 24种</span>
       <span class="info-badge green" id="gen-result-beads">⚪ 2,156颗</span>
@@ -1885,6 +1888,14 @@ function getGenResultLegendItems() {
   }).filter(item => item.code);
 }
 
+function normalizeGenResultLegendItems(legendItems = []) {
+  return legendItems.map((item) => ({
+    color: item?.color || '#ccc',
+    code: item?.code || item?.id || '',
+    count: String(item?.count ?? '')
+  })).filter(item => item.code && item.count);
+}
+
 function buildMockGenResultLegend(colorCount, beadCount) {
   const palette = [
     { code: 'C24', color: '#6FB2F8' }, { code: 'D24', color: '#7E89D9' }, { code: 'C7', color: '#4E8FDE' },
@@ -1902,11 +1913,12 @@ function buildMockGenResultLegend(colorCount, beadCount) {
   });
 }
 
-function renderGenResultLegend(colorCount, beadCount) {
+function renderGenResultLegend(colorCount, beadCount, legendItems = []) {
   const legendGrid = document.getElementById('gen-result-legend-grid');
   if (!legendGrid) return;
-  const items = buildMockGenResultLegend(colorCount, beadCount);
-  legendGrid.innerHTML = items.map(item => (
+  const normalizedItems = normalizeGenResultLegendItems(legendItems);
+  const displayItems = normalizedItems.length > 0 ? normalizedItems : buildMockGenResultLegend(colorCount, beadCount);
+  legendGrid.innerHTML = displayItems.map(item => (
     `<span class="gen-result-legend-item">` +
       `<span class="gen-result-legend-dot" style="background:${item.color}"></span>` +
       `<span class="gen-result-legend-code">${item.code}</span>` +
@@ -1915,9 +1927,10 @@ function renderGenResultLegend(colorCount, beadCount) {
   )).join('');
 }
 
-function buildGenResultCompositeUrl(previewUrl) {
+function buildGenResultCompositeUrl(previewUrl, legendItems = []) {
   if (!previewUrl) return '';
-  const legendItems = getGenResultLegendItems();
+  const normalizedItems = normalizeGenResultLegendItems(legendItems);
+  const items = normalizedItems.length > 0 ? normalizedItems : getGenResultLegendItems();
   const width = 1200;
   const imageHeight = 980;
   const legendPaddingX = 24;
@@ -1928,7 +1941,7 @@ function buildGenResultCompositeUrl(previewUrl) {
   let y = legendTop + 10;
   let rows = 1;
   let legendMarkup = '';
-  legendItems.forEach((item) => {
+  items.forEach((item) => {
     const itemWidth = Math.max(70, 20 + item.code.length * 10 + item.count.length * 8 + 20);
     if (x + itemWidth > width - legendPaddingX) {
       x = legendPaddingX;
@@ -2203,6 +2216,7 @@ function initializeAiCandidatePlaceholders(payload) {
     convertedPreviewUrl: '',
     convertedColorCount: null,
     convertedBeadCount: null,
+    convertedLegendItems: [],
     sizeLabel: spec.sizeLabel,
     colorCount: Math.max(10, (payload.style === '像素' ? 16 : payload.style === '极简' ? 14 : payload.style === '写实' ? 28 : 22) + spec.colorDelta),
     beadCount: Math.round(payload.size.rows * payload.size.cols * spec.beadRatio),
@@ -3442,22 +3456,26 @@ function applySelectedBeadCandidate(candidate) {
   const size = document.getElementById('gen-result-size');
   const colors = document.getElementById('gen-result-colors');
   const beads = document.getElementById('gen-result-beads');
+  const resultPreviewUrl = candidate.convertedPreviewUrl || candidate.previewUrl || '';
+  const displayColorCount = candidate.convertedColorCount ?? candidate.colorCount;
+  const displayBeadCount = candidate.convertedBeadCount ?? candidate.beadCount;
+  const legendItems = candidate.convertedLegendItems || [];
   if (preview) {
-    if (candidate.previewType === 'image' && candidate.previewUrl) {
-      currentGenResultCompositeUrl = buildGenResultCompositeUrl(candidate.previewUrl) || candidate.previewUrl;
+    if (resultPreviewUrl) {
+      currentGenResultCompositeUrl = buildGenResultCompositeUrl(resultPreviewUrl, legendItems) || resultPreviewUrl;
       preview.innerHTML = `<img class="result-preview-image" src="${currentGenResultCompositeUrl}" alt="${candidate.title}">`;
     } else {
       currentGenResultCompositeUrl = '';
       preview.textContent = candidate.preview;
     }
   }
-  if (previewBox) previewBox.style.background = candidate.gradient;
+  if (previewBox) previewBox.style.background = '#fff';
   if (title) title.textContent = candidate.title;
-  if (desc) desc.textContent = candidate.description;
+  if (desc) desc.textContent = candidate.description + ' 当前页展示的是转成拼豆后的工程结果。';
   if (size) size.textContent = `📐 ${candidate.sizeLabel}`;
-  if (colors) colors.textContent = `🎨 ${candidate.colorCount}种`;
-  if (beads) beads.textContent = `⚪ ${candidate.beadCount.toLocaleString()}颗`;
-  renderGenResultLegend(candidate.colorCount, candidate.beadCount);
+  if (colors) colors.textContent = `🎨 ${displayColorCount}种`;
+  if (beads) beads.textContent = `⚪ ${displayBeadCount.toLocaleString()}颗`;
+  renderGenResultLegend(displayColorCount, displayBeadCount, legendItems);
   syncAiCandidateToImageConvert(candidate);
   goPage('page-gen-result');
 }
@@ -3912,6 +3930,7 @@ function handleImageConvertBridgeMessage(event) {
       candidate.convertedPreviewUrl = payload.previewUrl || candidate.convertedPreviewUrl;
       candidate.convertedColorCount = payload.colorCount ?? candidate.convertedColorCount;
       candidate.convertedBeadCount = payload.beadCount ?? candidate.convertedBeadCount;
+      candidate.convertedLegendItems = Array.isArray(payload.legendItems) ? payload.legendItems : candidate.convertedLegendItems;
       candidate.engineeringPresetId = payload.actualPresetId || candidate.engineeringPresetId;
       if (candidateIndex >= 0) {
         updateAiCandidateState(candidateIndex, {
