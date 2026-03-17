@@ -1949,6 +1949,11 @@ async function buildConvertedPreviewForCandidate(payload) {
     previewUrl: renderGridPreviewDataUrl(gridData, rows, cols),
     colorCount: colorStats.length,
     beadCount,
+    legendItems: colorStats.slice(0, 18).map((item) => ({
+      code: item.id,
+      color: `rgb(${item.r},${item.g},${item.b})`,
+      count: item.count
+    })),
     profileId: payload?.profileId || appState.profileId,
     actualPresetId: payload?.actualPresetId || appState.activePresetId
   };
