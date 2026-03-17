@@ -140,8 +140,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .product-card .price{color:var(--accent);font-weight:700;font-size:16px}
 .cart-item{background:var(--white);padding:16px;display:flex;gap:12px;border-bottom:1px solid var(--border)}
 .gen-result-sheet{background:var(--white);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px;border:1px solid rgba(0,0,0,.04)}
-.gen-result-preview{background:#fff;aspect-ratio:1/1;min-height:320px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:14px}
-.gen-result-chip{position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid rgba(0,0,0,.06);font-size:11px;font-weight:600;color:#6f5a89;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.gen-result-preview{background:#fff;aspect-ratio:1/1;min-height:360px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:6px}
 .gen-result-legend{background:#fff;border-top:1px solid #ececf1;padding:10px 12px 12px}
 .gen-result-legend-grid{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
 .gen-result-legend-item{display:inline-flex;align-items:center;gap:4px;font-size:10px;line-height:1;white-space:nowrap;color:#555;background:#f7f7fa;border-radius:999px;padding:5px 8px}
@@ -619,7 +618,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
   <div class="content" style="padding:16px">
     <div class="gen-result-sheet" id="gen-result-export-sheet">
       <div class="gen-result-preview" id="gen-result-preview-box">
-        <div class="gen-result-chip">🧩 工程拼豆预览</div>
         <div id="gen-result-preview" style="font-size:80px">🐕</div>
       </div>
       <div class="gen-result-legend" id="gen-result-legend">
@@ -628,7 +626,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
     </div>
     <div id="gen-result-title" style="font-size:18px;font-weight:700;text-align:center;margin-bottom:6px">推荐成品版</div>
     <div id="gen-result-desc" style="font-size:12px;color:var(--text2);text-align:center;line-height:1.6;margin:0 auto 12px;max-width:290px">系统已自动完成拼豆适配、颜色压缩和可制作性优化。</div>
-    <div class="gen-result-note">当前展示的是工程拼豆结果图，不是 AI 原图，便于直接判断成品效果。</div>
+    <div class="gen-result-note">当前展示为最终生成结果图，可直接判断整体成品效果。</div>
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px">
       <span class="info-badge purple" id="gen-result-size">📐 58×58</span>
       <span class="info-badge pink" id="gen-result-colors">🎨 24种</span>
