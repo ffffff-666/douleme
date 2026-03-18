@@ -1977,6 +1977,39 @@ const AI_TO_ENGINEERING_PROFILE_MAP = {
   contrast: 'line_boost'
 };
 
+function resolveEngineeringPresetFromAiControls(payload, spec) {
+  if (!payload || payload.mode !== 'reference') {
+    return AI_TO_ENGINEERING_PROFILE_MAP[spec?.id] || 'smart_balanced';
+  }
+  const style = payload.style || '卡通';
+  const freedom = payload.referenceFreedom?.key || 'medium';
+  const variation = payload.referenceVariation?.key || 'pose';
+  const candidateId = spec?.id || '';
+
+  if (style === '像素') return 'line_boost';
+  if (style === '极简' && freedom !== 'low') return 'smart_graphic';
+
+  if (candidateId === 'reference_safe') {
+    return style === '写实' ? 'smart_portrait' : 'detail_keep';
+  }
+  if (candidateId === 'reference_creative') {
+    if (style === '写实') return 'smart_balanced';
+    return freedom === 'high' || variation === 'style' ? 'smart_graphic' : 'smart_balanced';
+  }
+
+  if (variation === 'style') {
+    return style === '写实' ? 'smart_balanced' : 'smart_graphic';
+  }
+  if (variation === 'composition') {
+    return freedom === 'low' ? 'detail_keep' : 'smart_balanced';
+  }
+  if (variation === 'pose') {
+    return style === '写实' ? 'smart_portrait' : 'smart_balanced';
+  }
+
+  return 'smart_balanced';
+}
+
 function getBeadSystemDefaults(channel) {
   return window.GodDouBeadRegistry?.getDefault?.(channel) || { seriesId: 'mard', variantId: '221' };
 }
@@ -2211,7 +2244,7 @@ function initializeAiCandidatePlaceholders(payload) {
   const specs = buildCandidateSpecs(payload);
   aiBeadCandidates = specs.map(spec => ({
     id: spec.id,
-    engineeringPresetId: AI_TO_ENGINEERING_PROFILE_MAP[spec.id] || 'smart_balanced',
+    engineeringPresetId: resolveEngineeringPresetFromAiControls(payload, spec),
     title: spec.title,
     description: spec.description,
     preview: '🖼️',
@@ -3344,7 +3377,7 @@ async function requestAiBeadCandidates(payload) {
     }
     return {
       id: spec.id,
-      engineeringPresetId: AI_TO_ENGINEERING_PROFILE_MAP[spec.id] || 'smart_balanced',
+      engineeringPresetId: resolveEngineeringPresetFromAiControls(payload, spec),
       title: spec.title,
       description: spec.description,
       preview: '🖼️',
