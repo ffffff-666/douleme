@@ -501,14 +501,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
           <div class="ai-upload-desc" id="ai-reference-desc">可上传宠物照、人物照、插画、表情包，系统会基于原图再创作成更适合拼豆的版本。</div>
         </div>
       </div>
-      <div class="section-label" style="margin-top:14px">影响强度</div>
-      <div style="font-size:12px;color:var(--text2);margin:-2px 0 8px">控制补充文字对参考图再创作结果的影响程度</div>
-      <div class="ai-grid-tags intent-grid" id="ai-reference-influence-tags">
-        <span class="tag" onclick="selectTag(this,'ai-reference-influence-tags');syncReferenceInfluenceTip()">小</span>
-        <span class="tag active" onclick="selectTag(this,'ai-reference-influence-tags');syncReferenceInfluenceTip()">中</span>
-        <span class="tag" onclick="selectTag(this,'ai-reference-influence-tags');syncReferenceInfluenceTip()">大</span>
-      </div>
-      <div id="ai-reference-influence-tip" style="font-size:12px;color:var(--text2);margin-top:8px">中：平衡原图与文字描述（推荐）</div>
       <div class="section-label" style="margin-top:14px">多元程度</div>
       <div style="font-size:12px;color:var(--text2);margin:-2px 0 8px">控制候选图和原图相比有多敢变化</div>
       <div class="ai-grid-tags intent-grid" id="ai-reference-freedom-tags">
@@ -520,12 +512,11 @@ input:focus,textarea:focus{border-color:var(--primary)}
       <div class="section-label" style="margin-top:14px">变化方向</div>
       <div style="font-size:12px;color:var(--text2);margin:-2px 0 8px">控制这批候选更偏向改哪里</div>
       <div class="ai-grid-tags intent-grid" id="ai-reference-variation-tags">
-        <span class="tag active" onclick="selectTag(this,'ai-reference-variation-tags');syncReferenceVariationTip()">平衡</span>
-        <span class="tag" onclick="selectTag(this,'ai-reference-variation-tags');syncReferenceVariationTip()">动作姿势</span>
+        <span class="tag active" onclick="selectTag(this,'ai-reference-variation-tags');syncReferenceVariationTip()">动作姿势</span>
         <span class="tag" onclick="selectTag(this,'ai-reference-variation-tags');syncReferenceVariationTip()">构图镜头</span>
         <span class="tag" onclick="selectTag(this,'ai-reference-variation-tags');syncReferenceVariationTip()">风格类型</span>
       </div>
-      <div id="ai-reference-variation-tip" style="font-size:12px;color:var(--text2);margin-top:8px">平衡：主体、动作、风格都做适度探索</div>
+      <div id="ai-reference-variation-tip" style="font-size:12px;color:var(--text2);margin-top:8px">动作姿势：优先探索站姿、坐姿、回头、挥手、奔跑等变化</div>
     </div>
 
     <div class="section-label" id="ai-prompt-label">描述你想要的图案</div>
@@ -541,8 +532,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
       <span class="tag" onclick="selectTag(this,'style-tags')">写实</span>
       <span class="tag" onclick="selectTag(this,'style-tags')">极简</span>
       <span class="tag" onclick="selectTag(this,'style-tags')">像素</span>
-      <span class="tag" onclick="selectTag(this,'style-tags')">可爱</span>
-      <span class="tag" onclick="selectTag(this,'style-tags')">复古</span>
     </div>
     <div class="section-label">转换策略</div>
     <div class="ai-grid-tags intent-grid" id="ai-intent-tags">
@@ -2522,28 +2511,6 @@ function appendPrompt(text) {
   }
 }
 
-function getReferenceInfluenceMeta(levelText) {
-  const key = (levelText || '中').trim();
-  const map = {
-    '小': {
-      key: 'small',
-      tip: '小：更像参考图，只做轻微调整',
-      promptRule: '文字要求仅作轻微修饰，请优先保留参考图主体、构图和主要视觉特征，只做小幅优化。'
-    },
-    '中': {
-      key: 'medium',
-      tip: '中：平衡原图与文字描述（推荐）',
-      promptRule: '请平衡参考图和文字要求，在保留主体识别特征的前提下，明显优化成更适合拼豆的版本。'
-    },
-    '大': {
-      key: 'large',
-      tip: '大：按文字明显改造，原图主要保留识别特征',
-      promptRule: '请优先响应文字要求，对参考图做更明显改造；原图主要保留主体识别特征，不必拘泥于原始细节。'
-    }
-  };
-  return map[key] || map['中'];
-}
-
 function getReferenceFreedomMeta(levelText) {
   const key = (levelText || '中').trim();
   const map = {
@@ -2573,13 +2540,8 @@ function syncReferenceFreedomTip() {
 }
 
 function getReferenceVariationMeta(text) {
-  const key = (text || '平衡').trim();
+  const key = (text || '动作姿势').trim();
   const map = {
-    '平衡': {
-      key: 'balanced',
-      tip: '平衡：主体、动作、风格都做适度探索',
-      promptRule: '请做平衡型探索，不要只改一种维度；可以适度改动作、构图和风格，但仍保证主体容易识别。'
-    },
     '动作姿势': {
       key: 'pose',
       tip: '动作姿势：优先探索站姿、坐姿、回头、挥手、奔跑等变化',
@@ -2596,19 +2558,13 @@ function getReferenceVariationMeta(text) {
       promptRule: '请优先改风格和表现类型，例如 Q版、像素块风、徽章风、玩偶风、海报风等。'
     }
   };
-  return map[key] || map['平衡'];
+  return map[key] || map['动作姿势'];
 }
 
 function syncReferenceVariationTip() {
   const tip = document.getElementById('ai-reference-variation-tip');
   if (!tip) return;
-  tip.textContent = getReferenceVariationMeta(getActiveTagText('ai-reference-variation-tags') || '平衡').tip;
-}
-
-function syncReferenceInfluenceTip() {
-  const tip = document.getElementById('ai-reference-influence-tip');
-  if (!tip) return;
-  tip.textContent = getReferenceInfluenceMeta(getActiveTagText('ai-reference-influence-tags') || '中').tip;
+  tip.textContent = getReferenceVariationMeta(getActiveTagText('ai-reference-variation-tags') || '动作姿势').tip;
 }
 
 function startGenerate() {
@@ -2634,7 +2590,6 @@ function switchAiMode(mode, el) {
   if (textarea) textarea.placeholder = mode === 'reference'
     ? '例如：保留这只猫的神态，改成Q版，背景更干净，更适合做拼豆'
     : '请输入描述，例如：一只可爱的柴犬，适合做成拼豆作品';
-  syncReferenceInfluenceTip();
   syncReferenceFreedomTip();
   syncReferenceVariationTip();
   checkAiGenBtn();
@@ -2727,9 +2682,8 @@ function commitAiCustomSize() {
 function buildAiGenerationPayload() {
   readAiConfigForm();
   const prompt = (document.getElementById('ai-prompt') || {}).value?.trim() || '';
-  const referenceInfluence = getReferenceInfluenceMeta(getActiveTagText('ai-reference-influence-tags') || '中');
   const referenceFreedom = getReferenceFreedomMeta(getActiveTagText('ai-reference-freedom-tags') || '中');
-  const referenceVariation = getReferenceVariationMeta(getActiveTagText('ai-reference-variation-tags') || '平衡');
+  const referenceVariation = getReferenceVariationMeta(getActiveTagText('ai-reference-variation-tags') || '动作姿势');
   return {
     mode: aiMode,
     prompt,
@@ -2737,7 +2691,6 @@ function buildAiGenerationPayload() {
     intent: getActiveTagText('ai-intent-tags') || '平衡还原',
     size: parseAiSizeTag(getActiveTagText('ai-size-tags') || '中 58×58'),
     referenceGoal: aiMode === 'reference' ? prompt : '',
-    referenceInfluence: aiMode === 'reference' ? referenceInfluence : null,
     referenceFreedom: aiMode === 'reference' ? referenceFreedom : null,
     referenceVariation: aiMode === 'reference' ? referenceVariation : null,
     aiConfig: {
@@ -2885,14 +2838,9 @@ function parsePromptMap(mapText) {
 function buildCandidateSpecs(payload) {
   const sizeLabel = `${payload.size.rows}×${payload.size.cols}`;
   if (payload.mode === 'reference') {
-    const variationKey = payload.referenceVariation?.key || 'balanced';
+    const variationKey = payload.referenceVariation?.key || 'pose';
     const freedomKey = payload.referenceFreedom?.key || 'medium';
     const variationPromptMap = {
-      balanced: [
-        '请优先做保真优化，只微调画面结构和块面关系。',
-        '请在保主体识别特征的前提下，做一版适度变化方案，让动作、构图或风格有明显变化。',
-        '请做一版更有创意的扩展方案，但仍要让人一眼看出是同一个主体。'
-      ],
       pose: [
         '请优先保留主体身份，动作姿势只做小幅变化。',
         '请重点探索不同动作和姿势，例如转头、挥手、坐姿、走动或跳跃。',
@@ -2914,7 +2862,7 @@ function buildCandidateSpecs(payload) {
       medium: '整体变化幅度适中，要能看出与原图不同，但仍保留主体识别特征。',
       high: '整体变化幅度可以明显一点，不要只是原图轻微修饰。'
     };
-    const variationPrompts = variationPromptMap[variationKey] || variationPromptMap.balanced;
+    const variationPrompts = variationPromptMap[variationKey] || variationPromptMap.pose;
     const freedomPrompt = freedomPromptMap[freedomKey] || freedomPromptMap.medium;
     return [
       {
@@ -3028,10 +2976,6 @@ function composeAiPrompt(payload, spec) {
   const parts = [template];
   if (payload.prompt) parts.push(`用户需求：${payload.prompt}`);
   if (payload.mode === 'reference' && payload.referenceGoal) parts.push(`参考图再创作目标：${payload.referenceGoal}`);
-  if (payload.mode === 'reference' && payload.referenceInfluence) {
-    parts.push(`影响强度：${payload.referenceInfluence.key}`);
-    parts.push(`影响强度要求：${payload.referenceInfluence.promptRule}`);
-  }
   if (payload.mode === 'reference' && payload.referenceFreedom) {
     parts.push(`多元程度：${payload.referenceFreedom.key}`);
     parts.push(`多元程度要求：${payload.referenceFreedom.promptRule}`);
@@ -3042,8 +2986,10 @@ function composeAiPrompt(payload, spec) {
   }
   parts.push(`风格：${payload.style}`);
   if (stylePrompt) parts.push(`风格提示词：${stylePrompt}`);
-  parts.push(`转换策略：${payload.intent}`);
-  if (strategyPrompt) parts.push(`转换策略提示词：${strategyPrompt}`);
+  if (payload.mode !== 'reference') {
+    parts.push(`转换策略：${payload.intent}`);
+    if (strategyPrompt) parts.push(`转换策略提示词：${strategyPrompt}`);
+  }
   parts.push(`拼豆成品候选：${spec.title}，${spec.intent}`);
   parts.push(`目标拼豆尺寸：${payload.size.rows}×${payload.size.cols}`);
   if (payload.mode === 'reference') {
