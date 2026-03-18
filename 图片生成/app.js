@@ -562,6 +562,71 @@ function firstPassMatchRgb(rawGrid, rows, cols) {
 }
 function buildRawGridSimpleMean(imageData, pixN, baseCenterBias, minorityColorProtect) {
   const w = imageData.width, h = imageData.height;
+  const exactRows = Number.isInteger(arguments[4]) && arguments[4] > 0 ? arguments[4] : null;
+  const exactCols = Number.isInteger(arguments[5]) && arguments[5] > 0 ? arguments[5] : null;
+  const data = getPixelDataComposited(imageData).data;
+  const centerBiasBase = Math.max(0, Math.min(0.85, Number(baseCenterBias) || 0.3));
+  const minorityProtect = Math.max(0, Math.min(1, Number(minorityColorProtect) || 0));
+  if (exactRows && exactCols) {
+    const grid = [];
+    for (let r = 0; r < exactRows; r++) {
+      grid[r] = [];
+      const sy = Math.floor(r * h / exactRows);
+      const ey = Math.max(sy + 1, Math.floor((r + 1) * h / exactRows));
+      for (let c = 0; c < exactCols; c++) {
+        const sx = Math.floor(c * w / exactCols);
+        const ex = Math.max(sx + 1, Math.floor((c + 1) * w / exactCols));
+        let sr = 0, sg = 0, sb = 0, cnt = 0;
+        let lumMin = 255, lumMax = 0;
+        for (let y = sy; y < ey; y++) {
+          for (let x = sx; x < ex; x++) {
+            const i = (y * w + x) * 4;
+            const pr = data[i], pg = data[i + 1], pb = data[i + 2];
+            sr += pr; sg += pg; sb += pb;
+            const lum = 0.299 * pr + 0.587 * pg + 0.114 * pb;
+            if (lum < lumMin) lumMin = lum;
+            if (lum > lumMax) lumMax = lum;
+            cnt++;
+          }
+        }
+        const meanR = sr / cnt, meanG = sg / cnt, meanB = sb / cnt;
+        const insetX = Math.max(0, Math.floor((ex - sx) / 4));
+        const insetY = Math.max(0, Math.floor((ey - sy) / 4));
+        const cx0 = sx + insetX, cy0 = sy + insetY;
+        const cx1 = Math.max(cx0 + 1, ex - insetX), cy1 = Math.max(cy0 + 1, ey - insetY);
+        let csr = 0, csg = 0, csb = 0, ccnt = 0;
+        for (let y = cy0; y < cy1; y++) {
+          for (let x = cx0; x < cx1; x++) {
+            const i = (y * w + x) * 4;
+            csr += data[i]; csg += data[i + 1]; csb += data[i + 2]; ccnt++;
+          }
+        }
+        const centerR = ccnt > 0 ? (csr / ccnt) : meanR;
+        const centerG = ccnt > 0 ? (csg / ccnt) : meanG;
+        const centerB = ccnt > 0 ? (csb / ccnt) : meanB;
+        const blockContrast = lumMax - lumMin;
+        const dynamicBoost = blockContrast > 70 ? 0.20 : (blockContrast > 42 ? 0.10 : 0);
+        const centerW = Math.max(0, Math.min(0.9, centerBiasBase + dynamicBoost));
+        let outR = meanR * (1 - centerW) + centerR * centerW;
+        let outG = meanG * (1 - centerW) + centerG * centerW;
+        let outB = meanB * (1 - centerW) + centerB * centerW;
+        if (minorityProtect > 0.001) {
+          const animeRgb = sampleAnime(data, sx, sy, Math.max(1, ex - sx), Math.max(1, ey - sy), w);
+          const animeSat = Math.max(animeRgb[0], animeRgb[1], animeRgb[2]) - Math.min(animeRgb[0], animeRgb[1], animeRgb[2]);
+          const baseSat = Math.max(outR, outG, outB) - Math.min(outR, outG, outB);
+          const animeDist = Math.hypot(animeRgb[0] - outR, animeRgb[1] - outG, animeRgb[2] - outB);
+          if (animeDist > 18 && animeSat > baseSat + 8) {
+            const minorityBlend = Math.min(0.78, minorityProtect * (0.22 + Math.min(1, (animeDist - 18) / 54) * 0.5));
+            outR = outR * (1 - minorityBlend) + animeRgb[0] * minorityBlend;
+            outG = outG * (1 - minorityBlend) + animeRgb[1] * minorityBlend;
+            outB = outB * (1 - minorityBlend) + animeRgb[2] * minorityBlend;
+          }
+        }
+        grid[r][c] = [Math.round(outR), Math.round(outG), Math.round(outB)];
+      }
+    }
+    return { grid, rows: exactRows, cols: exactCols };
+  }
   const shortSide = Math.min(w, h);
   const blockSz = Math.floor(shortSide / pixN);
   if (blockSz < 1) throw new Error('图片尺寸过小');
@@ -569,9 +634,6 @@ function buildRawGridSimpleMean(imageData, pixN, baseCenterBias, minorityColorPr
   const rows = Math.floor(h / blockSz);
   const ox = Math.floor((w - cols * blockSz) / 2);
   const oy = Math.floor((h - rows * blockSz) / 2);
-  const data = getPixelDataComposited(imageData).data;
-  const centerBiasBase = Math.max(0, Math.min(0.85, Number(baseCenterBias) || 0.3));
-  const minorityProtect = Math.max(0, Math.min(1, Number(minorityColorProtect) || 0));
   const grid = [];
   for (let r = 0; r < rows; r++) {
     grid[r] = [];
@@ -1676,7 +1738,7 @@ function cleanupDarkOutlierSpeckles(gridData, rawGrid, rows, cols, level) {
   }
   return out;
 }
-function generateGridCompat(imageData, pixN) {
+function generateGridCompat(imageData, pixN, targetRows, targetCols) {
   const preset = PROFILE_PRESETS[appState.activePresetId] || PROFILE_PRESETS.detail_keep;
   const tuning = getResolutionTuning(pixN);
   let centerBias = preset.centerBias != null ? preset.centerBias : 0.3;
@@ -1684,7 +1746,7 @@ function generateGridCompat(imageData, pixN) {
     centerBias = Math.min(0.9, centerBias + 0.1);
   }
   const sampleProtect = Math.max(0, Math.min(1, (preset.featureProtect || 0) * (tuning.sampleProtectScale || 1)));
-  const { grid, rows, cols } = buildRawGridSimpleMean(imageData, pixN, centerBias, sampleProtect);
+  const { grid, rows, cols } = buildRawGridSimpleMean(imageData, pixN, centerBias, sampleProtect, targetRows, targetCols);
   if (!grid || rows <= 0 || cols <= 0) {
     throw new Error('网格生成失败');
   }
@@ -1733,8 +1795,8 @@ function generateGridCompat(imageData, pixN) {
   gridData = restoreProtectedFeatureCells(gridData, sourceFeatureGrid, semanticFeatureMask);
   return { rawGrid: workRaw, gridData, rows, cols, featureMask: semanticFeatureMask, featureSourceGrid: sourceFeatureGrid };
 }
-function buildBeadDesign(imageData, pixN) {
-  const { rawGrid, gridData: compatGridData, rows, cols, featureMask: compatFeatureMask, featureSourceGrid } = generateGridCompat(imageData, pixN);
+function buildBeadDesign(imageData, pixN, targetRows, targetCols) {
+  const { rawGrid, gridData: compatGridData, rows, cols, featureMask: compatFeatureMask, featureSourceGrid } = generateGridCompat(imageData, pixN, targetRows, targetCols);
   let gridData = compatGridData;
   const preset = PROFILE_PRESETS[appState.activePresetId] || PROFILE_PRESETS.detail_keep;
   const tuning = getResolutionTuning(pixN);
@@ -1905,6 +1967,8 @@ function applyImportedAiCandidate(payload) {
   appState.hideOriginalPreview = true;
   appState.previewMode = 'beads';
   appState.pendingAutoPage = payload?.targetPage || 'page-result';
+  appState.targetGridRows = Number.isInteger(payload?.targetRows) ? payload.targetRows : null;
+  appState.targetGridCols = Number.isInteger(payload?.targetCols) ? payload.targetCols : null;
   const previewImg = document.getElementById('previewImg');
   if (previewImg) {
     previewImg.src = dataUrl;
@@ -1943,7 +2007,9 @@ async function buildConvertedPreviewForCandidate(payload) {
     applyProfileDefaults(PROFILE_PRESETS[auto.id], '智能推荐：' + auto.reason);
     appState.smartResolvedForFile = true;
   }
-  const { rawGrid, gridData, rows, cols } = buildBeadDesign(imageData, appState.pixN);
+  const targetRows = Number.isInteger(payload?.targetRows) ? payload.targetRows : null;
+  const targetCols = Number.isInteger(payload?.targetCols) ? payload.targetCols : null;
+  const { rawGrid, gridData, rows, cols } = buildBeadDesign(imageData, appState.pixN, targetRows, targetCols);
   const colorStats = buildColorStats(gridData, rows, cols);
   const beadCount = countForegroundBeads(gridData, rows, cols);
   return {
@@ -2049,6 +2115,8 @@ let appState = {
   previewMode: 'beads',
   hideOriginalPreview: false,
   pendingAutoPage: '',
+  targetGridRows: null,
+  targetGridCols: null,
   previewScale: 1,
   previewOffsetX: 0,
   previewOffsetY: 0,
@@ -2559,6 +2627,8 @@ function confirmCrop() {
   const dataUrl = out.toDataURL('image/png');
   appState.cropImageSrc = dataUrl;
   appState.file = dataUrlToFile(dataUrl, 'cropped.png');
+  appState.targetGridRows = null;
+  appState.targetGridCols = null;
     appState.cachedImg = null; appState.cachedImageData = null;
   appState.bgMask = null; appState.fullGridData = null; appState.smartResolvedForFile = false;
   appState.previewScale = 0; appState.previewOffsetX = 0; appState.previewOffsetY = 0; appState.previewNeedsReset = true;
@@ -2586,6 +2656,8 @@ function handleFileSelect(e) {
   appState.liveJobId++;
   appState.currentSolutionKey = '';
   appState.hideOriginalPreview = false;
+  appState.targetGridRows = null;
+  appState.targetGridCols = null;
   appState.cachedImg = null; appState.cachedImageData = null;
   appState.bgMask = null; appState.fullGridData = null; appState.smartResolvedForFile = false;
   const reader = new FileReader();
@@ -3222,7 +3294,7 @@ async function runLiveConvert() {
     }
     await sleep(0);
     if (jobId !== appState.liveJobId) return;
-    const { rawGrid, gridData: finalGridData, rows, cols, featureMask } = buildBeadDesign(appState.cachedImageData, pixN);
+    const { rawGrid, gridData: finalGridData, rows, cols, featureMask } = buildBeadDesign(appState.cachedImageData, pixN, appState.targetGridRows, appState.targetGridCols);
     let gridData = finalGridData;
     const protectedSourceGrid = finalGridData.map(row => [...row]);
     appState.rawGrid = rawGrid;

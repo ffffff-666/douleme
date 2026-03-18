@@ -3391,7 +3391,14 @@ function resolveEngineeringSizeFromAiCandidate(candidate) {
   return Math.max(10, Math.min(200, size));
 }
 
+function resolveEngineeringTargetGridFromAiCandidate(candidate) {
+  const size = resolveEngineeringSizeFromAiCandidate(candidate);
+  if (!Number.isInteger(size)) return { targetRows: null, targetCols: null };
+  return { targetRows: size, targetCols: size };
+}
+
 function buildImageConvertPayloadFromAiCandidate(candidate) {
+  const gridMeta = resolveEngineeringTargetGridFromAiCandidate(candidate);
   return {
     source: 'god-dou-home-ai',
     imageDataUrl: candidate?.previewUrl || '',
@@ -3403,7 +3410,9 @@ function buildImageConvertPayloadFromAiCandidate(candidate) {
     candidateIntent: candidate?.intent || '',
     prompt: candidate?.prompt || '',
     sourceMode: candidate?.sourceMode || aiMode || 'text',
-    targetPage: 'page-result'
+    targetPage: 'page-result',
+    targetRows: gridMeta.targetRows,
+    targetCols: gridMeta.targetCols
   };
 }
 
@@ -3435,13 +3444,16 @@ function syncAiCandidateToImageConvert(candidate) {
 
 function requestConvertedPreviewForCandidate(candidate) {
   if (!candidate?.previewUrl) return;
+  const gridMeta = resolveEngineeringTargetGridFromAiCandidate(candidate);
   postImageConvertMessage('god-dou:image-convert:convert-preview', {
     candidateId: candidate.id,
     candidateTitle: candidate.title,
     imageDataUrl: candidate.previewUrl,
     profileId: resolveEngineeringProfileFromAiCandidate(candidate),
     actualPresetId: resolveEngineeringPresetFromAiCandidate(candidate),
-    pixN: resolveEngineeringSizeFromAiCandidate(candidate)
+    pixN: resolveEngineeringSizeFromAiCandidate(candidate),
+    targetRows: gridMeta.targetRows,
+    targetCols: gridMeta.targetCols
   });
 }
 
