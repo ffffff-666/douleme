@@ -481,6 +481,10 @@ input:focus,textarea:focus{border-color:var(--primary)}
 细节优先：优先保留五官、发型、表情和关键识别特征，但仍控制杂色和碎点。
 容易制作：优先保留大色块、清晰轮廓和更低复杂度，方便真实拼豆落地制作。</textarea>
           </div>
+          <div class="ai-config-item full">
+            <div class="ai-config-label">当前 AI → 工程承接</div>
+            <div id="ai-engineering-mapping" class="ai-config-tip" style="background:#f7f4f9;border:1px solid #e7deef;border-radius:10px;padding:10px 12px"></div>
+          </div>
         </div>
         <div class="ai-config-actions">
           <button class="btn-secondary" onclick="saveAiConfig();event.stopPropagation()">保存配置</button>
@@ -2450,6 +2454,9 @@ function selectTag(el, containerId) {
       syncAiCustomSize();
     }
   }
+  if (containerId === 'style-tags' || containerId === 'ai-reference-freedom-tags' || containerId === 'ai-reference-variation-tags' || containerId === 'ai-size-tags') {
+    syncAiEngineeringMapping();
+  }
 }
 
 // ==================== AI Generate ====================
@@ -2472,6 +2479,31 @@ function syncAiConfigSummary() {
   const summary = document.getElementById('ai-config-summary');
   if (!summary) return;
   summary.textContent = `${aiConfig.model} · ${getBeadSystemLabel('ai-generate')} · ${aiConfig.baseUrl.replace(/^https?:\/\//, '')} · ${aiConfig.candidateCount} 个候选`;
+  syncAiEngineeringMapping();
+}
+
+function syncAiEngineeringMapping() {
+  const box = document.getElementById('ai-engineering-mapping');
+  if (!box) return;
+  const style = getActiveTagText('style-tags') || '卡通';
+  const size = parseAiSizeTag(getActiveTagText('ai-size-tags') || '29格');
+  if (aiMode !== 'reference') {
+    box.innerHTML = `当前为文生图模式：<br>风格：<b>${style}</b>；尺寸：<b>${size.rows}×${size.cols}</b>。<br>工程承接预设将主要按候选类型默认映射。`;
+    return;
+  }
+  const payload = {
+    mode: 'reference',
+    style,
+    size,
+    referenceFreedom: getReferenceFreedomMeta(getActiveTagText('ai-reference-freedom-tags') || '中'),
+    referenceVariation: getReferenceVariationMeta(getActiveTagText('ai-reference-variation-tags') || '动作姿势')
+  };
+  const specs = buildCandidateSpecs(payload);
+  const mapping = specs.slice(0, 3).map((spec) => {
+    const preset = resolveEngineeringPresetFromAiControls(payload, spec);
+    return `- ${spec.title} → ${preset}`;
+  }).join('<br>');
+  box.innerHTML = `参考图模式当前选择：<br>风格：<b>${style}</b>；多元程度：<b>${payload.referenceFreedom.key}</b>；变化方向：<b>${payload.referenceVariation.key}</b>；短边格数：<b>${size.rows}</b>。<br><br>工程承接映射：<br>${mapping}`;
 }
 
 function fillAiConfigForm() {
@@ -2625,6 +2657,7 @@ function switchAiMode(mode, el) {
     : '请输入描述，例如：一只可爱的柴犬，适合做成拼豆作品';
   syncReferenceFreedomTip();
   syncReferenceVariationTip();
+  syncAiEngineeringMapping();
   checkAiGenBtn();
 }
 
@@ -2699,6 +2732,7 @@ function onAiCustomSizeInput() {
   });
   const estimated = Math.round(value * value * 0.74);
   meta.textContent = `当前按 ${value}×${value} 估算，平衡还原策略大约会用到 ${estimated.toLocaleString()} 颗拼豆；尺寸越大，细节越丰富。`;
+  syncAiEngineeringMapping();
 }
 
 function commitAiCustomSize() {
@@ -2710,6 +2744,7 @@ function commitAiCustomSize() {
   if (value > 200) value = 200;
   input.value = value;
   syncAiCustomSize();
+  syncAiEngineeringMapping();
 }
 
 function buildAiGenerationPayload() {
