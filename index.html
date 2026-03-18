@@ -2014,6 +2014,48 @@ function resolveEngineeringPresetFromAiControls(payload, spec) {
   return 'smart_balanced';
 }
 
+function resolveEngineeringOptionsFromAiControls(payload, spec) {
+  const preset = resolveEngineeringPresetFromAiControls(payload, spec);
+  const style = payload?.style || '卡通';
+  const freedom = payload?.referenceFreedom?.key || 'medium';
+  const variation = payload?.referenceVariation?.key || 'pose';
+  const shortSide = Number.isInteger(payload?.size?.rows) ? payload.size.rows : 58;
+
+  let simplifyLevel = style === '像素' ? 46 : style === '极简' ? 38 : style === '写实' ? 16 : 26;
+  if (freedom === 'low') simplifyLevel -= 8;
+  if (freedom === 'high') simplifyLevel += 8;
+  if (variation === 'style') simplifyLevel += 8;
+  if (variation === 'pose') simplifyLevel -= 4;
+  simplifyLevel = Math.max(0, Math.min(100, simplifyLevel));
+
+  let ditherStrength = style === '像素' ? 8 : style === '写实' ? 0 : 2;
+  if (variation === 'style' && style === '像素') ditherStrength = 12;
+  if (freedom === 'low') ditherStrength = Math.max(0, ditherStrength - 2);
+  ditherStrength = Math.max(0, Math.min(100, ditherStrength));
+
+  let removeBg = true;
+  if (style === '写实' && freedom === 'low') removeBg = false;
+  if (variation === 'composition' && freedom !== 'high') removeBg = false;
+
+  const showGrid = true;
+  const showLabels = shortSide <= 58 && style === '像素';
+  const showMirror = false;
+  const finalShowLabels = shortSide <= 58 && (style === '像素' || freedom === 'low');
+  const finalQuality = shortSide >= 116 ? '8k' : shortSide >= 87 ? 'ultra' : 'hd';
+
+  return {
+    preset,
+    removeBg,
+    simplifyLevel,
+    ditherStrength,
+    showGrid,
+    showLabels,
+    showMirror,
+    finalShowLabels,
+    finalQuality
+  };
+}
+
 function getBeadSystemDefaults(channel) {
   return window.GodDouBeadRegistry?.getDefault?.(channel) || { seriesId: 'mard', variantId: '221' };
 }
@@ -2249,6 +2291,7 @@ function initializeAiCandidatePlaceholders(payload) {
   aiBeadCandidates = specs.map(spec => ({
     id: spec.id,
     engineeringPresetId: resolveEngineeringPresetFromAiControls(payload, spec),
+    engineeringOptions: resolveEngineeringOptionsFromAiControls(payload, spec),
     title: spec.title,
     description: spec.description,
     preview: '🖼️',
@@ -2501,7 +2544,8 @@ function syncAiEngineeringMapping() {
   const specs = buildCandidateSpecs(payload);
   const mapping = specs.slice(0, 3).map((spec) => {
     const preset = resolveEngineeringPresetFromAiControls(payload, spec);
-    return `- ${spec.title} → ${preset}`;
+    const options = resolveEngineeringOptionsFromAiControls(payload, spec);
+    return `- ${spec.title} → ${preset}（去背景:${options.removeBg ? '开' : '关'} / 简化:${options.simplifyLevel} / 抖动:${options.ditherStrength} / 结果编号:${options.showLabels ? '开' : '关'} / 最终编号:${options.finalShowLabels ? '开' : '关'} / 最终清晰度:${options.finalQuality}）`;
   }).join('<br>');
   box.innerHTML = `参考图模式当前选择：<br>风格：<b>${style}</b>；多元程度：<b>${payload.referenceFreedom.key}</b>；变化方向：<b>${payload.referenceVariation.key}</b>；短边格数：<b>${size.rows}</b>。<br><br>工程承接映射：<br>${mapping}`;
 }
@@ -3413,6 +3457,7 @@ async function requestAiBeadCandidates(payload) {
     return {
       id: spec.id,
       engineeringPresetId: resolveEngineeringPresetFromAiControls(payload, spec),
+      engineeringOptions: resolveEngineeringOptionsFromAiControls(payload, spec),
       title: spec.title,
       description: spec.description,
       preview: '🖼️',
@@ -3623,6 +3668,7 @@ function resolveEngineeringTargetGridFromAiCandidate(candidate) {
 function buildImageConvertPayloadFromAiCandidate(candidate) {
   const gridMeta = resolveEngineeringTargetGridFromAiCandidate(candidate);
   const targetShortSide = Number.isInteger(candidate?.targetShortSide) ? candidate.targetShortSide : resolveEngineeringSizeFromAiCandidate(candidate);
+  const engineeringOptions = candidate?.engineeringOptions || {};
   return {
     source: 'god-dou-home-ai',
     imageDataUrl: candidate?.previewUrl || '',
@@ -3637,7 +3683,8 @@ function buildImageConvertPayloadFromAiCandidate(candidate) {
     targetPage: 'page-result',
     targetRows: gridMeta.targetRows,
     targetCols: gridMeta.targetCols,
-    targetShortSide
+    targetShortSide,
+    engineeringOptions
   };
 }
 
@@ -3671,6 +3718,7 @@ function requestConvertedPreviewForCandidate(candidate) {
   if (!candidate?.previewUrl) return;
   const gridMeta = resolveEngineeringTargetGridFromAiCandidate(candidate);
   const targetShortSide = Number.isInteger(candidate?.targetShortSide) ? candidate.targetShortSide : resolveEngineeringSizeFromAiCandidate(candidate);
+  const engineeringOptions = candidate?.engineeringOptions || {};
   postImageConvertMessage('god-dou:image-convert:convert-preview', {
     candidateId: candidate.id,
     candidateTitle: candidate.title,
@@ -3680,7 +3728,8 @@ function requestConvertedPreviewForCandidate(candidate) {
     pixN: resolveEngineeringSizeFromAiCandidate(candidate),
     targetRows: gridMeta.targetRows,
     targetCols: gridMeta.targetCols,
-    targetShortSide
+    targetShortSide,
+    engineeringOptions
   });
 }
 

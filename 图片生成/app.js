@@ -1945,6 +1945,40 @@ function applyIncomingPreset(profileId, actualPresetId, silent) {
   }
 }
 
+function applyIncomingEngineeringOptions(options) {
+  if (!options || typeof options !== 'object') return;
+  if (typeof options.removeBg === 'boolean') {
+    const removeBgToggle = document.getElementById('removeBgToggle');
+    if (removeBgToggle) removeBgToggle.classList.toggle('on', options.removeBg);
+  }
+  if (Number.isFinite(options.simplifyLevel)) {
+    appState.userSimplifyLevel = Math.max(0, Math.min(100, Math.round(options.simplifyLevel)));
+    const smSlider = document.getElementById('smLevelSlider');
+    if (smSlider) smSlider.value = String(appState.userSimplifyLevel);
+  }
+  if (Number.isFinite(options.ditherStrength)) {
+    appState.ditherStrength = Math.max(0, Math.min(100, Math.round(options.ditherStrength)));
+    const ditherSlider = document.getElementById('ditherSlider');
+    const ditherVal = document.getElementById('ditherVal');
+    if (ditherSlider) ditherSlider.value = String(appState.ditherStrength);
+    if (ditherVal) ditherVal.textContent = String(appState.ditherStrength);
+  }
+  if (typeof options.showGrid === 'boolean') appState.showGrid = options.showGrid;
+  if (typeof options.showLabels === 'boolean') appState.showLabels = options.showLabels;
+  if (typeof options.showMirror === 'boolean') appState.showMirror = options.showMirror;
+  if (typeof options.finalShowLabels === 'boolean') appState.finalShowLabels = options.finalShowLabels;
+  if (typeof options.finalQuality === 'string') appState.finalQuality = options.finalQuality;
+  const chipGrid = document.getElementById('chipGrid');
+  const chipLabel = document.getElementById('chipLabel');
+  const chipMirror = document.getElementById('chipMirror');
+  if (chipGrid) chipGrid.classList.toggle('on', appState.showGrid);
+  if (chipLabel) chipLabel.classList.toggle('on', appState.showLabels);
+  if (chipMirror) chipMirror.classList.toggle('on', appState.showMirror);
+  refreshColorSimplifyIndicator();
+  syncFinalLabelChip();
+  syncFinalQualityChip();
+}
+
 function applyImportedAiCandidate(payload) {
   const dataUrl = payload?.imageDataUrl;
   if (!dataUrl || typeof dataUrl !== 'string') {
@@ -1965,6 +1999,7 @@ function applyImportedAiCandidate(payload) {
   if (payload?.profileId || payload?.actualPresetId) {
     applyIncomingPreset(payload?.profileId || 'smart', payload?.actualPresetId, true);
   }
+  applyIncomingEngineeringOptions(payload?.engineeringOptions);
   appState.liveJobId++;
   appState.currentSolutionKey = '';
   appState.cropImageSrc = dataUrl;
@@ -2013,6 +2048,7 @@ async function buildConvertedPreviewForCandidate(payload) {
   if (payload?.profileId || payload?.actualPresetId) {
     applyIncomingPreset(payload?.profileId || 'smart', payload?.actualPresetId, true);
   }
+  applyIncomingEngineeringOptions(payload?.engineeringOptions);
   const img = await loadImageFromSrc(dataUrl);
   const imageData = getPixelData(img);
   if (!payload?.actualPresetId && appState.profileId === 'smart') {
