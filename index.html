@@ -537,7 +537,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
       <div class="ai-size-custom" id="ai-size-custom-box">
         <div class="ai-size-custom-row">
           <span style="font-size:12px;white-space:nowrap;font-weight:600;color:var(--text)">手动选格数</span>
-          <input id="ai-custom-size-input" type="number" min="20" max="160" value="29" oninput="syncAiCustomSize()">
+          <input id="ai-custom-size-input" type="number" min="10" max="200" value="29" oninput="onAiCustomSizeInput()" onchange="commitAiCustomSize()" onblur="commitAiCustomSize()">
           <span style="font-size:12px;color:var(--text2)">× 按比例</span>
         </div>
         <div class="ai-grid-tags size-grid" id="ai-size-tags">
@@ -2583,7 +2583,7 @@ function getActiveTagText(containerId) {
 
 function parseAiSizeTag(text) {
   const input = document.getElementById('ai-custom-size-input');
-  const customVal = Math.max(20, Math.min(160, parseInt(input?.value || '29', 10) || 29));
+  const customVal = Math.max(10, Math.min(200, parseInt(input?.value || '29', 10) || 29));
   const matched = text.match(/(\d+)×(\d+)/);
   if (!matched) return { label: `自定义 ${customVal}×${customVal}`, rows: customVal, cols: customVal };
   return { label: `${customVal}×${customVal}`, rows: customVal, cols: customVal };
@@ -2593,7 +2593,7 @@ function syncAiCustomSize() {
   const input = document.getElementById('ai-custom-size-input');
   const meta = document.getElementById('ai-size-custom-meta');
   if (!input || !meta) return;
-  const val = Math.max(20, Math.min(160, parseInt(input.value || '72', 10) || 72));
+  const val = Math.max(10, Math.min(200, parseInt(input.value || '72', 10) || 72));
   input.value = val;
   document.querySelectorAll('#ai-size-tags .tag').forEach(tag => {
     const matched = tag.textContent.trim().match(/(\d+)格/);
@@ -2601,6 +2601,44 @@ function syncAiCustomSize() {
   });
   const estimated = Math.round(val * val * 0.74);
   meta.textContent = `当前按 ${val}×${val} 估算，平衡还原策略大约会用到 ${estimated.toLocaleString()} 颗拼豆；尺寸越大，细节越丰富。`;
+}
+
+function onAiCustomSizeInput() {
+  const input = document.getElementById('ai-custom-size-input');
+  const meta = document.getElementById('ai-size-custom-meta');
+  if (!input || !meta) return;
+  const raw = input.value.trim();
+  if (!raw) {
+    document.querySelectorAll('#ai-size-tags .tag').forEach(tag => tag.classList.remove('active'));
+    meta.textContent = '建议 40~96 之间，格数越大越细致，但制作成本也会更高。';
+    return;
+  }
+  const value = parseInt(raw, 10);
+  if (!Number.isInteger(value)) {
+    meta.textContent = '请输入有效数字';
+    return;
+  }
+  if (value < 10 || value > 200) {
+    meta.textContent = '可输入范围：10-200';
+    return;
+  }
+  document.querySelectorAll('#ai-size-tags .tag').forEach(tag => {
+    const matched = tag.textContent.trim().match(/(\d+)格/);
+    tag.classList.toggle('active', !!matched && parseInt(matched[1], 10) === value);
+  });
+  const estimated = Math.round(value * value * 0.74);
+  meta.textContent = `当前按 ${value}×${value} 估算，平衡还原策略大约会用到 ${estimated.toLocaleString()} 颗拼豆；尺寸越大，细节越丰富。`;
+}
+
+function commitAiCustomSize() {
+  const input = document.getElementById('ai-custom-size-input');
+  if (!input) return;
+  let value = parseInt(input.value, 10);
+  if (!Number.isInteger(value)) value = 29;
+  if (value < 10) value = 10;
+  if (value > 200) value = 200;
+  input.value = value;
+  syncAiCustomSize();
 }
 
 function buildAiGenerationPayload() {
