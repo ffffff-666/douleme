@@ -2386,10 +2386,10 @@ function renderFinalArtwork(targetCanvas, options) {
   var isExportCanvas = !!targetCanvas;
   var pixelRatio = isExportCanvas ? 1 : Math.max(1, Math.min(3, window.devicePixelRatio || 1));
   var uiScale = isExportCanvas ? exportMultiplier : 1;
-  var gridWidth = 350 * uiScale;
-  var cellSize = gridWidth / Math.max(cols, 1);
+  var cellSize = isExportCanvas ? (350 * uiScale) / Math.max(cols, 1) : 12;
+  var gridWidth = cols * cellSize;
   var gridHeight = rows * cellSize;
-  var paddingX = 2 * uiScale;
+  var paddingX = isExportCanvas ? 2 * uiScale : 0;
   var topHeaderH = 0;
   var topGap = 0;
   var axisBand = 0;
@@ -2420,7 +2420,7 @@ function renderFinalArtwork(targetCanvas, options) {
   canvas.height = Math.round(logicalHeight * pixelRatio);
   if (!isExportCanvas) {
     canvas.style.width = '100%';
-    canvas.style.maxWidth = Math.min(720, logicalWidth) + 'px';
+    canvas.style.maxWidth = 'none';
     canvas.style.height = 'auto';
   }
   var ctx = canvas.getContext('2d');
@@ -2432,7 +2432,7 @@ function renderFinalArtwork(targetCanvas, options) {
   drawFinalAxisLabels(ctx, rows, cols, cellSize, gridOriginX, gridOriginY, gridWidth, gridHeight, axisBand);
   ctx.save();
   ctx.translate(gridOriginX, topHeaderH + topGap + axisBand);
-  drawGrid(ctx, appState.gridData, rows, cols, cellSize, true, appState.finalShowLabels !== false, false, { variant: 'final' });
+  drawGrid(ctx, appState.gridData, rows, cols, cellSize, true, appState.finalShowLabels !== false, false);
   ctx.restore();
   if (includeLegend) {
     var footerTop = gridOriginY + gridHeight + footerGap;
