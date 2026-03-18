@@ -694,6 +694,20 @@ function buildRawGridSimpleMean(imageData, pixN, baseCenterBias, minorityColorPr
   }
   return { grid, rows, cols };
 }
+
+function resolveTargetGridByAspect(width, height, targetShortSide, targetRows, targetCols) {
+  const shortSide = Number.isInteger(targetShortSide) && targetShortSide > 0 ? targetShortSide : null;
+  if (shortSide && width > 0 && height > 0) {
+    if (width >= height) {
+      return { rows: shortSide, cols: Math.max(shortSide, Math.round(width / height * shortSide)) };
+    }
+    return { rows: Math.max(shortSide, Math.round(height / width * shortSide)), cols: shortSide };
+  }
+  if (Number.isInteger(targetRows) && Number.isInteger(targetCols) && targetRows > 0 && targetCols > 0) {
+    return { rows: targetRows, cols: targetCols };
+  }
+  return { rows: null, cols: null };
+}
 function detectSemanticFeatureMask(baseGridData, rawGrid, rows, cols, strength) {
   const t = Math.max(0, Math.min(1, Number(strength) || 0));
   const mask = Array.from({ length: rows }, () => new Uint8Array(cols));
@@ -1969,6 +1983,7 @@ function applyImportedAiCandidate(payload) {
   appState.pendingAutoPage = payload?.targetPage || 'page-result';
   appState.targetGridRows = Number.isInteger(payload?.targetRows) ? payload.targetRows : null;
   appState.targetGridCols = Number.isInteger(payload?.targetCols) ? payload.targetCols : null;
+  appState.targetShortSide = Number.isInteger(payload?.targetShortSide) ? payload.targetShortSide : null;
   const previewImg = document.getElementById('previewImg');
   if (previewImg) {
     previewImg.src = dataUrl;
@@ -2007,13 +2022,16 @@ async function buildConvertedPreviewForCandidate(payload) {
     applyProfileDefaults(PROFILE_PRESETS[auto.id], '智能推荐：' + auto.reason);
     appState.smartResolvedForFile = true;
   }
-  const targetRows = Number.isInteger(payload?.targetRows) ? payload.targetRows : null;
-  const targetCols = Number.isInteger(payload?.targetCols) ? payload.targetCols : null;
+  const targetGrid = resolveTargetGridByAspect(imageData.width, imageData.height, payload?.targetShortSide, payload?.targetRows, payload?.targetCols);
+  const targetRows = targetGrid.rows;
+  const targetCols = targetGrid.cols;
   const { rawGrid, gridData, rows, cols } = buildBeadDesign(imageData, appState.pixN, targetRows, targetCols);
   const colorStats = buildColorStats(gridData, rows, cols);
   const beadCount = countForegroundBeads(gridData, rows, cols);
   return {
     previewUrl: renderGridPreviewDataUrl(gridData, rows, cols),
+    rows,
+    cols,
     colorCount: colorStats.length,
     beadCount,
     legendItems: colorStats.slice(0, 18).map((item) => ({
@@ -2117,6 +2135,7 @@ let appState = {
   pendingAutoPage: '',
   targetGridRows: null,
   targetGridCols: null,
+  targetShortSide: null,
   previewScale: 1,
   previewOffsetX: 0,
   previewOffsetY: 0,
@@ -2629,6 +2648,7 @@ function confirmCrop() {
   appState.file = dataUrlToFile(dataUrl, 'cropped.png');
   appState.targetGridRows = null;
   appState.targetGridCols = null;
+  appState.targetShortSide = null;
     appState.cachedImg = null; appState.cachedImageData = null;
   appState.bgMask = null; appState.fullGridData = null; appState.smartResolvedForFile = false;
   appState.previewScale = 0; appState.previewOffsetX = 0; appState.previewOffsetY = 0; appState.previewNeedsReset = true;
@@ -2658,6 +2678,7 @@ function handleFileSelect(e) {
   appState.hideOriginalPreview = false;
   appState.targetGridRows = null;
   appState.targetGridCols = null;
+  appState.targetShortSide = null;
   appState.cachedImg = null; appState.cachedImageData = null;
   appState.bgMask = null; appState.fullGridData = null; appState.smartResolvedForFile = false;
   const reader = new FileReader();
@@ -3294,7 +3315,8 @@ async function runLiveConvert() {
     }
     await sleep(0);
     if (jobId !== appState.liveJobId) return;
-    const { rawGrid, gridData: finalGridData, rows, cols, featureMask } = buildBeadDesign(appState.cachedImageData, pixN, appState.targetGridRows, appState.targetGridCols);
+    const targetGrid = resolveTargetGridByAspect(appState.cachedImageData.width, appState.cachedImageData.height, appState.targetShortSide, appState.targetGridRows, appState.targetGridCols);
+    const { rawGrid, gridData: finalGridData, rows, cols, featureMask } = buildBeadDesign(appState.cachedImageData, pixN, targetGrid.rows, targetGrid.cols);
     let gridData = finalGridData;
     const protectedSourceGrid = finalGridData.map(row => [...row]);
     appState.rawGrid = rawGrid;

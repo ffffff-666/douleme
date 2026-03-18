@@ -2215,6 +2215,9 @@ function initializeAiCandidatePlaceholders(payload) {
     convertedColorCount: null,
     convertedBeadCount: null,
     convertedLegendItems: [],
+    convertedRows: null,
+    convertedCols: null,
+    targetShortSide: payload.size.rows,
     sizeLabel: spec.sizeLabel,
     colorCount: Math.max(10, (payload.style === '像素' ? 16 : payload.style === '极简' ? 14 : payload.style === '写实' ? 28 : 22) + spec.colorDelta),
     beadCount: Math.round(payload.size.rows * payload.size.cols * spec.beadRatio),
@@ -2880,7 +2883,11 @@ function composeAiPrompt(payload, spec) {
   if (strategyPrompt) parts.push(`转换策略提示词：${strategyPrompt}`);
   parts.push(`拼豆成品候选：${spec.title}，${spec.intent}`);
   parts.push(`目标拼豆尺寸：${payload.size.rows}×${payload.size.cols}`);
-  parts.push(`网格生成要求：请严格按 ${payload.size.rows}×${payload.size.cols} 的拼豆网格思维组织画面，把主体概括成清楚的大色块和块面边界，让结果看起来更像已经初步像素化/拼豆化的源图，而不是普通高清插画。`);
+  if (payload.mode === 'reference') {
+    parts.push(`网格生成要求：请把用户选择的 ${payload.size.rows} 格理解为参考图最终拼豆网格的短边格数，长边必须按原图比例自然推导，不要为了凑正方形去压缩、拉伸或改坏原图构图。`);
+  } else {
+    parts.push(`网格生成要求：请严格按 ${payload.size.rows}×${payload.size.cols} 的拼豆网格思维组织画面，把主体概括成清楚的大色块和块面边界，让结果看起来更像已经初步像素化/拼豆化的源图，而不是普通高清插画。`);
+  }
   parts.push('块面要求：优先大色块、少渐变、少纹理、少碎点、少高频细节，允许必要层次，但不要出现大量细碎真实材质。');
   parts.push('工程友好要求：让后续工程转换主要做色板映射、少量边界修正和颗数统计，而不是重新压缩整张图。');
   parts.push(spec.promptSuffix);
@@ -3234,6 +3241,7 @@ async function requestAiBeadCandidates(payload) {
       preview: '🖼️',
       previewUrl: b64,
       previewType: 'image',
+      targetShortSide: payload.size.rows,
       sizeLabel: spec.sizeLabel,
       colorCount: Math.max(10, baseColors + spec.colorDelta),
       beadCount: Math.round(baseBeads * spec.beadRatio),
@@ -3430,13 +3438,14 @@ function resolveEngineeringSizeFromAiCandidate(candidate) {
 }
 
 function resolveEngineeringTargetGridFromAiCandidate(candidate) {
-  const size = resolveEngineeringSizeFromAiCandidate(candidate);
+  const size = Number.isInteger(candidate?.targetShortSide) ? candidate.targetShortSide : resolveEngineeringSizeFromAiCandidate(candidate);
   if (!Number.isInteger(size)) return { targetRows: null, targetCols: null };
   return { targetRows: size, targetCols: size };
 }
 
 function buildImageConvertPayloadFromAiCandidate(candidate) {
   const gridMeta = resolveEngineeringTargetGridFromAiCandidate(candidate);
+  const targetShortSide = Number.isInteger(candidate?.targetShortSide) ? candidate.targetShortSide : resolveEngineeringSizeFromAiCandidate(candidate);
   return {
     source: 'god-dou-home-ai',
     imageDataUrl: candidate?.previewUrl || '',
@@ -3450,7 +3459,8 @@ function buildImageConvertPayloadFromAiCandidate(candidate) {
     sourceMode: candidate?.sourceMode || aiMode || 'text',
     targetPage: 'page-result',
     targetRows: gridMeta.targetRows,
-    targetCols: gridMeta.targetCols
+    targetCols: gridMeta.targetCols,
+    targetShortSide
   };
 }
 
@@ -3483,6 +3493,7 @@ function syncAiCandidateToImageConvert(candidate) {
 function requestConvertedPreviewForCandidate(candidate) {
   if (!candidate?.previewUrl) return;
   const gridMeta = resolveEngineeringTargetGridFromAiCandidate(candidate);
+  const targetShortSide = Number.isInteger(candidate?.targetShortSide) ? candidate.targetShortSide : resolveEngineeringSizeFromAiCandidate(candidate);
   postImageConvertMessage('god-dou:image-convert:convert-preview', {
     candidateId: candidate.id,
     candidateTitle: candidate.title,
@@ -3491,7 +3502,8 @@ function requestConvertedPreviewForCandidate(candidate) {
     actualPresetId: resolveEngineeringPresetFromAiCandidate(candidate),
     pixN: resolveEngineeringSizeFromAiCandidate(candidate),
     targetRows: gridMeta.targetRows,
-    targetCols: gridMeta.targetCols
+    targetCols: gridMeta.targetCols,
+    targetShortSide
   });
 }
 
@@ -3956,6 +3968,11 @@ function handleImageConvertBridgeMessage(event) {
       candidate.convertedColorCount = payload.colorCount ?? candidate.convertedColorCount;
       candidate.convertedBeadCount = payload.beadCount ?? candidate.convertedBeadCount;
       candidate.convertedLegendItems = Array.isArray(payload.legendItems) ? payload.legendItems : candidate.convertedLegendItems;
+      candidate.convertedRows = payload.rows ?? candidate.convertedRows;
+      candidate.convertedCols = payload.cols ?? candidate.convertedCols;
+      if (Number.isInteger(payload.rows) && Number.isInteger(payload.cols)) {
+        candidate.sizeLabel = `${payload.rows}×${payload.cols}`;
+      }
       candidate.engineeringPresetId = payload.actualPresetId || candidate.engineeringPresetId;
       if (candidateIndex >= 0) {
         updateAiCandidateState(candidateIndex, {
