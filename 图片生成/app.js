@@ -2432,7 +2432,7 @@ function renderFinalArtwork(targetCanvas, options) {
   drawFinalAxisLabels(ctx, rows, cols, cellSize, gridOriginX, gridOriginY, gridWidth, gridHeight, axisBand);
   ctx.save();
   ctx.translate(gridOriginX, topHeaderH + topGap + axisBand);
-  drawGrid(ctx, appState.gridData, rows, cols, cellSize, true, appState.finalShowLabels !== false, false);
+  drawGrid(ctx, appState.gridData, rows, cols, cellSize, true, appState.finalShowLabels !== false, false, { variant: 'final' });
   ctx.restore();
   if (includeLegend) {
     var footerTop = gridOriginY + gridHeight + footerGap;
@@ -3665,7 +3665,7 @@ function renderResult(preserveView) {
   renderColorList();
   setWorkspaceMode(appState.workspaceMode || 'preview', true);
 }
-function drawGrid(ctx, gridData, rows, cols, cellSize, showGrid, showLabels, mirror) {
+function drawGrid(ctx, gridData, rows, cols, cellSize, showGrid, showLabels, mirror, labelOptions) {
   ctx.save();
   if (mirror) { ctx.translate(cols * cellSize, 0); ctx.scale(-1, 1); }
   const checkSize = Math.max(2, Math.floor(cellSize / 3));
@@ -3708,25 +3708,39 @@ function drawGrid(ctx, gridData, rows, cols, cellSize, showGrid, showLabels, mir
   }
   if (showLabels && cellSize >= 4) {
     ctx.save();
-    const fontSize = Math.max(5, cellSize * 0.58);
-    ctx.font = `bold ${fontSize}px monospace`;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        if (gridData[r][c] === -1) continue; // skip background cells
-        const mc = MARD_PALETTE[gridData[r][c]];
-        const lum = (mc.r * 0.299 + mc.g * 0.587 + mc.b * 0.114) / 255;
-        const fill = lum < 0.5 ? '#fff' : '#000';
-        const stroke = lum < 0.5 ? 'rgba(0,0,0,.45)' : 'rgba(255,255,255,.5)';
-        ctx.fillStyle = fill;
-        ctx.strokeStyle = stroke;
-        ctx.lineWidth = Math.max(1, fontSize * 0.18);
-        const textX = mirror ? ((cols - c - 0.5) * cellSize) : (c * cellSize + cellSize / 2);
-        ctx.strokeText(mc.id, textX, r*cellSize+cellSize/2);
-        ctx.fillText(mc.id, textX, r*cellSize+cellSize/2);
+    const finalLabelMode = labelOptions?.variant === 'final';
+    if (finalLabelMode && cellSize < 5.2) {
+      ctx.restore();
+    } else {
+      const fontSize = finalLabelMode
+        ? Math.max(3.2, cellSize * (cellSize >= 8 ? 0.38 : cellSize >= 6.4 ? 0.32 : 0.28))
+        : Math.max(5, cellSize * 0.58);
+      ctx.font = `bold ${fontSize}px monospace`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (gridData[r][c] === -1) continue; // skip background cells
+          const mc = MARD_PALETTE[gridData[r][c]];
+          const lum = (mc.r * 0.299 + mc.g * 0.587 + mc.b * 0.114) / 255;
+          const fill = finalLabelMode
+            ? (lum < 0.5 ? 'rgba(255,255,255,0.56)' : 'rgba(0,0,0,0.42)')
+            : (lum < 0.5 ? '#fff' : '#000');
+          const stroke = finalLabelMode
+            ? (lum < 0.5 ? 'rgba(0,0,0,.12)' : 'rgba(255,255,255,.12)')
+            : (lum < 0.5 ? 'rgba(0,0,0,.45)' : 'rgba(255,255,255,.5)');
+          ctx.fillStyle = fill;
+          ctx.strokeStyle = stroke;
+          ctx.lineWidth = finalLabelMode ? Math.max(0.35, fontSize * 0.08) : Math.max(1, fontSize * 0.18);
+          const textX = mirror ? ((cols - c - 0.5) * cellSize) : (c * cellSize + cellSize / 2);
+          const labelText = finalLabelMode && cellSize < 6.4 ? String(mc.id).slice(0, 2) : mc.id;
+          if (!finalLabelMode || cellSize >= 6) {
+            ctx.strokeText(labelText, textX, r*cellSize+cellSize/2);
+          }
+          ctx.fillText(labelText, textX, r*cellSize+cellSize/2);
+        }
       }
+      ctx.restore();
     }
-    ctx.restore();
   }
   if (appState.highlightedResultColor != null) {
     ctx.save();
