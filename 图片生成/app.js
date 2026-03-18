@@ -1904,6 +1904,7 @@ function applyImportedAiCandidate(payload) {
   appState.previewNeedsReset = true;
   appState.hideOriginalPreview = true;
   appState.previewMode = 'beads';
+  appState.pendingAutoPage = payload?.targetPage || 'page-result';
   const previewImg = document.getElementById('previewImg');
   if (previewImg) {
     previewImg.src = dataUrl;
@@ -2047,6 +2048,7 @@ let appState = {
   liveConvertTimer: null, liveJobId: 0,
   previewMode: 'beads',
   hideOriginalPreview: false,
+  pendingAutoPage: '',
   previewScale: 1,
   previewOffsetX: 0,
   previewOffsetY: 0,
@@ -3249,6 +3251,11 @@ async function runLiveConvert() {
     renderLivePreview();
     hideUploadPreview();
     syncConvertBottomBar(true);
+    if (appState.pendingAutoPage) {
+      const targetPage = appState.pendingAutoPage;
+      appState.pendingAutoPage = '';
+      navigateTo(targetPage);
+    }
   } catch (err) {
     console.error('Live convert error:', err);
     showToast('转换出错：' + err.message);

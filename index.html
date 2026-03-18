@@ -3402,7 +3402,8 @@ function buildImageConvertPayloadFromAiCandidate(candidate) {
     candidateTitle: candidate?.title || 'AI 拼豆方案',
     candidateIntent: candidate?.intent || '',
     prompt: candidate?.prompt || '',
-    sourceMode: candidate?.sourceMode || aiMode || 'text'
+    sourceMode: candidate?.sourceMode || aiMode || 'text',
+    targetPage: 'page-result'
   };
 }
 
@@ -3450,35 +3451,8 @@ function requestConvertedPreviews(candidates) {
 
 function applySelectedBeadCandidate(candidate) {
   selectedAiCandidate = candidate;
-  const preview = document.getElementById('gen-result-preview');
-  const previewBox = document.getElementById('gen-result-preview-box');
-  const title = document.getElementById('gen-result-title');
-  const desc = document.getElementById('gen-result-desc');
-  const size = document.getElementById('gen-result-size');
-  const colors = document.getElementById('gen-result-colors');
-  const beads = document.getElementById('gen-result-beads');
-  const resultPreviewUrl = candidate.convertedPreviewUrl || candidate.previewUrl || '';
-  const displayColorCount = candidate.convertedColorCount ?? candidate.colorCount;
-  const displayBeadCount = candidate.convertedBeadCount ?? candidate.beadCount;
-  const legendItems = candidate.convertedLegendItems || [];
-  if (preview) {
-    if (resultPreviewUrl) {
-      currentGenResultCompositeUrl = buildGenResultCompositeUrl(resultPreviewUrl, legendItems) || resultPreviewUrl;
-      preview.innerHTML = `<img class="result-preview-image" src="${resultPreviewUrl}" alt="${candidate.title}">`;
-    } else {
-      currentGenResultCompositeUrl = '';
-      preview.textContent = candidate.preview;
-    }
-  }
-  if (previewBox) previewBox.style.background = '#fff';
-  if (title) title.textContent = candidate.title;
-  if (desc) desc.textContent = candidate.description + ' 当前页展示的是转成拼豆后的工程结果。';
-  if (size) size.textContent = `📐 ${candidate.sizeLabel}`;
-  if (colors) colors.textContent = `🎨 ${displayColorCount}种`;
-  if (beads) beads.textContent = `⚪ ${displayBeadCount.toLocaleString()}颗`;
-  renderGenResultLegend(displayColorCount, displayBeadCount, legendItems);
   syncAiCandidateToImageConvert(candidate);
-  goPage('page-gen-result');
+  goPage('page-img-convert');
 }
 
 // ==================== AI Gen CTA Disable Logic ====================
