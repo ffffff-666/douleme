@@ -2042,12 +2042,23 @@ function resolveEngineeringOptionsFromAiControls(payload, spec) {
   const showMirror = false;
   const finalShowLabels = shortSide <= 58 && (style === '像素' || freedom === 'low');
   const finalQuality = shortSide >= 116 ? '8k' : shortSide >= 87 ? 'ultra' : 'hd';
+  const experimentScene = style === '写实' ? 'portrait' : 'general';
+  const experimentOverrides = {
+    hairRegionDetectStrength: style === '写实' ? 0.92 : 0.56,
+    hairPaletteLevels: style === '像素' ? 2 : 3,
+    hairNeutralReject: style === '写实' ? 0.88 : 0.52,
+    hairInteriorSmooth: freedom === 'low' ? 0.82 : freedom === 'high' ? 0.46 : 0.62,
+    hairBoundaryProtect: variation === 'pose' ? 0.84 : 0.68,
+    figureBoundaryClean: variation === 'composition' ? 0.72 : 0.56
+  };
 
   return {
     preset,
     removeBg,
     simplifyLevel,
     ditherStrength,
+    experimentScene,
+    experimentOverrides,
     showGrid,
     showLabels,
     showMirror,
@@ -2545,7 +2556,7 @@ function syncAiEngineeringMapping() {
   const mapping = specs.slice(0, 3).map((spec) => {
     const preset = resolveEngineeringPresetFromAiControls(payload, spec);
     const options = resolveEngineeringOptionsFromAiControls(payload, spec);
-    return `- ${spec.title} → ${preset}（去背景:${options.removeBg ? '开' : '关'} / 简化:${options.simplifyLevel} / 抖动:${options.ditherStrength} / 结果编号:${options.showLabels ? '开' : '关'} / 最终编号:${options.finalShowLabels ? '开' : '关'} / 最终清晰度:${options.finalQuality}）`;
+    return `- ${spec.title} → ${preset}（去背景:${options.removeBg ? '开' : '关'} / 简化:${options.simplifyLevel} / 抖动:${options.ditherStrength} / 场景:${options.experimentScene} / 结果编号:${options.showLabels ? '开' : '关'} / 最终编号:${options.finalShowLabels ? '开' : '关'} / 最终清晰度:${options.finalQuality}）`;
   }).join('<br>');
   box.innerHTML = `参考图模式当前选择：<br>风格：<b>${style}</b>；多元程度：<b>${payload.referenceFreedom.key}</b>；变化方向：<b>${payload.referenceVariation.key}</b>；短边格数：<b>${size.rows}</b>。<br><br>工程承接映射：<br>${mapping}`;
 }
