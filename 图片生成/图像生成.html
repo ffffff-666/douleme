@@ -277,6 +277,12 @@
     </div>
     <div class="material-sheet-body">
       <div class="material-summary" id="materialSummary"></div>
+      <div class="toggle-bar" style="padding:10px 0 12px">
+        <div class="toggle-chip on" id="materialMergeOff" onclick="setMaterialMergeLevel('off')">相近色合并：关闭</div>
+        <div class="toggle-chip" id="materialMergeSoft" onclick="setMaterialMergeLevel('soft')">保守</div>
+        <div class="toggle-chip" id="materialMergeMedium" onclick="setMaterialMergeLevel('medium')">平衡</div>
+        <div class="toggle-chip" id="materialMergeStrong" onclick="setMaterialMergeLevel('strong')">强合并</div>
+      </div>
       <div class="material-head">
         <span style="width:28px"></span><span style="flex:1">名称</span><span class="material-code">色号</span><span class="material-need">需要</span><span class="material-buy">购买</span><span class="material-price">金额</span>
       </div>
