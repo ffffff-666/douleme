@@ -208,6 +208,11 @@
   </div>
   <div class="workspace-panel result-preview-panel active" id="workspacePreviewPanel">
     <div class="canvas-container result-canvas-container" id="resultCanvasContainer">
+      <div class="result-debug-tabs" id="resultDebugTabs" style="display:none">
+        <div class="result-debug-tab" id="resultDebugTabAi" onclick="setResultDebugTab('ai')">AI生成图</div>
+        <div class="result-debug-tab active" id="resultDebugTabEngineering" onclick="setResultDebugTab('engineering')">工程生成图</div>
+      </div>
+      <div class="result-ai-preview" id="resultAiPreview"><img id="resultAiPreviewImg" alt="AI生成图"></div>
       <canvas id="resultCanvas"></canvas>
     </div>
     <div class="content result-scroll">
