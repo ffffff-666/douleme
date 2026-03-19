@@ -148,6 +148,14 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .gen-result-legend-code{font-weight:700;color:#333}
 .gen-result-legend-count{color:#777}
 .gen-result-note{font-size:11px;color:var(--text2);text-align:center;line-height:1.6;margin:-2px auto 12px;max-width:320px}
+.batch-test-toolbar{display:flex;gap:8px;padding:12px 16px 8px;flex-wrap:wrap}
+.batch-test-card{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:12px 14px;margin:0 16px 12px;border:1px solid rgba(0,0,0,.04)}
+.batch-test-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
+.batch-test-meta{font-size:12px;color:var(--text2);line-height:1.6}
+.batch-test-grid{display:grid;grid-template-columns:88px 1fr;gap:12px;align-items:flex-start}
+.batch-test-thumb{width:88px;height:88px;border-radius:12px;background:#f4f4f7;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.batch-test-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.batch-test-actions{display:flex;gap:8px;margin-top:10px}
 .cart-item .thumb{width:70px;height:70px;background:linear-gradient(135deg,#f0e8f5,#ffe8ee);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
 .cart-item .info{flex:1}
 .address-card{background:var(--white);border-radius:var(--radius);margin:8px 16px;padding:16px;box-shadow:var(--shadow);cursor:pointer}
@@ -1841,6 +1849,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
     <div class="list-item" onclick="goPage('page-favorites')"><span>14g 我的收藏页</span><span style="color:var(--text2)">›</span></div>
     <div class="list-item" onclick="goPage('page-settings')"><span>14h 设置页</span><span style="color:var(--text2)">›</span></div>
     <div class="list-item" onclick="goPage('page-address-form')"><span>14i 地址编辑表单页</span><span style="color:var(--text2)">›</span></div>
+    <div class="list-item" onclick="goPage('page-batch-test')"><span>14j AI/工程批量测试页</span><span style="color:var(--text2)">›</span></div>
     <div class="list-item" onclick="showLogin()"><span>— 登录授权弹窗（全局组件）</span><span style="color:var(--text2)">›</span></div>
     <div class="section-title">P1 重要页面 <span class="p-badge p1">P1</span></div>
     <div class="list-item" onclick="goPage('page-launch')"><span>15 启动页</span><span style="color:var(--text2)">›</span></div>
@@ -1855,6 +1864,25 @@ input:focus,textarea:focus{border-color:var(--primary)}
     <div class="list-item" onclick="goPage('page-my-designs')"><span>22 我的设计稿页</span><span style="color:var(--text2)">›</span></div>
     <div class="list-item" onclick="goPage('page-coupon')"><span>23 优惠券页面</span><span style="color:var(--text2)">›</span></div>
   </div>
+</div>
+
+<div id="page-batch-test" class="page sub-page">
+  <div class="nav-bar">
+    <div class="back" onclick="goBack()">←</div>
+    <span class="title">AI/工程批量测试</span>
+    <span></span>
+  </div>
+  <input id="batch-test-input" type="file" accept="image/*" multiple style="display:none" onchange="handleBatchTestFiles(event)">
+  <div class="batch-test-toolbar">
+    <button class="btn-secondary" style="width:auto;padding:10px 14px" onclick="document.getElementById('batch-test-input').click()">批量挂图</button>
+    <button class="btn-secondary" style="width:auto;padding:10px 14px" onclick="addBatchTestCurrentCase()">保存当前方案</button>
+  </div>
+  <div class="section-title" style="padding-top:8px">当前配置快照</div>
+  <div class="batch-test-card">
+    <div id="batch-test-current" class="batch-test-meta"></div>
+  </div>
+  <div class="section-title" style="padding-top:4px">测试案例列表</div>
+  <div id="batch-test-list"></div>
 </div>
 
 </div><!-- end .app -->
@@ -1877,6 +1905,7 @@ let aiBeadCandidates = [];
 let selectedAiCandidate = null;
 let aiMockTask = null;
 let aiGenerationUiState = null;
+let batchTestCases = [];
 let currentAiGenerationPayload = null;
 let currentAiPickTab = '';
 let imageConvertFrameReady = false;
@@ -2543,6 +2572,7 @@ function syncAiEngineeringMapping() {
   const size = parseAiSizeTag(getActiveTagText('ai-size-tags') || '29格');
   if (aiMode !== 'reference') {
     box.innerHTML = `当前为文生图模式：<br>风格：<b>${style}</b>；尺寸：<b>${size.rows}×${size.cols}</b>。<br>工程承接预设将主要按候选类型默认映射。`;
+    renderBatchTestCurrent();
     return;
   }
   const payload = {
@@ -2559,6 +2589,124 @@ function syncAiEngineeringMapping() {
     return `- ${spec.title} → ${preset}（去背景:${options.removeBg ? '开' : '关'} / 简化:${options.simplifyLevel} / 抖动:${options.ditherStrength} / 场景:${options.experimentScene} / 结果编号:${options.showLabels ? '开' : '关'} / 最终编号:${options.finalShowLabels ? '开' : '关'} / 最终清晰度:${options.finalQuality}）`;
   }).join('<br>');
   box.innerHTML = `参考图模式当前选择：<br>风格：<b>${style}</b>；多元程度：<b>${payload.referenceFreedom.key}</b>；变化方向：<b>${payload.referenceVariation.key}</b>；短边格数：<b>${size.rows}</b>。<br><br>工程承接映射：<br>${mapping}`;
+  renderBatchTestCurrent();
+}
+
+function snapshotCurrentAiCase() {
+  const size = parseAiSizeTag(getActiveTagText('ai-size-tags') || '29格');
+  return {
+    mode: aiMode,
+    style: getActiveTagText('style-tags') || '卡通',
+    freedom: getActiveTagText('ai-reference-freedom-tags') || '中',
+    variation: getActiveTagText('ai-reference-variation-tags') || '动作姿势',
+    shortSide: size.rows,
+    prompt: (document.getElementById('ai-prompt') || {}).value?.trim() || '',
+    mappingHtml: (document.getElementById('ai-engineering-mapping') || {}).innerHTML || ''
+  };
+}
+
+function renderBatchTestCurrent() {
+  const box = document.getElementById('batch-test-current');
+  if (!box) return;
+  const snap = snapshotCurrentAiCase();
+  box.innerHTML = `模式：<b>${snap.mode === 'reference' ? '参考图' : '文生图'}</b><br>风格：<b>${snap.style}</b>；多元程度：<b>${snap.freedom}</b>；变化方向：<b>${snap.variation}</b>；短边格数：<b>${snap.shortSide}</b><br><br>${snap.mappingHtml || ''}`;
+}
+
+function renderBatchTestList() {
+  const list = document.getElementById('batch-test-list');
+  if (!list) return;
+  if (!batchTestCases.length) {
+    list.innerHTML = '<div class="batch-test-card"><div class="batch-test-meta">暂无测试案例。你可以先挂图，再保存当前方案做对比。</div></div>';
+    return;
+  }
+  list.innerHTML = batchTestCases.map((item, index) => `
+    <div class="batch-test-card">
+      <div class="batch-test-grid">
+        <div class="batch-test-thumb">${item.previewUrl ? `<img src="${item.previewUrl}" alt="${item.name}">` : '🧪'}</div>
+        <div>
+          <div class="batch-test-title">${item.name || `案例 ${index + 1}`}</div>
+          <div class="batch-test-meta">尺寸：${item.width || '?'}×${item.height || '?'}<br>模式：${item.mode === 'reference' ? '参考图' : '文生图'}；风格：${item.style}；多元程度：${item.freedom}；变化方向：${item.variation}；短边格数：${item.shortSide}</div>
+          <div class="batch-test-meta" style="margin-top:6px">${item.mappingHtml || ''}</div>
+          <div class="batch-test-actions">
+            <button class="btn-secondary" onclick="loadBatchTestCase(${index})">载入到 AI 页</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setActiveTagByText(containerId, text) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const tags = Array.from(container.querySelectorAll('.tag'));
+  const target = tags.find(tag => tag.textContent.trim() === text);
+  if (target) selectTag(target, containerId);
+}
+
+function loadBatchTestCase(index) {
+  const item = batchTestCases[index];
+  if (!item) return;
+  switchAiMode(item.mode || 'reference');
+  setActiveTagByText('style-tags', item.style || '卡通');
+  setActiveTagByText('ai-reference-freedom-tags', item.freedom || '中');
+  setActiveTagByText('ai-reference-variation-tags', item.variation || '动作姿势');
+  const input = document.getElementById('ai-custom-size-input');
+  if (input) {
+    input.value = item.shortSide || 29;
+    commitAiCustomSize();
+  }
+  const ta = document.getElementById('ai-prompt');
+  if (ta) {
+    ta.value = item.prompt || '';
+    updateCharCount();
+  }
+  if (item.mode === 'reference' && item.previewUrl) {
+    aiReferenceName = item.name || '批量测试图';
+    const uploadBox = document.getElementById('ai-reference-upload');
+    const thumb = document.getElementById('ai-reference-thumb');
+    const name = document.getElementById('ai-reference-name');
+    const desc = document.getElementById('ai-reference-desc');
+    if (uploadBox) uploadBox.classList.add('has-image');
+    if (thumb) thumb.innerHTML = `<img src="${item.previewUrl}" alt="参考图">`;
+    if (name) name.textContent = item.name || '批量测试图';
+    if (desc) desc.textContent = '这是批量测试页载入的参考图快照；如需真实生成请重新上传原图文件。';
+  }
+  syncAiEngineeringMapping();
+  goPage('page-ai-gen');
+}
+
+function addBatchTestCurrentCase() {
+  const snap = snapshotCurrentAiCase();
+  batchTestCases.unshift({
+    ...snap,
+    name: aiReferenceName || `方案快照 ${batchTestCases.length + 1}`,
+    previewUrl: document.querySelector('#ai-reference-thumb img')?.src || '',
+    width: document.querySelector('#ai-reference-thumb img')?.naturalWidth || null,
+    height: document.querySelector('#ai-reference-thumb img')?.naturalHeight || null
+  });
+  renderBatchTestList();
+  showToast('已保存当前方案到批量测试页');
+}
+
+function handleBatchTestFiles(event) {
+  const files = Array.from(event?.target?.files || []);
+  if (!files.length) return;
+  const snap = snapshotCurrentAiCase();
+  Promise.all(files.map(file => fileToDataUrl(file).then(url => ({ file, url })))).then(items => {
+    items.forEach(({ file, url }) => {
+      batchTestCases.unshift({
+        ...snap,
+        mode: 'reference',
+        name: file.name,
+        previewUrl: url,
+        width: null,
+        height: null
+      });
+    });
+    renderBatchTestList();
+    showToast(`已添加 ${items.length} 个批量测试案例`);
+  }).catch(() => showToast('批量挂图失败'));
 }
 
 function fillAiConfigForm() {
@@ -4544,6 +4692,8 @@ window.addEventListener('load', function() {
   loadAiConfig();
   switchAiMode('text');
   syncAiCustomSize();
+  renderBatchTestCurrent();
+  renderBatchTestList();
   checkAiGenBtn();
   // Privacy check on first visit
   if (!localStorage.getItem('privacyAccepted')) {
