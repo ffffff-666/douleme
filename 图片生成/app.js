@@ -2283,7 +2283,6 @@ let appState = {
   targetShortSide: null,
   inputSource: 'manual',
   materialMergeLevel: 'off',
-  resultDebugTab: 'engineering',
   previewScale: 1,
   previewOffsetX: 0,
   previewOffsetY: 0,
@@ -3874,32 +3873,10 @@ function renderResult(preserveView) {
   }
   applyTransform(canvas);
   drawGrid(ctx, appState.gridData, rows, cols, cellSize, appState.showGrid, appState.showLabels, appState.showMirror);
-  syncResultDebugTabs();
   refreshColorSimplifyIndicator();
   renderStats();
   renderColorList();
   setWorkspaceMode(appState.workspaceMode || 'preview', true);
-}
-
-function setResultDebugTab(tab) {
-  appState.resultDebugTab = tab === 'ai' ? 'ai' : 'engineering';
-  syncResultDebugTabs();
-}
-
-function syncResultDebugTabs() {
-  const tabs = document.getElementById('resultDebugTabs');
-  const tabAi = document.getElementById('resultDebugTabAi');
-  const tabEngineering = document.getElementById('resultDebugTabEngineering');
-  const aiPreview = document.getElementById('resultAiPreview');
-  const aiPreviewImg = document.getElementById('resultAiPreviewImg');
-  const resultCanvas = document.getElementById('resultCanvas');
-  const hasAiPreview = appState.inputSource === 'ai' && !!appState.cropImageSrc;
-  if (tabs) tabs.style.display = hasAiPreview ? 'flex' : 'none';
-  if (aiPreviewImg && hasAiPreview) aiPreviewImg.src = appState.cropImageSrc;
-  if (tabAi) tabAi.classList.toggle('active', appState.resultDebugTab === 'ai');
-  if (tabEngineering) tabEngineering.classList.toggle('active', appState.resultDebugTab !== 'ai');
-  if (aiPreview) aiPreview.classList.toggle('show', hasAiPreview && appState.resultDebugTab === 'ai');
-  if (resultCanvas) resultCanvas.style.display = hasAiPreview && appState.resultDebugTab === 'ai' ? 'none' : 'block';
 }
 function drawGrid(ctx, gridData, rows, cols, cellSize, showGrid, showLabels, mirror, labelOptions) {
   ctx.save();
