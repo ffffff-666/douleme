@@ -2235,7 +2235,6 @@ let appState = {
   currentSolutionKey: '',
   file: null, pixN: 29, profileId: 'smart', activePresetId: 'smart_balanced', smartResolvedForFile: false, ditherStrength: 0, internalMergeLevel: 10, userSimplifyLevel: 0, beadRefineStrength: 68,
   gridData: null, rawGrid: null, gridRows: 0, gridCols: 0, colorStats: null, metadata: null,
-  featureMask: null,
   gridVersion: 0, editSourceVersion: -1,
   highlightedResultColor: null,
   workspaceMode: 'preview',
@@ -2258,7 +2257,6 @@ let appState = {
   targetGridCols: null,
   targetShortSide: null,
   inputSource: 'manual',
-  materialMergeLevel: 'off',
   previewScale: 1,
   previewOffsetX: 0,
   previewOffsetY: 0,
@@ -2395,7 +2393,6 @@ function invalidateEditState() {
 }
 function openMaterialSheet() {
   renderMaterialList();
-  syncMaterialMergeChips();
   const sheet = document.getElementById('materialSheet');
   if (sheet) sheet.classList.add('show');
 }
@@ -2418,59 +2415,6 @@ function buildMaterialItems() {
       price
     };
   });
-}
-
-function syncMaterialMergeChips() {
-  const map = {
-    off: document.getElementById('materialMergeOff'),
-    soft: document.getElementById('materialMergeSoft'),
-    medium: document.getElementById('materialMergeMedium'),
-    strong: document.getElementById('materialMergeStrong')
-  };
-  Object.entries(map).forEach(([key, el]) => {
-    if (!el) return;
-    el.classList.toggle('on', appState.materialMergeLevel === key);
-  });
-}
-
-function getMaterialMergeValue(level) {
-  if (level === 'soft') return 22;
-  if (level === 'medium') return 40;
-  if (level === 'strong') return 62;
-  return 0;
-}
-
-function rebuildResultFromBaseGrid() {
-  if (!appState.fullGridData || !appState.rawGrid) return;
-  const rows = appState.metadata?.rows || appState.gridRows;
-  const cols = appState.metadata?.cols || appState.gridCols;
-  const featureMask = appState.featureMask;
-  const protectedSourceGrid = appState.fullGridData.map(row => [...row]);
-  let gridData = appState.fullGridData.map(row => [...row]);
-  const removeBg = document.getElementById('removeBgToggle')?.classList.contains('on');
-  if (removeBg && appState.bgMask) {
-    applyBgMaskToGrid(gridData, appState.bgMask, rows, cols);
-    cleanupIslands(gridData, rows, cols, 2);
-  }
-  const mergeValue = getMaterialMergeValue(appState.materialMergeLevel);
-  if (mergeValue > 0) {
-    gridData = applySimilarMergeByPaletteTop(gridData, appState.rawGrid, rows, cols, mergeValue);
-    gridData = restoreProtectedFeatureCells(gridData, protectedSourceGrid, featureMask);
-  }
-  appState.gridData = gridData;
-  appState.colorStats = buildColorStats(gridData, rows, cols);
-  appState.materials = buildMaterialItems();
-  appState.metadata.totalBeads = countForegroundBeads(gridData, rows, cols);
-  appState.metadata.colorCount = appState.colorStats.length;
-  refreshColorSimplifyIndicator();
-  renderResult(true);
-  renderMaterialList();
-}
-
-function setMaterialMergeLevel(level) {
-  appState.materialMergeLevel = level;
-  syncMaterialMergeChips();
-  rebuildResultFromBaseGrid();
 }
 function renderMaterialList() {
   const summary = document.getElementById('materialSummary');
@@ -3502,7 +3446,6 @@ async function runLiveConvert() {
     appState.gridRows = rows;
     appState.gridCols = cols;
     appState.fullGridData = gridData.map(row => [...row]);
-    appState.featureMask = featureMask;
     appState.bgMask = detectGridBackground(gridData, rawGrid, rows, cols);
     if (pixN >= 120) {
       gridData = cleanupBackgroundRegionNoise(gridData, rawGrid, appState.bgMask, rows, cols, 0.9);
@@ -3520,7 +3463,6 @@ async function runLiveConvert() {
     appState.colorStats = buildColorStats(gridData, rows, cols);
     appState.materials = buildMaterialItems();
     appState.metadata = { pixN, rows, cols, totalBeads: countForegroundBeads(gridData, rows, cols), colorCount: appState.colorStats.length };
-    rebuildResultFromBaseGrid();
     refreshColorSimplifyIndicator();
     document.getElementById('previewSection').classList.add('show');
     renderLivePreview();
@@ -3627,8 +3569,22 @@ function onRemoveBgToggle() {
     triggerLiveConvert(false);
     return;
   }
-  rebuildResultFromBaseGrid();
+  const removeBg = document.getElementById('removeBgToggle').classList.contains('on');
+  const { rows, cols } = appState.metadata || { rows: appState.gridRows, cols: appState.gridCols };
+  const gridData = appState.fullGridData.map(row => [...row]);
+  if (removeBg) {
+    applyBgMaskToGrid(gridData, appState.bgMask, rows, cols);
+    cleanupIslands(gridData, rows, cols, 2);
+  }
+  appState.gridData = gridData;
   invalidateEditState();
+  appState.colorStats = buildColorStats(gridData, rows, cols);
+  appState.materials = buildMaterialItems();
+  if (appState.metadata) {
+    appState.metadata.totalBeads = countForegroundBeads(gridData, rows, cols);
+    appState.metadata.colorCount = appState.colorStats.length;
+  }
+  refreshColorSimplifyIndicator();
   renderLivePreview();
 }
 function renderLivePreview() {
