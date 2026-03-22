@@ -934,19 +934,9 @@ function getPostMergeKeepCount(similarMergeLevel, usedColorCount) {
 function getUserSimplifyKeepCount(simplifyLevel, usedColorCount) {
   const level = Math.max(0, Math.min(100, simplifyLevel || 0));
   if (level <= 0 || usedColorCount <= 1) return usedColorCount;
-  const side = Math.max(10, Number(appState.targetShortSide || appState.metadata?.rows || 58));
-  let budgetFloor = 18;
-  if (side <= 29) budgetFloor = 8;
-  else if (side <= 40) budgetFloor = 10;
-  else if (side <= 58) budgetFloor = 14;
-  else if (side <= 87) budgetFloor = 18;
-  else if (side <= 116) budgetFloor = 24;
-  else budgetFloor = 30;
-  const minKeep = usedColorCount <= 6
-    ? Math.max(2, usedColorCount - 1)
-    : Math.max(4, Math.min(budgetFloor, Math.round(usedColorCount * 0.22)));
-  const mergeFactor = Math.pow(level / 100, 0.7);
-  const keepByRatio = Math.round(usedColorCount * (1 - 0.95 * mergeFactor));
+  const minKeep = usedColorCount <= 6 ? Math.max(2, usedColorCount - 1) : Math.max(4, Math.min(8, Math.round(usedColorCount * 0.28)));
+  const mergeFactor = Math.pow(level / 100, 0.62);
+  const keepByRatio = Math.round(usedColorCount * (1 - 0.9 * mergeFactor));
   return Math.max(minKeep, Math.min(usedColorCount, keepByRatio));
 }
 function applyUserColorSimplify(gridData, rawGrid, rows, cols, simplifyLevel, featureMask) {
@@ -966,20 +956,6 @@ function applyUserColorSimplify(gridData, rawGrid, rows, cols, simplifyLevel, fe
     .slice(0, keepCount)
     .map(([idx]) => idx)
     .sort((a, b) => a - b);
-  if (featureMask) {
-    const protectedIndices = new Set();
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        if (featureMask[r] && featureMask[r][c] && gridData[r][c] >= 0) {
-          protectedIndices.add(gridData[r][c]);
-        }
-      }
-    }
-    protectedIndices.forEach(idx => {
-      if (!keepIndices.includes(idx)) keepIndices.push(idx);
-    });
-    keepIndices.sort((a, b) => a - b);
-  }
   if (keepIndices.length === 0) return gridData;
   const rgbRemap = new Map();
   const out = gridData.map(row => [...row]);
