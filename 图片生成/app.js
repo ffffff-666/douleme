@@ -2034,18 +2034,6 @@ function applyIncomingEngineeringOptions(options) {
     if (ditherSlider) ditherSlider.value = String(appState.ditherStrength);
     if (ditherVal) ditherVal.textContent = String(appState.ditherStrength);
   }
-  if (typeof options.experimentScene === 'string') {
-    appState.experimentScene = options.experimentScene;
-  }
-  if (options.experimentOverrides && typeof options.experimentOverrides === 'object') {
-    Object.keys(appState.experimentOverrides).forEach((key) => {
-      const value = options.experimentOverrides[key];
-      appState.experimentOverrides[key] = Number.isFinite(value) ? value : appState.experimentOverrides[key];
-    });
-    syncExperimentControls(true);
-  } else {
-    syncExperimentControls(true);
-  }
   if (typeof options.showGrid === 'boolean') appState.showGrid = options.showGrid;
   if (typeof options.showLabels === 'boolean') appState.showLabels = options.showLabels;
   if (typeof options.showMirror === 'boolean') appState.showMirror = options.showMirror;
