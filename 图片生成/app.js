@@ -977,70 +977,6 @@ function applyUserColorSimplify(gridData, rawGrid, rows, cols, simplifyLevel, fe
   }
   return out;
 }
-
-function getAiSourceMaxColors(shortSide) {
-  const side = Math.max(10, Number(shortSide) || 58);
-  if (side <= 29) return 12;
-  if (side <= 40) return 16;
-  if (side <= 58) return 20;
-  if (side <= 87) return 26;
-  if (side <= 116) return 34;
-  return 42;
-}
-
-function applyAiSourceColorBudget(gridData, rawGrid, rows, cols, featureMask, maxColors) {
-  if (!gridData || !rawGrid || rows <= 0 || cols <= 0) return gridData;
-  const stats = buildColorStats(gridData, rows, cols);
-  if (stats.length <= maxColors) return gridData;
-  const protectedIndices = new Set();
-  if (featureMask) {
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        if (featureMask[r] && featureMask[r][c] && gridData[r][c] >= 0) {
-          protectedIndices.add(gridData[r][c]);
-        }
-      }
-    }
-  }
-  const keepIndices = [];
-  for (const item of stats) {
-    if (keepIndices.length >= maxColors) break;
-    keepIndices.push(item.idx);
-  }
-  protectedIndices.forEach(idx => {
-    if (!keepIndices.includes(idx)) keepIndices.push(idx);
-  });
-  keepIndices.sort((a, b) => a - b);
-  const rgbRemap = new Map();
-  const out = gridData.map(row => [...row]);
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      if (gridData[r][c] < 0) continue;
-      if (featureMask && featureMask[r] && featureMask[r][c]) continue;
-      const srcRaw = rawGrid[r][c];
-      if (!srcRaw) continue;
-      const key = `${srcRaw[0]},${srcRaw[1]},${srcRaw[2]}`;
-      let mapped = rgbRemap.get(key);
-      if (mapped == null) {
-        mapped = findNearestColor(srcRaw[0], srcRaw[1], srcRaw[2], keepIndices);
-        rgbRemap.set(key, mapped);
-      }
-      out[r][c] = mapped;
-    }
-  }
-  return out;
-}
-
-function cleanupAiSourceNoise(gridData, rawGrid, rows, cols, featureMask, shortSide) {
-  let out = gridData;
-  const side = Math.max(10, Number(shortSide) || Math.min(rows, cols));
-  const speckleStrength = side <= 40 ? 0.94 : side <= 58 ? 0.9 : 0.84;
-  out = cleanupForegroundSpeckles(out, rawGrid, rows, cols, featureMask, speckleStrength);
-  if (side <= 58) {
-    out = cleanupDarkOutlierSpeckles(out, rawGrid, rows, cols, 0.92);
-  }
-  return out;
-}
 function applySimilarMergeByPaletteTop(gridData, rawGrid, rows, cols, similarMergeLevel) {
   if (!gridData || !rawGrid || rows <= 0 || cols <= 0) return gridData;
   const freq = new Map();
@@ -1878,7 +1814,6 @@ function buildBeadDesign(imageData, pixN, targetRows, targetCols) {
   let gridData = compatGridData;
   const preset = PROFILE_PRESETS[appState.activePresetId] || PROFILE_PRESETS.detail_keep;
   const tuning = getResolutionTuning(pixN);
-  const shortSide = appState.targetShortSide || Math.min(rows, cols);
   const featureMask = compatFeatureMask || detectSemanticFeatureMask(gridData, rawGrid, rows, cols, preset.featureProtect || 0);
   const protectedSourceGrid = featureSourceGrid ? featureSourceGrid.map(row => [...row]) : gridData.map(row => [...row]);
   const refineStrength = Math.round((appState.beadRefineStrength || 0) * (tuning.refineScale || 1));
@@ -1913,12 +1848,6 @@ function buildBeadDesign(imageData, pixN, targetRows, targetCols) {
   }
   if (appState.userSimplifyLevel > 0) {
     gridData = applyUserColorSimplify(gridData, rawGrid, rows, cols, appState.userSimplifyLevel, featureMask);
-    gridData = restoreProtectedFeatureCells(gridData, protectedSourceGrid, featureMask);
-  }
-  if (appState.inputSource === 'ai') {
-    gridData = applyAiSourceColorBudget(gridData, rawGrid, rows, cols, featureMask, getAiSourceMaxColors(shortSide));
-    gridData = restoreProtectedFeatureCells(gridData, protectedSourceGrid, featureMask);
-    gridData = cleanupAiSourceNoise(gridData, rawGrid, rows, cols, featureMask, shortSide);
     gridData = restoreProtectedFeatureCells(gridData, protectedSourceGrid, featureMask);
   }
   gridData = restoreProtectedFeatureCells(gridData, protectedSourceGrid, featureMask);
@@ -2090,7 +2019,6 @@ function applyImportedAiCandidate(payload) {
   appState.targetGridRows = Number.isInteger(payload?.targetRows) ? payload.targetRows : null;
   appState.targetGridCols = Number.isInteger(payload?.targetCols) ? payload.targetCols : null;
   appState.targetShortSide = Number.isInteger(payload?.targetShortSide) ? payload.targetShortSide : null;
-  appState.inputSource = payload?.source === 'god-dou-home-ai' ? 'ai' : 'manual';
   const previewImg = document.getElementById('previewImg');
   if (previewImg) {
     previewImg.src = dataUrl;
@@ -2244,7 +2172,6 @@ let appState = {
   targetGridRows: null,
   targetGridCols: null,
   targetShortSide: null,
-  inputSource: 'manual',
   previewScale: 1,
   previewOffsetX: 0,
   previewOffsetY: 0,
@@ -2758,7 +2685,6 @@ function confirmCrop() {
   appState.targetGridRows = null;
   appState.targetGridCols = null;
   appState.targetShortSide = null;
-  appState.inputSource = 'manual';
     appState.cachedImg = null; appState.cachedImageData = null;
   appState.bgMask = null; appState.fullGridData = null; appState.smartResolvedForFile = false;
   appState.previewScale = 0; appState.previewOffsetX = 0; appState.previewOffsetY = 0; appState.previewNeedsReset = true;
@@ -2789,7 +2715,6 @@ function handleFileSelect(e) {
   appState.targetGridRows = null;
   appState.targetGridCols = null;
   appState.targetShortSide = null;
-  appState.inputSource = 'manual';
   appState.cachedImg = null; appState.cachedImageData = null;
   appState.bgMask = null; appState.fullGridData = null; appState.smartResolvedForFile = false;
   const reader = new FileReader();
