@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>douleme 批量回归测试</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #f4f5f8; color: #222; }
+    .page { max-width: 1440px; margin: 0 auto; padding: 20px; }
+    .hero { background: #fff; border-radius: 18px; padding: 20px 22px; box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+    .hero h1 { margin: 0 0 8px; font-size: 26px; }
+    .hero p { margin: 0; line-height: 1.6; color: #666; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 18px 0; }
+    .toolbar button, .toolbar select { border: none; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+    .toolbar button { background: #111827; color: #fff; cursor: pointer; }
+    .toolbar button.secondary { background: #fff; color: #111827; border: 1px solid #d7dbe3; }
+    .toolbar select { background: #fff; border: 1px solid #d7dbe3; }
+    .status { padding: 14px 16px; background: #eef2ff; color: #3949ab; border-radius: 14px; margin-bottom: 16px; white-space: pre-wrap; }
+    .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .summary-card { background: #fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 8px 24px rgba(0,0,0,.05); }
+    .summary-card .label { font-size: 12px; color: #666; }
+    .summary-card .value { margin-top: 6px; font-size: 24px; font-weight: 700; }
+    .results { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
+    .card { background: #fff; border-radius: 16px; padding: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.05); }
+    .card h3 { margin: 0 0 4px; font-size: 18px; }
+    .meta { font-size: 12px; color: #666; margin-bottom: 10px; }
+    .image-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .image-tile { background: #f7f8fb; border-radius: 12px; padding: 8px; }
+    .image-tile .caption { font-size: 12px; color: #555; margin-bottom: 6px; }
+    .image-tile img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; background: #fff; border-radius: 8px; border: 1px solid #eceff5; }
+    .metrics { margin-top: 12px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .metric { background: #f7f8fb; border-radius: 10px; padding: 10px; }
+    .metric .k { font-size: 12px; color: #666; }
+    .metric .v { margin-top: 4px; font-weight: 700; }
+    .issues { margin-top: 12px; padding: 10px 12px; background: #fff8f1; border: 1px solid #ffe0b2; border-radius: 12px; }
+    .issues strong { display: block; margin-bottom: 6px; }
+    .issues ul { margin: 0; padding-left: 18px; color: #8a5b00; }
+    .hidden-frame { width: 0; height: 0; border: 0; position: absolute; left: -9999px; top: -9999px; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="hero">
+      <h1>douleme 低格数批量回归测试</h1>
+      <p>固定 58 格，调用图像生成页当前算法批量生成结果，并自动输出基础缺陷指标与问题摘要。当前重点服务 Q版 / 可爱 / 动漫 / logo / 表情包。</p>
+    </div>
+
+    <div class="toolbar">
+      <button id="runSelectedBtn">运行当前筛选</button>
+      <button id="runAllBtn">运行全部样本</button>
+      <button class="secondary" id="downloadBtn">下载 JSON 报告</button>
+      <select id="categoryFilter">
+        <option value="all">全部类型</option>
+        <option value="iconic">iconic</option>
+        <option value="cute-anime">cute-anime</option>
+        <option value="photo-reference">photo-reference</option>
+        <option value="other">other</option>
+      </select>
+    </div>
+
+    <div class="status" id="statusBox">等待开始测试。</div>
+
+    <div class="summary" id="summaryPanel"></div>
+    <div class="results" id="resultsPanel"></div>
+  </div>
+
+  <iframe id="runnerFrame" class="hidden-frame" src="../图片生成/图像生成.html"></iframe>
+
+  <script src="./test-cases.generated.js"></script>
+  <script>
+    const runnerFrame = document.getElementById('runnerFrame');
+    const statusBox = document.getElementById('statusBox');
+    const resultsPanel = document.getElementById('resultsPanel');
+    const summaryPanel = document.getElementById('summaryPanel');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const allCases = Array.isArray(window.GOD_DOU_TEST_CASES) ? window.GOD_DOU_TEST_CASES : [];
+    let currentReport = [];
+
+    function setStatus(text) {
+      statusBox.textContent = text;
+    }
+
+    function updateSummary(report) {
+      if (!report.length) {
+        summaryPanel.innerHTML = '';
+        return;
+      }
+      const avg = key => (report.reduce((sum, item) => sum + (Number(item.metrics[key]) || 0), 0) / report.length).toFixed(2);
+      const cards = [
+        ['样本数', String(report.length)],
+        ['平均颜色数', avg('colorCount')],
+        ['平均灰污染分', avg('edgeGrayPenalty')],
+        ['平均碎裂分', avg('fragmentationPenalty')],
+        ['平均白面污染分', avg('whiteNoisePenalty')]
+      ];
+      summaryPanel.innerHTML = cards.map(([label, value]) => `
+        <div class="summary-card">
+          <div class="label">${label}</div>
+          <div class="value">${value}</div>
+        </div>
+      `).join('');
+    }
+
+    function getFilteredCases() {
+      const category = categoryFilter.value;
+      if (category === 'all') return allCases;
+      return allCases.filter(item => item.category === category);
+    }
+
+    function loadImage(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error(`图片加载失败：${url}`));
+        img.src = url;
+      });
+    }
+
+    async function imageUrlToDataUrl(url) {
+      const img = await loadImage(url);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      return canvas.toDataURL('image/png');
+    }
+
+    function isMidGray(id) {
+      return /^H(5|6|8|9|10|11|12|13|14|15|16|17|18|19|20)$/.test(id);
+    }
+
+    function isWhiteLike(id) {
+      return /^H(2|5)$/.test(id);
+    }
+
+    function isDarkLike(id) {
+      return /^H(7|8|20)$/.test(id) || /^G(7|8|17)$/.test(id);
+    }
+
+    function buildIndexToIdMap(colorStats) {
+      const map = new Map();
+      (colorStats || []).forEach(item => map.set(item.idx, item.id));
+      return map;
+    }
+
+    function computeConnectedComponents(gridData) {
+      const rows = gridData.length;
+      const cols = rows > 0 ? gridData[0].length : 0;
+      const visited = Array.from({ length: rows }, () => Array(cols).fill(false));
+      const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+      let components = 0;
+      let tinyComponents = 0;
+      let largest = 0;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (visited[r][c] || gridData[r][c] < 0) continue;
+          components += 1;
+          const color = gridData[r][c];
+          const queue = [[r, c]];
+          let size = 0;
+          visited[r][c] = true;
+          while (queue.length) {
+            const [cr, cc] = queue.shift();
+            size += 1;
+            for (const [dr, dc] of dirs) {
+              const nr = cr + dr;
+              const nc = cc + dc;
+              if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
+              if (visited[nr][nc] || gridData[nr][nc] !== color) continue;
+              visited[nr][nc] = true;
+              queue.push([nr, nc]);
+            }
+          }
+          if (size <= 2) tinyComponents += 1;
+          if (size > largest) largest = size;
+        }
+      }
+      return { components, tinyComponents, largest };
+    }
+
+    function scoreSnapshot(snapshot) {
+      const metadata = snapshot.metadata || {};
+      const colorStats = snapshot.colorStats || [];
+      const gridData = snapshot.gridData || [];
+      const totalCells = Math.max(1, (metadata.rows || 0) * (metadata.cols || 0));
+      const idxToId = buildIndexToIdMap(colorStats);
+      const rows = gridData.length;
+      const cols = rows > 0 ? gridData[0].length : 0;
+      let edgeGrayCells = 0;
+      let whiteCells = 0;
+      let midGrayCells = 0;
+      const dirs8 = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const idx = gridData[r][c];
+          if (idx < 0) continue;
+          const id = idxToId.get(idx) || '';
+          if (isWhiteLike(id)) whiteCells += 1;
+          if (isMidGray(id)) midGrayCells += 1;
+          if (!isMidGray(id)) continue;
+          let nearWhite = false;
+          let nearDark = false;
+          for (const [dr, dc] of dirs8) {
+            const nr = r + dr;
+            const nc = c + dc;
+            if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
+            const nIdx = gridData[nr][nc];
+            if (nIdx < 0) continue;
+            const nId = idxToId.get(nIdx) || '';
+            if (isWhiteLike(nId)) nearWhite = true;
+            if (isDarkLike(nId)) nearDark = true;
+          }
+          if (nearWhite && nearDark) edgeGrayCells += 1;
+        }
+      }
+      const cc = computeConnectedComponents(gridData);
+      const metrics = {
+        colorCount: Number(metadata.colorCount || colorStats.length || 0),
+        totalBeads: Number(metadata.totalBeads || 0),
+        edgeGrayPenalty: Number((edgeGrayCells / totalCells).toFixed(4)),
+        whiteNoisePenalty: Number((whiteCells > 0 ? midGrayCells / Math.max(1, whiteCells) : 0).toFixed(4)),
+        fragmentationPenalty: Number((cc.tinyComponents / Math.max(1, cc.components)).toFixed(4)),
+        largestComponentRatio: Number((cc.largest / totalCells).toFixed(4))
+      };
+      const issues = [];
+      if (metrics.colorCount > 16) issues.push(`颜色数偏多（${metrics.colorCount}）`);
+      if (metrics.edgeGrayPenalty > 0.01) issues.push('黑白边界灰污染明显');
+      if (metrics.whiteNoisePenalty > 0.12) issues.push('白色大面不够干净');
+      if (metrics.fragmentationPenalty > 0.22) issues.push('碎块和小孤点偏多');
+      if (metrics.largestComponentRatio < 0.16) issues.push('主体大块面不够集中');
+      if (!issues.length) issues.push('基础指标暂无明显报警，建议继续人工核对主体识别与关键特征');
+      return { metrics, issues };
+    }
+
+    function renderCard(result) {
+      const { name, category, originalUrl, targetUrl, snapshot, metrics, issues } = result;
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h3>${name}</h3>
+        <div class="meta">类型：${category} · ${snapshot.activePresetId} · ${snapshot.metadata.cols}×${snapshot.metadata.rows}</div>
+        <div class="image-grid">
+          <div class="image-tile"><div class="caption">原图</div><img src="${originalUrl}" alt="原图"></div>
+          <div class="image-tile"><div class="caption">目标图纸</div><img src="${targetUrl}" alt="目标图纸"></div>
+          <div class="image-tile"><div class="caption">当前生成</div><img src="${snapshot.resultDataUrl}" alt="当前生成"></div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="k">颜色数</div><div class="v">${metrics.colorCount}</div></div>
+          <div class="metric"><div class="k">总颗数</div><div class="v">${metrics.totalBeads}</div></div>
+          <div class="metric"><div class="k">灰污染分</div><div class="v">${metrics.edgeGrayPenalty}</div></div>
+          <div class="metric"><div class="k">碎裂分</div><div class="v">${metrics.fragmentationPenalty}</div></div>
+          <div class="metric"><div class="k">白面污染分</div><div class="v">${metrics.whiteNoisePenalty}</div></div>
+          <div class="metric"><div class="k">最大块面比</div><div class="v">${metrics.largestComponentRatio}</div></div>
+        </div>
+        <div class="issues">
+          <strong>自动摘要</strong>
+          <ul>${issues.map(item => `<li>${item}</li>`).join('')}</ul>
+        </div>
+      `;
+      resultsPanel.appendChild(card);
+    }
+
+    async function waitForRunner() {
+      const startedAt = Date.now();
+      while (Date.now() - startedAt < 30000) {
+        const api = runnerFrame.contentWindow && runnerFrame.contentWindow.GodDouRegressionApi;
+        if (api && typeof api.runRegressionCase === 'function') return api;
+        await new Promise(resolve => setTimeout(resolve, 120));
+      }
+      throw new Error('测试 iframe 未就绪');
+    }
+
+    async function runCases(cases) {
+      currentReport = [];
+      resultsPanel.innerHTML = '';
+      updateSummary([]);
+      const api = await waitForRunner();
+      for (let i = 0; i < cases.length; i++) {
+        const item = cases[i];
+        setStatus(`正在运行 ${i + 1}/${cases.length}：${item.name}`);
+        const dataUrl = await imageUrlToDataUrl(item.originalUrl);
+        const snapshot = await api.runRegressionCase({
+          imageDataUrl: dataUrl,
+          candidateTitle: item.name,
+          pixN: 58,
+          profileId: 'smart'
+        });
+        const scored = scoreSnapshot(snapshot);
+        const result = {
+          ...item,
+          snapshot,
+          metrics: scored.metrics,
+          issues: scored.issues
+        };
+        currentReport.push(result);
+        renderCard(result);
+        updateSummary(currentReport);
+      }
+      setStatus(`已完成 ${cases.length} 组样本回归。你现在可以下载 JSON 报告，或继续人工查看最差样本。`);
+    }
+
+    document.getElementById('runSelectedBtn').addEventListener('click', async () => {
+      const cases = getFilteredCases();
+      await runCases(cases);
+    });
+
+    document.getElementById('runAllBtn').addEventListener('click', async () => {
+      await runCases(allCases);
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const payload = currentReport.map(item => ({
+        id: item.id,
+        name: item.name,
+        category: item.category,
+        activePresetId: item.snapshot.activePresetId,
+        metadata: item.snapshot.metadata,
+        metrics: item.metrics,
+        issues: item.issues
+      }));
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'douleme-regression-report.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    setStatus(`已加载 ${allCases.length} 组样本。建议先跑 iconic 或 cute-anime。`);
+  </script>
+</body>
+</html>

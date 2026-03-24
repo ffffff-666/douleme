@@ -1215,7 +1215,7 @@ function resolveLowGridIconicMode(imageData, pixN, preset) {
   }
   const f = analyzeImageFeatures(imageData);
   const force = !!(preset && preset.iconicPreferred);
-  const skinHeavy = f.skinLikeRatio > 0.09 && f.paletteComplexity > 220;
+  const skinHeavy = f.skinLikeRatio > 0.18 && f.paletteComplexity > 240;
   const graphicLike = f.edgeDensity > 0.16 && f.paletteComplexity < 340;
   const cuteFlatLike = f.paletteComplexity < 220 && f.satMean > 0.16 && f.lumStd < 0.24;
   const enabled = force || (!skinHeavy && (graphicLike || cuteFlatLike));
@@ -3275,7 +3275,7 @@ function analyzeImageFeatures(imageData) {
 function resolveSmartProfile(imageData) {
   const f = analyzeImageFeatures(imageData);
   const n = Math.max(10, Math.min(200, Number(appState && appState.pixN) || 39));
-  if (n <= 58 && f.skinLikeRatio < 0.09 && ((f.edgeDensity > 0.16 && f.paletteComplexity < 340) || (f.paletteComplexity < 220 && f.satMean > 0.16))) {
+  if (n <= 58 && f.skinLikeRatio < 0.2 && ((f.edgeDensity > 0.12 && f.paletteComplexity < 360) || (f.paletteComplexity < 250 && f.satMean > 0.14))) {
     return { id: 'smart_iconic', reason: '检测到低格数 Q版/图标化场景，已优先使用块面化和线条禁灰方案' };
   }
   if (f.skinLikeRatio > 0.06) {
@@ -3880,6 +3880,63 @@ function navigateToResult() {
   ensureSolutionKey();
   navigateTo('page-result');
 }
+function buildRegressionSnapshot() {
+  if (!appState.gridData || !appState.metadata) return null;
+  const prevShowGrid = appState.showGrid;
+  const prevShowLabels = appState.showLabels;
+  const prevShowMirror = appState.showMirror;
+  appState.showGrid = false;
+  appState.showLabels = false;
+  appState.showMirror = false;
+  renderResult();
+  const resultCanvas = document.getElementById('resultCanvas');
+  const snapshot = {
+    metadata: { ...(appState.metadata || {}) },
+    profileId: appState.profileId,
+    activePresetId: appState.activePresetId,
+    colorStats: (appState.colorStats || []).map(item => ({
+      id: item.id,
+      idx: item.idx,
+      count: item.count,
+      r: item.r,
+      g: item.g,
+      b: item.b
+    })),
+    gridData: appState.gridData.map(row => [...row]),
+    resultDataUrl: resultCanvas ? resultCanvas.toDataURL('image/png') : '',
+    sourceName: appState.file?.name || ''
+  };
+  appState.showGrid = prevShowGrid;
+  appState.showLabels = prevShowLabels;
+  appState.showMirror = prevShowMirror;
+  renderResult();
+  return snapshot;
+}
+async function runRegressionCase(payload) {
+  applyImportedAiCandidate({
+    ...(payload || {}),
+    targetPage: 'page-result'
+  });
+  const jobId = appState.liveJobId;
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < 60000) {
+    const proc = document.getElementById('previewProcessing');
+    const done = !!appState.gridData && !!appState.metadata && appState.liveJobId === jobId && !(proc && proc.classList.contains('show'));
+    if (done) {
+      if (!document.getElementById('page-result')?.classList.contains('active')) {
+        navigateTo('page-result');
+        await sleep(60);
+      }
+      return buildRegressionSnapshot();
+    }
+    await sleep(120);
+  }
+  throw new Error('回归测试超时：60 秒内未完成生成');
+}
+window.GodDouRegressionApi = {
+  runRegressionCase,
+  buildRegressionSnapshot
+};
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 function cleanupIslands(gridData, rows, cols, minNeighbors) {
   const toRemove = [];
