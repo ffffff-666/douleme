@@ -207,7 +207,7 @@
       return { components, tinyComponents, largest, componentSize };
     }
 
-    function collectIssueCells(snapshot) {
+    function collectIssueCells(snapshot, targetIdxGrid = null) {
       const metadata = snapshot.metadata || {};
       const gridData = snapshot.gridData || [];
       const colorStats = snapshot.colorStats || [];
@@ -233,6 +233,16 @@
         cur.severity += severity;
         if (!cur.types.includes(type)) cur.types.push(type);
         issueMap.set(key, cur);
+      }
+
+      if (targetIdxGrid && targetIdxGrid.length === rows && targetIdxGrid[0] && targetIdxGrid[0].length === cols) {
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (gridData[r][c] !== targetIdxGrid[r][c]) {
+              addIssue(r, c, '逐格不一致', 4);
+            }
+          }
+        }
       }
 
       let edgeGrayCells = 0;
@@ -297,7 +307,7 @@
       if (metrics.largestComponentRatio < 0.16) issues.push('主体大块面不够集中');
       if (!issues.length) issues.push('基础指标暂无明显报警，建议继续人工核对主体识别与关键特征');
 
-      const issueCells = [...issueMap.values()].sort((a, b) => b.severity - a.severity).slice(0, 80);
+      const issueCells = [...issueMap.values()].sort((a, b) => b.severity - a.severity).slice(0, 120);
       return { metrics, issues, issueCells };
     }
 
@@ -364,6 +374,32 @@
       });
     }
 
+    async function parseTargetGrid(targetDataUrl) {
+      const response = await fetch('/__parse_target_grid__', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetDataUrl })
+      });
+      const data = await response.json();
+      if (!data.ok) {
+        throw new Error(data.error || '目标图解析失败');
+      }
+      return data.result;
+    }
+
+    function toTargetIdxGrid(targetGrid, runnerWindow) {
+      const rows = targetGrid.rows || 0;
+      const cols = targetGrid.cols || 0;
+      const out = Array.from({ length: rows }, () => Array(cols).fill(-1));
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const rgb = targetGrid.grid_rgb[r][c];
+          out[r][c] = runnerWindow.findNearestColor(rgb[0], rgb[1], rgb[2], null);
+        }
+      }
+      return out;
+    }
+
     function renderCard(result) {
       const { name, category, snapshot, metrics, issues, issueCells, targetLargeDataUrl, currentLargeDataUrl, heatmapDataUrl } = result;
       const topCoords = issueCells.slice(0, 12);
@@ -416,24 +452,30 @@
       resultsPanel.innerHTML = '';
       updateSummary([]);
       const api = await waitForRunner();
+      const runnerWindow = runnerFrame.contentWindow;
       for (let i = 0; i < cases.length; i++) {
         const item = cases[i];
         setStatus(`正在运行 ${i + 1}/${cases.length}：${item.name}`);
         const originalDataUrl = await imageUrlToDataUrl(item.originalUrl);
         const targetDataUrl = await imageUrlToDataUrl(item.targetUrl);
+        const targetGrid = await parseTargetGrid(targetDataUrl);
         const targetLargeDataUrl = await scaleImageToDataUrl(item.targetUrl, 4);
         const snapshot = await api.runRegressionCase({
           imageDataUrl: originalDataUrl,
           candidateTitle: item.name,
           pixN: 58,
-          profileId: 'smart'
+          profileId: 'smart',
+          targetRows: targetGrid.rows,
+          targetCols: targetGrid.cols
         });
-        const scored = collectIssueCells(snapshot);
+        const targetIdxGrid = toTargetIdxGrid(targetGrid, runnerWindow);
+        const scored = collectIssueCells(snapshot, targetIdxGrid);
         const currentLargeDataUrl = renderSnapshotGrid(snapshot, 14, []);
         const heatmapDataUrl = renderSnapshotGrid(snapshot, 14, scored.issueCells);
         const result = {
           ...item,
           snapshot,
+          targetGrid,
           metrics: scored.metrics,
           issues: scored.issues,
           issueCells: scored.issueCells,

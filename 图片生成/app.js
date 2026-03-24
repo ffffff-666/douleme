@@ -650,6 +650,12 @@ function buildLowGridAllowedPalette(rawGrid, rows, cols, colorBudget) {
     );
     if (Number.isInteger(idx) && !chosen.includes(idx)) chosen.unshift(idx);
   }
+  if (brightNeutral[3] > 0) {
+    const softGrayIds = ['H4', 'H5', 'H9', 'H11', 'H23', 'M10'];
+    const softGraySet = new Set(softGrayIds.map(id => PALETTE_ID_TO_INDEX.get(id)).filter(Number.isInteger));
+    const pruned = chosen.filter((idx, index) => !(index >= 5 && softGraySet.has(idx)));
+    return pruned.slice(0, budget).sort((a, b) => a - b);
+  }
   return chosen.slice(0, budget).sort((a, b) => a - b);
 }
 function buildRawGridSimpleMean(imageData, pixN, baseCenterBias, minorityColorProtect) {
@@ -1923,6 +1929,114 @@ function cleanupLowGridIconicNoise(gridData, rawGrid, rows, cols, featureMask, l
   }
   return out;
 }
+function cleanupLowGridWhitePlanes(gridData, rawGrid, rows, cols, featureMask, level) {
+  const t = Math.max(0, Math.min(1, Number(level) || 0));
+  if (!gridData || !rawGrid || rows < 3 || cols < 3 || t <= 0) return gridData;
+  const out = gridData.map(row => [...row]);
+  const whitePreferred = ['H1', 'H2', 'H17'].map(id => PALETTE_ID_TO_INDEX.get(id)).filter(Number.isInteger);
+  const softShadow = ['H11', 'H17', 'H23', 'M10'].map(id => PALETTE_ID_TO_INDEX.get(id)).filter(Number.isInteger);
+  const dirs8 = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+  for (let r = 1; r < rows - 1; r++) {
+    for (let c = 1; c < cols - 1; c++) {
+      if (featureMask && featureMask[r] && featureMask[r][c]) continue;
+      const src = rawGrid[r][c];
+      const curIdx = out[r][c];
+      if (!src || curIdx < 0) continue;
+      const cur = MARD_PALETTE[curIdx];
+      const [sL, sA, sB] = rgbToLab(src[0], src[1], src[2]);
+      const srcChroma = Math.hypot(sA, sB);
+      if (sL < (72 - t * 4) || srcChroma > (16 + (1 - t) * 4)) continue;
+      let whiteNeighbors = 0;
+      let darkNeighbors = 0;
+      let grayNeighbors = 0;
+      let softPinkNeighbors = 0;
+      for (const [dr, dc] of dirs8) {
+        const nr = r + dr, nc = c + dc;
+        const nIdx = out[nr][nc];
+        if (nIdx < 0) continue;
+        const n = MARD_PALETTE[nIdx];
+        if (n.L > 82 && n.chroma < 12) whiteNeighbors++;
+        if (n.L < 48) darkNeighbors++;
+        if (n.chroma < 12) grayNeighbors++;
+        if (n.hue >= 320 || n.hue <= 20) softPinkNeighbors++;
+      }
+      if (whiteNeighbors < 4) continue;
+      const whiteTarget = findNearestColor(src[0], src[1], src[2], whitePreferred);
+      const softTarget = findNearestColor(src[0], src[1], src[2], softShadow);
+      if (darkNeighbors >= 2 && grayNeighbors >= 3) {
+        if (whiteTarget >= 0) out[r][c] = whiteTarget;
+        continue;
+      }
+      if (whiteNeighbors >= 5 && softPinkNeighbors <= 1 && cur.chroma < 18 && cur.L < 86) {
+        if (whiteTarget >= 0) out[r][c] = whiteTarget;
+        continue;
+      }
+      if (cur.L < 78 && cur.chroma < 14 && whiteTarget >= 0) {
+        out[r][c] = whiteTarget;
+        continue;
+      }
+      if (softTarget >= 0 && curIdx !== softTarget && cur.chroma < 14 && sL > 78 && srcChroma < 12) {
+        out[r][c] = softTarget;
+      }
+    }
+  }
+  return out;
+}
+function compactLowGridComponents(gridData, rawGrid, rows, cols, featureMask, level) {
+  const t = Math.max(0, Math.min(1, Number(level) || 0));
+  if (!gridData || rows < 3 || cols < 3 || t <= 0) return gridData;
+  const out = gridData.map(row => [...row]);
+  const visited = Array.from({ length: rows }, () => new Uint8Array(cols));
+  const dirs4 = [[1,0],[-1,0],[0,1],[0,-1]];
+  const dirs8 = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+  const maxSize = t > 0.85 ? 4 : 3;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (visited[r][c] || out[r][c] < 0) continue;
+      if (featureMask && featureMask[r] && featureMask[r][c]) continue;
+      const srcIdx = out[r][c];
+      const queue = [[r, c]];
+      const cells = [];
+      visited[r][c] = 1;
+      while (queue.length) {
+        const [cr, cc] = queue.shift();
+        cells.push([cr, cc]);
+        for (const [dr, dc] of dirs4) {
+          const nr = cr + dr, nc = cc + dc;
+          if (nr < 0 || nr >= rows || nc < 0 || nc >= cols || visited[nr][nc]) continue;
+          if (featureMask && featureMask[nr] && featureMask[nr][nc]) continue;
+          if (out[nr][nc] !== srcIdx) continue;
+          visited[nr][nc] = 1;
+          queue.push([nr, nc]);
+        }
+      }
+      if (cells.length > maxSize) continue;
+      const borderFreq = new Map();
+      for (const [cr, cc] of cells) {
+        for (const [dr, dc] of dirs8) {
+          const nr = cr + dr, nc = cc + dc;
+          if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
+          const idx = out[nr][nc];
+          if (idx < 0 || idx === srcIdx) continue;
+          borderFreq.set(idx, (borderFreq.get(idx) || 0) + 1);
+        }
+      }
+      let domIdx = srcIdx;
+      let domCnt = 0;
+      for (const [idx, cnt] of borderFreq.entries()) {
+        if (cnt > domCnt) {
+          domIdx = idx;
+          domCnt = cnt;
+        }
+      }
+      if (domIdx === srcIdx || domCnt < 5) continue;
+      cells.forEach(([cr, cc]) => {
+        out[cr][cc] = domIdx;
+      });
+    }
+  }
+  return out;
+}
 function remapGridToAllowedPalette(gridData, rawGrid, rows, cols, featureMask, allowedIndices) {
   if (!gridData || !rawGrid || !Array.isArray(allowedIndices) || allowedIndices.length === 0) return gridData;
   const out = gridData.map(row => [...row]);
@@ -2040,7 +2154,9 @@ function buildBeadDesign(imageData, pixN, targetRows, targetCols) {
   }
   if (lowGridIconic && lowGridIconic.enabled) {
     gridData = remapGridToAllowedPalette(gridData, rawGrid, rows, cols, featureMask, allowedIndices);
+    gridData = cleanupLowGridWhitePlanes(gridData, rawGrid, rows, cols, featureMask, Math.max(lowGridIconic.planeClean, 0.92));
     gridData = cleanupLowGridIconicNoise(gridData, rawGrid, rows, cols, featureMask, lowGridIconic.planeClean);
+    gridData = compactLowGridComponents(gridData, rawGrid, rows, cols, featureMask, Math.max(lowGridIconic.mergeBoost, 0.88));
     if (lowGridIconic.mergeBoost > 0) {
       const boostedMerge = Math.max(postMergeLevel, Math.round(Math.max(appState.internalMergeLevel, 14) * lowGridIconic.mergeBoost));
       gridData = applySimilarMergeByPaletteTop(gridData, rawGrid, rows, cols, boostedMerge);
@@ -3275,7 +3391,10 @@ function analyzeImageFeatures(imageData) {
 function resolveSmartProfile(imageData) {
   const f = analyzeImageFeatures(imageData);
   const n = Math.max(10, Math.min(200, Number(appState && appState.pixN) || 39));
-  if (n <= 58 && f.skinLikeRatio < 0.2 && ((f.edgeDensity > 0.12 && f.paletteComplexity < 360) || (f.paletteComplexity < 250 && f.satMean > 0.14))) {
+  const targetRows = Number.isInteger(appState?.targetGridRows) ? appState.targetGridRows : null;
+  const targetCols = Number.isInteger(appState?.targetGridCols) ? appState.targetGridCols : null;
+  const smallTargetGrid = targetRows && targetCols && Math.max(targetRows, targetCols) <= 45;
+  if ((smallTargetGrid && f.skinLikeRatio < 0.24 && f.paletteComplexity < 460) || (n <= 58 && f.skinLikeRatio < 0.2 && ((f.edgeDensity > 0.12 && f.paletteComplexity < 360) || (f.paletteComplexity < 250 && f.satMean > 0.14)))) {
     return { id: 'smart_iconic', reason: '检测到低格数 Q版/图标化场景，已优先使用块面化和线条禁灰方案' };
   }
   if (f.skinLikeRatio > 0.06) {
