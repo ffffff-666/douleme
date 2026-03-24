@@ -11,18 +11,25 @@
   - 浏览器测试页
 - `生成测试清单.ps1`
   - 从主仓库根目录 `素材/` 扫描 `原图 + 拼豆图纸` 配对样本，生成 `test-cases.generated.js`
+- `regression_server.py`
+  - 本地测试服务器
+  - 负责同时提供静态页面和保存回归输出到 `测试/output/`
 
 ## 使用方式
 1. 在当前 worktree 的 `测试/` 目录运行：
    - `powershell -ExecutionPolicy Bypass -File .\生成测试清单.ps1`
-2. 打开 `批量回归测试.html`
-3. 先跑 `iconic` 或 `cute-anime`
-4. 查看：
+2. 在仓库根目录运行：
+   - `py .\测试\regression_server.py --port 8765`
+3. 打开：
+   - `http://127.0.0.1:8765/测试/批量回归测试.html`
+4. 先跑 `iconic` 或 `cute-anime`
+5. 查看：
    - 原图
    - 目标图纸
    - 当前生成
    - 自动摘要
-5. 下载 JSON 报告
+6. 下载 JSON 报告
+7. 如需让模型继续复盘，直接读取 `测试/output/<run-id>/` 里的图片和 `report.json`
 
 ## 当前评分维度
 - 颜色数
@@ -39,6 +46,7 @@
   - 色块碎裂
   - 白面不干净
   - 颜色数失控
+- 每次运行的原图、目标图、当前生成图和 `report.json` 都会落到 `测试/output/<run-id>/<case-id>/`
 - 后续可继续增加：
   - 对目标图纸的结构对比
   - 关键特征命中率

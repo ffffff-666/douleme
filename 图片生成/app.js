@@ -3917,11 +3917,10 @@ async function runRegressionCase(payload) {
     ...(payload || {}),
     targetPage: 'page-result'
   });
-  const jobId = appState.liveJobId;
   const startedAt = Date.now();
   while (Date.now() - startedAt < 60000) {
     const proc = document.getElementById('previewProcessing');
-    const done = !!appState.gridData && !!appState.metadata && appState.liveJobId === jobId && !(proc && proc.classList.contains('show'));
+    const done = !!appState.gridData && !!appState.metadata && !(proc && proc.classList.contains('show'));
     if (done) {
       if (!document.getElementById('page-result')?.classList.contains('active')) {
         navigateTo('page-result');
