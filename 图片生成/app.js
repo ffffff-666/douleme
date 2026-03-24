@@ -45,6 +45,10 @@ const DARK_CHROMATIC_INDICES = ALL_INDICES.filter(i => {
   const c = MARD_PALETTE[i];
   return c.L < 58 && c.chroma >= 6;
 });
+const LOW_GRID_PREFERRED_IDS = ['H2', 'H5', 'H7', 'H8', 'A21', 'A22', 'F10', 'F21', 'F25', 'E8', 'E18', 'C6', 'G7', 'G8'];
+const LOW_GRID_PREFERRED_INDICES = LOW_GRID_PREFERRED_IDS
+  .map(id => PALETTE_ID_TO_INDEX.get(id))
+  .filter(idx => Number.isInteger(idx));
 const NEAREST_COLOR_CACHE = new Map();
 const NEAREST_COLOR_CACHE_LIMIT = 60000;
 function deltaE2000FromLab(L1, a1, b1, L2, a2, b2) {
@@ -548,17 +552,105 @@ function suppressWarmSpeckles(gridData, rawGrid, rows, cols, level) {
   }
   return out;
 }
-function firstPassMatchRgb(rawGrid, rows, cols) {
+function firstPassMatchRgb(rawGrid, rows, cols, allowedIndices) {
   const gridData = [];
+  const allowed = Array.isArray(allowedIndices) && allowedIndices.length > 0 ? allowedIndices : null;
   for (let r = 0; r < rows; r++) {
     gridData[r] = [];
     for (let c = 0; c < cols; c++) {
       if (rawGrid[r][c] === null) { gridData[r][c] = -1; continue; }
       const [R, G, B] = rawGrid[r][c];
-      gridData[r][c] = findNearestColor(R, G, B, null);
+      gridData[r][c] = findNearestColor(R, G, B, allowed);
     }
   }
   return gridData;
+}
+function preferLowGridPopularAnchor(rgb, baseIdx) {
+  if (!Array.isArray(rgb) || rgb.length < 3 || !Number.isInteger(baseIdx)) return baseIdx;
+  if (LOW_GRID_PREFERRED_INDICES.includes(baseIdx)) return baseIdx;
+  const [L, a, b] = rgbToLab(rgb[0], rgb[1], rgb[2]);
+  const base = MARD_PALETTE[baseIdx];
+  if (!base) return baseIdx;
+  const baseDist = deltaE2000FromLab(L, a, b, base.L, base.a, base.b_lab);
+  let bestIdx = baseIdx;
+  let bestDist = baseDist;
+  for (const idx of LOW_GRID_PREFERRED_INDICES) {
+    const c = MARD_PALETTE[idx];
+    if (!c) continue;
+    const dist = deltaE2000FromLab(L, a, b, c.L, c.a, c.b_lab);
+    if (dist < bestDist) {
+      bestDist = dist;
+      bestIdx = idx;
+    }
+  }
+  return bestDist <= baseDist + 0.9 ? bestIdx : baseIdx;
+}
+function buildLowGridAllowedPalette(rawGrid, rows, cols, colorBudget) {
+  if (!rawGrid || rows <= 0 || cols <= 0) return null;
+  const budget = Math.max(6, Math.min(18, Number(colorBudget) || 10));
+  const buckets = new Map();
+  const brightNeutral = [0, 0, 0, 0];
+  const darkNeutral = [0, 0, 0, 0];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const rgb = rawGrid[r][c];
+      if (!rgb) continue;
+      const qR = Math.round(rgb[0] / 24);
+      const qG = Math.round(rgb[1] / 24);
+      const qB = Math.round(rgb[2] / 24);
+      const key = `${qR}|${qG}|${qB}`;
+      const item = buckets.get(key) || { count: 0, r: 0, g: 0, b: 0 };
+      item.count += 1;
+      item.r += rgb[0];
+      item.g += rgb[1];
+      item.b += rgb[2];
+      buckets.set(key, item);
+      const [L, a, b] = rgbToLab(rgb[0], rgb[1], rgb[2]);
+      const chroma = Math.hypot(a, b);
+      if (L > 82 && chroma < 10) {
+        brightNeutral[0] += rgb[0];
+        brightNeutral[1] += rgb[1];
+        brightNeutral[2] += rgb[2];
+        brightNeutral[3] += 1;
+      }
+      if (L < 42 && chroma < 16) {
+        darkNeutral[0] += rgb[0];
+        darkNeutral[1] += rgb[1];
+        darkNeutral[2] += rgb[2];
+        darkNeutral[3] += 1;
+      }
+    }
+  }
+  const chosen = [];
+  const sortedBuckets = [...buckets.values()]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, budget * 4);
+  for (const bucket of sortedBuckets) {
+    const avg = [bucket.r / bucket.count, bucket.g / bucket.count, bucket.b / bucket.count];
+    let idx = findNearestColor(avg[0], avg[1], avg[2], null);
+    idx = preferLowGridPopularAnchor(avg, idx);
+    if (Number.isInteger(idx) && !chosen.includes(idx)) {
+      chosen.push(idx);
+    }
+    if (chosen.length >= budget) break;
+  }
+  if (brightNeutral[3] > 0) {
+    const avg = [brightNeutral[0] / brightNeutral[3], brightNeutral[1] / brightNeutral[3], brightNeutral[2] / brightNeutral[3]];
+    const idx = preferLowGridPopularAnchor(
+      avg,
+      findNearestColor(avg[0], avg[1], avg[2], [PALETTE_ID_TO_INDEX.get('H2'), PALETTE_ID_TO_INDEX.get('H5')].filter(Number.isInteger))
+    );
+    if (Number.isInteger(idx) && !chosen.includes(idx)) chosen.unshift(idx);
+  }
+  if (darkNeutral[3] > 0) {
+    const avg = [darkNeutral[0] / darkNeutral[3], darkNeutral[1] / darkNeutral[3], darkNeutral[2] / darkNeutral[3]];
+    const idx = preferLowGridPopularAnchor(
+      avg,
+      findNearestColor(avg[0], avg[1], avg[2], [PALETTE_ID_TO_INDEX.get('H7'), PALETTE_ID_TO_INDEX.get('H8')].filter(Number.isInteger))
+    );
+    if (Number.isInteger(idx) && !chosen.includes(idx)) chosen.unshift(idx);
+  }
+  return chosen.slice(0, budget).sort((a, b) => a - b);
 }
 function buildRawGridSimpleMean(imageData, pixN, baseCenterBias, minorityColorProtect) {
   const w = imageData.width, h = imageData.height;
@@ -1108,6 +1200,32 @@ function getResolutionTuning(pixN) {
     fringeScale: 1,
       quantizeRelax: 0,
     colorFidelity: 0
+  };
+}
+function resolveLowGridIconicMode(imageData, pixN, preset) {
+  const n = Math.max(10, Math.min(200, Number(pixN) || 39));
+  if (n > 58 || !imageData) {
+    return {
+      enabled: false,
+      colorBudget: null,
+      outlineBias: 0,
+      planeClean: 0,
+      mergeBoost: 0
+    };
+  }
+  const f = analyzeImageFeatures(imageData);
+  const force = !!(preset && preset.iconicPreferred);
+  const skinHeavy = f.skinLikeRatio > 0.09 && f.paletteComplexity > 220;
+  const graphicLike = f.edgeDensity > 0.16 && f.paletteComplexity < 340;
+  const cuteFlatLike = f.paletteComplexity < 220 && f.satMean > 0.16 && f.lumStd < 0.24;
+  const enabled = force || (!skinHeavy && (graphicLike || cuteFlatLike));
+  const baseBudget = n <= 29 ? 8 : (n <= 40 ? 10 : 12);
+  return {
+    enabled,
+    colorBudget: Math.max(6, Math.min(16, baseBudget + (f.paletteComplexity > 210 ? 1 : 0))),
+    outlineBias: enabled ? 0.94 : 0,
+    planeClean: enabled ? 0.88 : 0,
+    mergeBoost: enabled ? 0.82 : 0
   };
 }
 function applyLargeGridColorFidelity(gridData, rawGrid, rows, cols, amount, featureMask) {
@@ -1752,9 +1870,78 @@ function cleanupDarkOutlierSpeckles(gridData, rawGrid, rows, cols, level) {
   }
   return out;
 }
+function cleanupLowGridIconicNoise(gridData, rawGrid, rows, cols, featureMask, level) {
+  const t = Math.max(0, Math.min(1, Number(level) || 0));
+  if (!gridData || !rawGrid || rows < 3 || cols < 3 || t <= 0) return gridData;
+  let out = gridData.map(row => [...row]);
+  const dirs8 = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+  for (let pass = 0; pass < 2; pass++) {
+    const next = out.map(row => [...row]);
+    for (let r = 1; r < rows - 1; r++) {
+      for (let c = 1; c < cols - 1; c++) {
+        if (featureMask && featureMask[r] && featureMask[r][c]) continue;
+        const src = rawGrid[r][c];
+        const curIdx = out[r][c];
+        if (!src || curIdx < 0) continue;
+        const freq = new Map();
+        let same = 0;
+        let valid = 0;
+        let contrastSum = 0;
+        for (const [dr, dc] of dirs8) {
+          const nr = r + dr, nc = c + dc;
+          const nIdx = out[nr][nc];
+          const nRaw = rawGrid[nr][nc];
+          if (nIdx < 0 || !nRaw) continue;
+          valid++;
+          if (nIdx === curIdx) same++;
+          freq.set(nIdx, (freq.get(nIdx) || 0) + 1);
+          contrastSum += Math.abs(src[0] - nRaw[0]) + Math.abs(src[1] - nRaw[1]) + Math.abs(src[2] - nRaw[2]);
+        }
+        if (valid < 6 || same >= 4) continue;
+        const avgContrast = contrastSum / valid;
+        if (avgContrast > (66 - t * 8)) continue;
+        let domIdx = curIdx;
+        let domCnt = 0;
+        for (const [idx, cnt] of freq.entries()) {
+          if (idx !== curIdx && cnt > domCnt) {
+            domIdx = idx;
+            domCnt = cnt;
+          }
+        }
+        if (domIdx === curIdx || domCnt < 4) continue;
+        const cur = MARD_PALETTE[curIdx];
+        const dom = MARD_PALETTE[domIdx];
+        const [sL, sA, sB] = rgbToLab(src[0], src[1], src[2]);
+        const curDist = deltaE2000FromLab(sL, sA, sB, cur.L, cur.a, cur.b_lab);
+        const domDist = deltaE2000FromLab(sL, sA, sB, dom.L, dom.a, dom.b_lab);
+        if (domDist <= curDist * (1.08 + t * 0.1) + 0.8) {
+          next[r][c] = domIdx;
+        }
+      }
+    }
+    out = next;
+  }
+  return out;
+}
+function remapGridToAllowedPalette(gridData, rawGrid, rows, cols, featureMask, allowedIndices) {
+  if (!gridData || !rawGrid || !Array.isArray(allowedIndices) || allowedIndices.length === 0) return gridData;
+  const out = gridData.map(row => [...row]);
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (featureMask && featureMask[r] && featureMask[r][c]) continue;
+      const src = rawGrid[r][c];
+      const curIdx = out[r][c];
+      if (!src || curIdx < 0) continue;
+      const mapped = findNearestColor(src[0], src[1], src[2], allowedIndices);
+      if (mapped >= 0) out[r][c] = mapped;
+    }
+  }
+  return out;
+}
 function generateGridCompat(imageData, pixN, targetRows, targetCols) {
   const preset = PROFILE_PRESETS[appState.activePresetId] || PROFILE_PRESETS.detail_keep;
   const tuning = getResolutionTuning(pixN);
+  const lowGridIconic = resolveLowGridIconicMode(imageData, pixN, preset);
   let centerBias = preset.centerBias != null ? preset.centerBias : 0.3;
   if ((appState.activePresetId === 'line_boost' || appState.activePresetId === 'detail_keep') && pixN <= 110) {
     centerBias = Math.min(0.9, centerBias + 0.1);
@@ -1779,7 +1966,8 @@ function generateGridCompat(imageData, pixN, targetRows, targetCols) {
     if (quantizeMode === 'soft') colorBudget = Math.min(48, colorBudget + 6);
     workRaw = medianCutQuantizeRawGrid(grid, rows, cols, colorBudget);
   }
-  const sourceFeatureGrid = firstPassMatchRgb(workRaw, rows, cols);
+  const allowedIndices = lowGridIconic.enabled ? buildLowGridAllowedPalette(workRaw, rows, cols, lowGridIconic.colorBudget) : null;
+  const sourceFeatureGrid = firstPassMatchRgb(workRaw, rows, cols, allowedIndices);
   const semanticFeatureMask = detectSemanticFeatureMask(sourceFeatureGrid, workRaw, rows, cols, preset.featureProtect || 0);
   let gridData = sourceFeatureGrid.map(row => [...row]);
   if (preset.darkLineBoost > 0) {
@@ -1807,10 +1995,10 @@ function generateGridCompat(imageData, pixN, targetRows, targetCols) {
   }
   gridData = cleanupDarkOutlierSpeckles(gridData, workRaw, rows, cols, preset.warmSpeckleGuard || 0);
   gridData = restoreProtectedFeatureCells(gridData, sourceFeatureGrid, semanticFeatureMask);
-  return { rawGrid: workRaw, gridData, rows, cols, featureMask: semanticFeatureMask, featureSourceGrid: sourceFeatureGrid };
+  return { rawGrid: workRaw, gridData, rows, cols, featureMask: semanticFeatureMask, featureSourceGrid: sourceFeatureGrid, lowGridIconic, allowedIndices };
 }
 function buildBeadDesign(imageData, pixN, targetRows, targetCols) {
-  const { rawGrid, gridData: compatGridData, rows, cols, featureMask: compatFeatureMask, featureSourceGrid } = generateGridCompat(imageData, pixN, targetRows, targetCols);
+  const { rawGrid, gridData: compatGridData, rows, cols, featureMask: compatFeatureMask, featureSourceGrid, lowGridIconic, allowedIndices } = generateGridCompat(imageData, pixN, targetRows, targetCols);
   let gridData = compatGridData;
   const preset = PROFILE_PRESETS[appState.activePresetId] || PROFILE_PRESETS.detail_keep;
   const tuning = getResolutionTuning(pixN);
@@ -1849,6 +2037,16 @@ function buildBeadDesign(imageData, pixN, targetRows, targetCols) {
   if (appState.userSimplifyLevel > 0) {
     gridData = applyUserColorSimplify(gridData, rawGrid, rows, cols, appState.userSimplifyLevel, featureMask);
     gridData = restoreProtectedFeatureCells(gridData, protectedSourceGrid, featureMask);
+  }
+  if (lowGridIconic && lowGridIconic.enabled) {
+    gridData = remapGridToAllowedPalette(gridData, rawGrid, rows, cols, featureMask, allowedIndices);
+    gridData = cleanupLowGridIconicNoise(gridData, rawGrid, rows, cols, featureMask, lowGridIconic.planeClean);
+    if (lowGridIconic.mergeBoost > 0) {
+      const boostedMerge = Math.max(postMergeLevel, Math.round(Math.max(appState.internalMergeLevel, 14) * lowGridIconic.mergeBoost));
+      gridData = applySimilarMergeByPaletteTop(gridData, rawGrid, rows, cols, boostedMerge);
+    }
+    gridData = cleanupGrayFringeAroundDark(gridData, rawGrid, rows, cols, Math.max(fringeStrength, lowGridIconic.outlineBias), featureMask);
+    gridData = preserveThinDarkStrokes(gridData, rawGrid, rows, cols, Math.max(fringeStrength, lowGridIconic.outlineBias), featureMask);
   }
   gridData = restoreProtectedFeatureCells(gridData, protectedSourceGrid, featureMask);
   return { rawGrid, gridData, rows, cols, featureMask };
@@ -2919,6 +3117,29 @@ const PROFILE_PRESETS = {
     removeBg: true,
     hint: '检测到卡通或强轮廓画面，优先压杂色并强化边缘'
   },
+  smart_iconic: {
+    label: '智能推荐',
+    dither: 0,
+    similarMerge: 26,
+    refine: 96,
+    centerBias: 0.84,
+    quantizeMode: 'strong',
+    darkLineBoost: 1,
+    warmSpeckleGuard: 1,
+    postMergeFactor: 0.92,
+    featureProtect: 0.86,
+    darkFringeClean: 1,
+    hairRegionDetectStrength: 0,
+    hairPaletteLevels: 0,
+    hairNeutralReject: 0,
+    hairInteriorSmooth: 0,
+    hairBoundaryProtect: 0,
+    figureBoundaryClean: 0,
+    clothNoiseClean: 0,
+    removeBg: true,
+    iconicPreferred: true,
+    hint: '检测到低格数常见拼豆场景，优先做图标化块面、禁灰和轮廓识别'
+  },
   portrait_opt: {
     label: '人像优化',
     dither: 0,
@@ -3053,6 +3274,10 @@ function analyzeImageFeatures(imageData) {
 }
 function resolveSmartProfile(imageData) {
   const f = analyzeImageFeatures(imageData);
+  const n = Math.max(10, Math.min(200, Number(appState && appState.pixN) || 39));
+  if (n <= 58 && f.skinLikeRatio < 0.09 && ((f.edgeDensity > 0.16 && f.paletteComplexity < 340) || (f.paletteComplexity < 220 && f.satMean > 0.16))) {
+    return { id: 'smart_iconic', reason: '检测到低格数 Q版/图标化场景，已优先使用块面化和线条禁灰方案' };
+  }
   if (f.skinLikeRatio > 0.06) {
     return { id: 'smart_portrait', reason: '检测到明显人物肤色区域，已优先使用人物优化方案' };
   }
