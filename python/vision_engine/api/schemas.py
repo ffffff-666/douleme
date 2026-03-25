@@ -33,4 +33,4 @@ class CompareResponse(BaseModel):
     cols: int
     diff_count: int
     diff_cells: list[dict]
-
+    notes: list[str] = Field(default_factory=list)

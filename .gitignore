@@ -3,3 +3,5 @@ __pycache__/
 .pytest_cache/
 .venv/
 python/.mypy_cache/
+python_output/
+python_tmp_input.png

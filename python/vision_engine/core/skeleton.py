@@ -1,18 +1,22 @@
 from __future__ import annotations
 
-import cv2
 import numpy as np
 
 
 def extract_visual_skeleton(image_rgb: np.ndarray) -> dict[str, np.ndarray]:
-    gray = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2GRAY)
-    edges = cv2.Canny(gray, 60, 160)
-    edges = cv2.dilate(edges, np.ones((3, 3), np.uint8), iterations=1)
-    _, foreground = cv2.threshold(gray, 245, 255, cv2.THRESH_BINARY_INV)
-    foreground = cv2.morphologyEx(foreground, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
-    feature_mask = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))
-    white_plane_mask = cv2.threshold(gray, 235, 255, cv2.THRESH_BINARY)[1]
-    forbid_gray_mask = cv2.bitwise_or(feature_mask, cv2.Canny(gray, 20, 80))
+    gray = (
+        image_rgb[:, :, 0].astype(np.float32) * 0.299
+        + image_rgb[:, :, 1].astype(np.float32) * 0.587
+        + image_rgb[:, :, 2].astype(np.float32) * 0.114
+    ).astype(np.uint8)
+    gx = np.abs(np.diff(gray.astype(np.int16), axis=1, prepend=gray[:, :1]))
+    gy = np.abs(np.diff(gray.astype(np.int16), axis=0, prepend=gray[:1, :]))
+    grad = np.clip(gx + gy, 0, 255).astype(np.uint8)
+    edges = np.where(grad > 36, 255, 0).astype(np.uint8)
+    feature_mask = np.where(grad > 24, 255, 0).astype(np.uint8)
+    foreground = np.where(gray < 245, 255, 0).astype(np.uint8)
+    white_plane_mask = np.where(gray > 232, 255, 0).astype(np.uint8)
+    forbid_gray_mask = np.where((feature_mask > 0) | (gray < 90), 255, 0).astype(np.uint8)
     return {
         "outline_mask": edges,
         "foreground_mask": foreground,
@@ -20,4 +24,3 @@ def extract_visual_skeleton(image_rgb: np.ndarray) -> dict[str, np.ndarray]:
         "white_plane_mask": white_plane_mask,
         "forbid_gray_mask": forbid_gray_mask,
     }
-

@@ -1,10 +1,16 @@
 from __future__ import annotations
 
 import numpy as np
-from skimage.segmentation import slic
 
 
 def build_region_map(image_rgb: np.ndarray, target_rows: int, target_cols: int) -> np.ndarray:
-    segments = max(32, min(180, target_rows * target_cols // 2))
-    return slic(image_rgb, n_segments=segments, compactness=8.0, start_label=1, channel_axis=2)
-
+    height, width, _ = image_rgb.shape
+    block_h = max(4, height // max(1, target_rows // 2))
+    block_w = max(4, width // max(1, target_cols // 2))
+    region_map = np.zeros((height, width), dtype=np.int32)
+    region_id = 1
+    for y in range(0, height, block_h):
+        for x in range(0, width, block_w):
+            region_map[y:y + block_h, x:x + block_w] = region_id
+            region_id += 1
+    return region_map

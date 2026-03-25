@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import numpy as np
-from scipy import ndimage
 
 from .palette import PaletteColor
 
@@ -29,24 +28,36 @@ def enforce_white_planes(grid: np.ndarray, skeleton: dict[str, np.ndarray], pale
 
 def remove_small_components(grid: np.ndarray, min_size: int = 3) -> np.ndarray:
     out = grid.copy()
-    structure = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], dtype=np.uint8)
-    for color in np.unique(out):
-      if color < 0:
-        continue
-      labeled, count = ndimage.label(out == color, structure=structure)
-      for label in range(1, count + 1):
-        positions = np.argwhere(labeled == label)
-        if len(positions) >= min_size:
-          continue
-        for row, col in positions:
-          neighbors = []
-          for dr, dc in ((1,0), (-1,0), (0,1), (0,-1)):
-            nr = row + dr
-            nc = col + dc
-            if 0 <= nr < out.shape[0] and 0 <= nc < out.shape[1] and out[nr, nc] != color:
-              neighbors.append(int(out[nr, nc]))
-          if neighbors:
-            out[row, col] = max(set(neighbors), key=neighbors.count)
+    rows, cols = out.shape
+    visited = np.zeros((rows, cols), dtype=bool)
+    for row in range(rows):
+        for col in range(cols):
+            color = int(out[row, col])
+            if color < 0 or visited[row, col]:
+                continue
+            queue = [(row, col)]
+            cells: list[tuple[int, int]] = []
+            visited[row, col] = True
+            while queue:
+                cr, cc = queue.pop()
+                cells.append((cr, cc))
+                for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    nr = cr + dr
+                    nc = cc + dc
+                    if 0 <= nr < rows and 0 <= nc < cols and not visited[nr, nc] and int(out[nr, nc]) == color:
+                        visited[nr, nc] = True
+                        queue.append((nr, nc))
+            if len(cells) >= min_size:
+                continue
+            for cr, cc in cells:
+                neighbors: list[int] = []
+                for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    nr = cr + dr
+                    nc = cc + dc
+                    if 0 <= nr < rows and 0 <= nc < cols and int(out[nr, nc]) != color:
+                        neighbors.append(int(out[nr, nc]))
+                if neighbors:
+                    out[cr, cc] = max(set(neighbors), key=neighbors.count)
     return out
 
 
@@ -65,4 +76,3 @@ def suppress_gray_edges(grid: np.ndarray, palette: tuple[PaletteColor, ...]) -> 
         if any(n in dark_ids for n in neighbors) and any(n in white_ids for n in neighbors):
           out[r, c] = next(iter(white_ids))
     return out
-
