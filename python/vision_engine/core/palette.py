@@ -48,6 +48,11 @@ def iconic_palette_subset() -> tuple[PaletteColor, ...]:
     return tuple(color for color in load_palette() if color.id in LOW_GRID_ICONIC_IDS)
 
 
+def palette_indices_by_ids(ids: set[str], palette: tuple[PaletteColor, ...] | None = None) -> set[int]:
+    colors = palette or load_palette()
+    return {color.index for color in colors if color.id in ids}
+
+
 def nearest_palette_index(rgb: tuple[int, int, int], palette: tuple[PaletteColor, ...] | None = None) -> int:
     colors = palette or load_palette()
     r, g, b = rgb
@@ -63,4 +68,3 @@ def nearest_palette_index(rgb: tuple[int, int, int], palette: tuple[PaletteColor
             best_dist = dist
             best_index = color.index
     return best_index
-

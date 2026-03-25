@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from .palette import PaletteColor
+from .palette import PaletteColor, palette_indices_by_ids
 
 
 def _idx_to_color_map(palette: tuple[PaletteColor, ...]) -> dict[int, PaletteColor]:
@@ -75,4 +75,21 @@ def suppress_gray_edges(grid: np.ndarray, palette: tuple[PaletteColor, ...]) -> 
         neighbors = [int(out[r + dr, c + dc]) for dr, dc in ((1,0),(-1,0),(0,1),(0,-1))]
         if any(n in dark_ids for n in neighbors) and any(n in white_ids for n in neighbors):
           out[r, c] = next(iter(white_ids))
+    return out
+
+
+def apply_feature_anchors(grid: np.ndarray, anchors: dict[str, object], palette: tuple[PaletteColor, ...]) -> np.ndarray:
+    out = grid.copy()
+    yellow_ids = palette_indices_by_ids({"A21", "A22", "A24", "G11"}, palette)
+    dark_ids = palette_indices_by_ids({"H7", "H8", "H16"}, palette)
+    for anchor in anchors.get("anchors", []):
+        row = int(anchor["grid_row"])
+        col = int(anchor["grid_col"])
+        if not (0 <= row < out.shape[0] and 0 <= col < out.shape[1]):
+            continue
+        role = anchor.get("role")
+        if role == "yellow_anchor" and yellow_ids:
+            out[row, col] = next(iter(yellow_ids))
+        elif role == "dark_anchor" and dark_ids:
+            out[row, col] = next(iter(dark_ids))
     return out
