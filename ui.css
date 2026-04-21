@@ -1,4 +1,4 @@
-﻿*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box}
 :root{--primary:#B8A9C9;--pink:#FFB7C5;--green:#98D8C8;--accent:#FF6B35;--accent-light:#FF8C6B;--bg:#F5F5F7;--text:#333;--text2:#999;--border:#E5E5E5;--white:#fff;--shadow:0 2px 8px rgba(0,0,0,.05);--radius:16px}
 body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;background:#1a1a2e;color:var(--text);overflow-x:hidden;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px 0}
 .app{width:375px;height:812px;position:relative;background:var(--bg);overflow:hidden;border-radius:30px;box-shadow:0 0 60px rgba(0,0,0,.3);flex-shrink:0}
@@ -243,3 +243,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue'
 .final-quality-group{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;max-width:240px}
 .final-note{font-size:12px;color:var(--text2);line-height:1.6;margin:12px 4px 16px}
 .final-actions{display:flex;flex-direction:column;gap:10px}
+/* Palette interactive layer */
+.color-panel-v2{padding:0 0 4px}
+.color-panel-v2[style*="display: none"]+.color-list{display:grid}
+.color-slider-wrap{padding:0 16px;margin:4px 0 4px}
+#colorList{display:none}
+.color-list--interactive{padding:10px 16px;gap:8px}
+.color-list--interactive .color-item{position:relative;transition:all .25s ease}
+.color-list--interactive .color-item.selectable{cursor:pointer}
+.color-list--interactive .color-item.removed{opacity:.55;background:#f4f4f6;border-style:dashed;border-color:#d8d8de}
+.color-list--interactive .color-item.removed .color-dot{filter:grayscale(.6) opacity(.7)}
+.color-list--interactive .color-item.removed .color-count{color:var(--text2);font-style:italic}
+.color-list--interactive .color-item.locked{cursor:default}
+.chip-badge{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;line-height:1;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18);cursor:pointer;transition:transform .15s ease;user-select:none}
+.chip-badge:hover{transform:scale(1.15)}
+.chip-badge::after{content:'';position:absolute;inset:-7px;border-radius:50%}
+.chip-badge--del{color:#fff;background:var(--accent)}
+.chip-badge--restore{color:#fff;background:#5b8def}
+.chip-badge--lock{color:#8a6a3a;background:#fff5dd;cursor:default;font-size:10px;box-shadow:none}
+@keyframes chipFadeOut{from{opacity:1;transform:scale(1)}to{opacity:.55;transform:scale(.94)}}
+@keyframes chipRestore{from{opacity:.55;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.color-item.is-removing{animation:chipFadeOut .3s ease forwards}
+.color-item.is-restoring{animation:chipRestore .3s ease forwards}
+@keyframes chipShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-3px)}40%{transform:translateX(3px)}60%{transform:translateX(-2px)}80%{transform:translateX(2px)}}
+.color-item.is-shake{animation:chipShake .4s ease}
+input[type=range].color-slider:disabled{opacity:.4;cursor:not-allowed}
+.color-list--interactive .color-item{cursor:pointer}
+.color-list--interactive .color-item:hover:not(.locked){border-color:#c6b1e3;background:#fbf7ff}
+.color-list--interactive .color-item.highlighted{border-color:var(--accent);background:#fff3ec;box-shadow:0 0 0 2px rgba(255,107,53,.18),0 2px 8px rgba(255,107,53,.12);transform:translateY(-1px)}
+.color-list--interactive .color-item.removed.highlighted{background:#fff3ec;opacity:.85;border-style:solid}
+.color-list--interactive .color-item.removed.highlighted .color-dot{filter:none}

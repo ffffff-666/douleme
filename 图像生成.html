@@ -1,10 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>图片转拼豆图纸</title>
-<script src="../shared/god-dou-bead-registry.js"></script>
 <link rel="stylesheet" href="./ui.css">
 </head>
 <body>
@@ -104,6 +103,11 @@
           <div class="toggle" id="removeBgToggle" onclick="this.classList.toggle('on');onRemoveBgToggle()"></div>
         </div>
         <div class="slider-desc">生成后一键去除背景区域，不影响主体（可随时切换）</div>
+        <div class="toggle-row">
+          <span class="label">手绘风格引导 <span style="font-size:10px;color:var(--accent);font-weight:700">NEW</span></span>
+          <div class="toggle on" id="handcraftToggle" onclick="this.classList.toggle('on');onHandcraftToggle()"></div>
+        </div>
+        <div class="slider-desc">开启后根据99张手绘拼豆样本的风格特征引导生成，让结果更接近手绘效果</div>
         <div class="slider-wrap">
           <label><span>颜色精简</span><span id="smLevelVal">0种</span></label>
           <input type="range" id="smLevelSlider" min="0" max="100" value="0" oninput="onSliderManual()">
@@ -223,6 +227,14 @@
         <div class="toggle-chip" id="chipMirror" onclick="toggleChip(this,'mirror')">左右镜像</div>
       </div>
       <div class="section-title" style="padding-bottom:4px">色板统计</div>
+      <div class="color-panel-v2" id="colorPanelV2">
+        <div class="slider-wrap color-slider-wrap">
+          <label><span>色板规模</span><span id="colorSliderVal">— / — 色</span></label>
+          <input type="range" id="colorSlider" class="color-slider" min="2" max="2" value="2">
+        </div>
+        <div class="slider-desc">向右滑动逐步合并最次要的颜色，前 4 主色受保护不会被砍。点击色块上的 ✕ 可单独删除，点 ↺ 恢复。</div>
+        <div class="color-list color-list--interactive" id="colorTiles"></div>
+      </div>
       <div class="color-list" id="colorList"></div>
       <div class="result-material-entry">
         <div class="result-material-copy">
@@ -358,6 +370,6 @@
   </div>
 </div>
 </div>
-<script src="./app.js"></script>
+<script src="./pindou-bundle.js"></script>
 </body>
 </html>

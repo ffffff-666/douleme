@@ -214,8 +214,8 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .image-convert-embed-frame{width:100%;height:100%;border:none;display:block;background:var(--white)}
 .cart-thumb-image{width:100%;height:100%;object-fit:cover;display:block}
 </style>
-<script src="shared/god-dou-bead-registry.js"></script>
-<script src="shared/god-dou-cart-store.js"></script>
+<script src="./god-dou-bead-registry.js"></script>
+<script src="./god-dou-cart-store.js"></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -415,22 +415,12 @@ input:focus,textarea:focus{border-color:var(--primary)}
     <span class="right-icon" onclick="goPage('page-history')">📋</span>
   </div>
   <div class="content" style="padding:12px 12px 14px">
-    <div class="ai-mode-switch" id="ai-mode-switch">
-      <div class="ai-mode-chip active" data-mode="text" onclick="switchAiMode('text', this)">
-        <div class="ai-mode-title">文字生成</div>
-        <div class="ai-mode-desc">输入一句话，直接生成拼豆候选方案</div>
-      </div>
-      <div class="ai-mode-chip" data-mode="reference" onclick="switchAiMode('reference', this)">
-        <div class="ai-mode-title">参考图再创作</div>
-        <div class="ai-mode-desc">上传原图，AI 改造成更适合拼豆的新图</div>
-      </div>
-    </div>
-    <div class="ai-helper" id="ai-helper-text">系统不会直接给你普通 AI 原图，而是生成多个更适合拼豆落地的候选方案，最后让你挑选最终拼豆图。</div>
+    <div class="ai-helper" id="ai-helper-text">上传一张图片，AI 会把它改造成更适合拼豆的风格，并直接展示改造后的原图效果。</div>
 
     <div class="ai-config-card" id="ai-config-card">
       <div class="ai-config-head" onclick="toggleAiConfigPanel()">
         <div class="ai-config-title">模型配置</div>
-        <div class="ai-config-summary" id="ai-config-summary">点击展开配置 API、模型、密钥和提示词模板</div>
+        <div class="ai-config-summary" id="ai-config-summary">点击展开配置 API、模型、密钥</div>
         <div class="ai-config-arrow">⌄</div>
       </div>
       <div class="ai-config-body">
@@ -453,37 +443,8 @@ input:focus,textarea:focus{border-color:var(--primary)}
             <div class="ai-config-tip">出于安全原因，我不会把你给过的密钥直接写进前端源码。这里只做本地输入与保存。</div>
           </div>
           <div class="ai-config-item full">
-            <div class="ai-config-label">文生图提示词模板</div>
-            <textarea id="ai-config-text-template" class="ai-config-textarea">请根据用户输入生成更适合后续转换为拼豆效果图的图像。请优先保证主体清晰、构图稳定、背景尽量简洁、轮廓边界明确、颜色分区清楚，并减少碎小细节、杂色、脏点和高频纹理，避免复杂背景、强光影、文字水印和无关装饰。让主体在缩小到拼豆尺寸后依然容易识别，并适合后续映射到 MARD 拼豆色板。整体观感自然、讨喜、有成品感。</textarea>
-          </div>
-          <div class="ai-config-item full">
-            <div class="ai-config-label">图转图提示词模板</div>
+            <div class="ai-config-label">图转图提示词模板（固定，不对用户开放）</div>
             <textarea id="ai-config-ref-template" class="ai-config-textarea">请基于参考图进行再创作，尽量保留主体最关键的识别特征、人物关系和主要表情，同时把画面优化得更适合后续转换为拼豆效果图。请优先保证主体完整、构图稳定、背景简化、轮廓边界清楚、颜色分区明确，减少碎小细节、杂色、噪点、脏背景和复杂渐变。对于人物、情侣照、头像类图片，请尽量保证五官稳定、头发边界清楚、肩颈关系自然，不要出现主体裁切、人物重叠混乱、表情失真、肢体变形或额外人物。让结果在缩小到拼豆尺寸后仍然容易识别，并更适合后续映射到 MARD 色板、降低脏点和生成可制作的拼豆图纸。整体观感保持自然、干净、讨喜和有成品感。</textarea>
-          </div>
-          <div class="ai-config-item full">
-            <div class="ai-config-label">风格提示词映射</div>
-            <textarea id="ai-config-style-map" class="ai-config-textarea">卡通：clean cute illustration, clear silhouette, simple facial features, tidy color blocks, friendly expression, centered composition, minimal background distraction
-写实：semi-realistic portrait, stable facial structure, softened detail density, cleaner background, readable edges, gentle lighting, controlled texture for bead-friendly conversion
-极简：minimal composition, large clean color areas, very low background detail, simplified forms, strong readability, elegant and neat visual balance
-像素：pixel-art inspired composition, blocky shapes, simplified edges, strong silhouette, limited detail density, retro but clean and cute
-可爱：cute proportions, warm and soft expression, charming composition, clean pastel-friendly palette, simple readable details, collectible handcrafted feeling
-复古：retro illustration style, nostalgic palette, clean poster-like composition, simplified textures, classic but tidy visual hierarchy</textarea>
-          </div>
-          <div class="ai-config-item full">
-            <div class="ai-config-label">转换策略提示词映射</div>
-            <textarea id="ai-config-strategy-map" class="ai-config-textarea">平衡还原：preserve recognizability while simplifying noisy details, keep main features readable, maintain clean edges, balanced color blocks, suitable for bead conversion and pleasing final product
-细节优先：keep important facial and identity details, preserve key expression and hairstyle features, but still reduce tiny noise and avoid messy texture that breaks bead readability
-容易制作：favor larger color regions, cleaner outlines, fewer isolated details, lower noise, reduced texture complexity, and stronger shape readability for real handmade bead production</textarea>
-          </div>
-          <div class="ai-config-item full">
-          <div class="ai-config-label">转换策略说明</div>
-          <textarea id="ai-config-intent-map" class="ai-config-textarea">平衡还原：平衡识别度、成品感和后续拼豆可制作性。
-细节优先：优先保留五官、发型、表情和关键识别特征，但仍控制杂色和碎点。
-容易制作：优先保留大色块、清晰轮廓和更低复杂度，方便真实拼豆落地制作。</textarea>
-          </div>
-          <div class="ai-config-item full">
-            <div class="ai-config-label">当前 AI → 工程承接</div>
-            <div id="ai-engineering-mapping" class="ai-config-tip" style="background:#f7f4f9;border:1px solid #e7deef;border-radius:10px;padding:10px 12px"></div>
           </div>
         </div>
         <div class="ai-config-actions">
@@ -494,73 +455,20 @@ input:focus,textarea:focus{border-color:var(--primary)}
     </div>
 
     <div class="ai-input-zone">
-    <div class="ai-zone-title" id="ai-input-zone-title">创作输入</div>
-    <div id="ai-reference-panel" style="display:none">
-      <div class="section-label">上传参考图</div>
+    <div class="ai-zone-title" id="ai-input-zone-title">上传图片</div>
+    <div id="ai-reference-panel">
       <div class="ai-upload-box" id="ai-reference-upload" onclick="document.getElementById('ai-reference-input').click()">
         <input id="ai-reference-input" type="file" accept="image/*" style="display:none" onchange="handleAiReferenceUpload(event)">
         <div class="ai-upload-thumb" id="ai-reference-thumb">🖼️</div>
         <div class="ai-upload-meta">
-          <div class="ai-upload-title" id="ai-reference-name">添加一张参考图</div>
-          <div class="ai-upload-desc" id="ai-reference-desc">可上传宠物照、人物照、插画、表情包，系统会基于原图再创作成更适合拼豆的版本。</div>
+          <div class="ai-upload-title" id="ai-reference-name">添加一张图片</div>
+          <div class="ai-upload-desc" id="ai-reference-desc">上传宠物照、人物照、插画等，AI 会改造成更适合拼豆的新图。</div>
         </div>
       </div>
-      <div class="section-label" style="margin-top:14px">多元程度</div>
-      <div style="font-size:12px;color:var(--text2);margin:-2px 0 8px">控制候选图和原图相比有多敢变化</div>
-      <div class="ai-grid-tags intent-grid" id="ai-reference-freedom-tags">
-        <span class="tag" onclick="selectTag(this,'ai-reference-freedom-tags');syncReferenceFreedomTip()">低</span>
-        <span class="tag active" onclick="selectTag(this,'ai-reference-freedom-tags');syncReferenceFreedomTip()">中</span>
-        <span class="tag" onclick="selectTag(this,'ai-reference-freedom-tags');syncReferenceFreedomTip()">高</span>
-      </div>
-      <div id="ai-reference-freedom-tip" style="font-size:12px;color:var(--text2);margin-top:8px">中：保主体识别特征，同时允许适度变化（推荐）</div>
-      <div class="section-label" style="margin-top:14px">变化方向</div>
-      <div style="font-size:12px;color:var(--text2);margin:-2px 0 8px">控制这批候选更偏向改哪里</div>
-      <div class="ai-grid-tags intent-grid" id="ai-reference-variation-tags">
-        <span class="tag active" onclick="selectTag(this,'ai-reference-variation-tags');syncReferenceVariationTip()">动作姿势</span>
-        <span class="tag" onclick="selectTag(this,'ai-reference-variation-tags');syncReferenceVariationTip()">构图镜头</span>
-        <span class="tag" onclick="selectTag(this,'ai-reference-variation-tags');syncReferenceVariationTip()">风格类型</span>
-      </div>
-      <div id="ai-reference-variation-tip" style="font-size:12px;color:var(--text2);margin-top:8px">动作姿势：优先探索站姿、坐姿、回头、挥手、奔跑等变化</div>
+    </div>
     </div>
 
-    <div class="section-label" id="ai-prompt-label">描述你想要的图案</div>
-    <textarea id="ai-prompt" rows="2" placeholder="例如：柴犬头像，主体居中，背景干净，适合做成拼豆作品" maxlength="200" oninput="updateCharCount();checkAiGenBtn()"></textarea>
-    <div style="text-align:right;font-size:12px;color:var(--text2);margin:4px 0"><span id="char-count">0</span>/200</div>
-    </div>
-
-    <div class="ai-settings-zone">
-    <div class="ai-zone-title">生成设置</div>
-    <div class="section-label">选择风格</div>
-    <div class="ai-grid-tags" id="style-tags">
-      <span class="tag active" onclick="selectTag(this,'style-tags')">卡通</span>
-      <span class="tag" onclick="selectTag(this,'style-tags')">写实</span>
-      <span class="tag" onclick="selectTag(this,'style-tags')">极简</span>
-      <span class="tag" onclick="selectTag(this,'style-tags')">像素</span>
-    </div>
-    <div class="section-label">转换策略</div>
-    <div class="ai-grid-tags intent-grid" id="ai-intent-tags">
-      <span class="tag active" onclick="selectTag(this,'ai-intent-tags')">平衡还原</span>
-      <span class="tag" onclick="selectTag(this,'ai-intent-tags')">细节优先</span>
-      <span class="tag" onclick="selectTag(this,'ai-intent-tags')">容易制作</span>
-    </div>
-    <div class="ai-size-panel">
-      <div class="ai-size-custom" id="ai-size-custom-box">
-        <div class="ai-size-custom-row">
-          <span style="font-size:12px;white-space:nowrap;font-weight:600;color:var(--text)">手动选格数</span>
-          <input id="ai-custom-size-input" type="number" min="10" max="200" value="29" oninput="onAiCustomSizeInput()" onchange="commitAiCustomSize()" onblur="commitAiCustomSize()">
-          <span style="font-size:12px;color:var(--text2)">× 按比例</span>
-        </div>
-        <div class="ai-grid-tags size-grid" id="ai-size-tags">
-          <div class="tag active" style="margin:0" onclick="selectTag(this,'ai-size-tags')"><span class="size-card-title">29格</span></div>
-          <div class="tag" style="margin:0" onclick="selectTag(this,'ai-size-tags')"><span class="size-card-title">58格</span></div>
-          <div class="tag" style="margin:0" onclick="selectTag(this,'ai-size-tags')"><span class="size-card-title">87格</span></div>
-          <div class="tag" style="margin:0" onclick="selectTag(this,'ai-size-tags')"><span class="size-card-title">116格</span></div>
-        </div>
-        <div class="ai-size-custom-meta" id="ai-size-custom-meta">建议 40~96 之间，格数越大越细致，但制作成本也会更高。</div>
-      </div>
-    </div>
-    </div>
-    <button class="btn-primary" id="ai-gen-btn" onclick="startAiGenerate()" disabled style="opacity:0.5;cursor:not-allowed">生成拼豆方案 ✨</button>
+    <button class="btn-primary" id="ai-gen-btn" onclick="startAiGenerate()" disabled style="opacity:0.5;cursor:not-allowed">AI 生图 ✨</button>
   </div>
 </div>
 
@@ -613,7 +521,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
       id="image-convert-frame"
       class="image-convert-embed-frame"
       title="图片转换"
-      src="图片生成/图像生成.html?embedded=1"
+      src="./图像生成.html?embedded=1"
     ></iframe>
   </div>
 </div>
@@ -1869,7 +1777,7 @@ let currentColor = '#B8A9C9';
 let undoStack = [];
 let obStep = 0;
 let isLoggedIn = true; // Toggle to false to test logged-out state
-let aiMode = 'text';
+let aiMode = 'reference';
 let aiReferenceImage = null;
 let aiReferenceName = '';
 let aiGenerationRunning = false;
@@ -2067,7 +1975,7 @@ function getBeadSystemLabel(channel) {
 const defaultAiConfig = {
   baseUrl: 'https://yunwu.ai',
   model: 'gemini-3.1-flash-image-preview',
-  candidateCount: 3,
+  candidateCount: 1,
   beadSystem: getBeadSystemDefaults('ai-generate'),
   apiKey: 'sk-rJNnTrudP8tawUFXevdjRTVEW5R8WjNaqynbdDWohKl9NBbK',
   textTemplate: '请根据用户输入，直接生成一张更接近目标拼豆网格图的图像，而不是普通高清 AI 插画。画面必须围绕目标格子数组织主体与色块，让主体在对应网格尺寸里仍然清楚可读。请优先使用大色块、清晰轮廓、有限层次、低频细节和明显块面关系，减少真实照片式纹理、连续渐变、细碎高频细节、脏点、噪点和复杂背景。请让图像本身就带有像素块/拼豆块面的感觉，便于后续工程转换只做轻量校正，而不是重新压缩整张图。避免文字、水印、复杂光影、半透明材质、超细发丝、密集花纹和无关装饰。整体观感要讨喜、稳定，并适合映射到 MARD 拼豆色板。',
@@ -2248,21 +2156,23 @@ function renderAiPickViewer(payload, candidates) {
   }
   const candidate = candidates.find(item => item.id === activeTab.id);
   if (!candidate) return;
-  const previewUrl = candidate.convertedPreviewUrl || '';
+  // ★ 简化后：优先展示 AI 原图（previewUrl），再 fallback 到工程图
+  const previewUrl = candidate.previewUrl || candidate.convertedPreviewUrl || '';
   if (previewUrl) {
     viewerMedia.innerHTML = `<img src="${previewUrl}" alt="${candidate.title}" style="width:100%;height:100%;object-fit:contain;background:#fff;display:block">`;
   } else {
-    viewerMedia.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--text2)"><div style="font-size:30px">🧩</div><div style="font-size:13px">拼豆图生成中...</div></div>`;
+    viewerMedia.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--text2)"><div style="font-size:30px">🎨</div><div style="font-size:13px">AI 生成中...</div></div>`;
   }
-  caption.textContent = previewUrl ? (candidate.title || '') : `${candidate.title || ''} · 工程拼豆图生成中`;
+  caption.textContent = previewUrl ? (candidate.title || 'AI 生成图') : `${candidate.title || ''} · 生成中`;
   stats.innerHTML = `
-    <span class="info-badge purple">📐 ${candidate.sizeLabel}</span>
-    <span class="info-badge pink">🎨 ${(candidate.convertedColorCount ?? candidate.colorCount)}种</span>
-    <span class="info-badge green">⚪ ${(candidate.convertedBeadCount ?? candidate.beadCount).toLocaleString()}颗</span>
+    <span class="info-badge purple">📐 ${candidate.sizeLabel || ''}</span>
+    <span class="info-badge pink">🎨 AI 原图</span>
   `;
   actions.innerHTML = `
+    <button class="btn-secondary" onclick="downloadAiImage('${candidate.id}')">⬇ 保存图片</button>
     <button class="btn-secondary" onclick="previewAiCandidate('${candidate.id}')">查看说明</button>
-    <button class="btn-primary" onclick="applySelectedBeadCandidateById('${candidate.id}')" ${candidate.convertedPreviewUrl ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>选这版继续</button>
+    <button class="btn-primary" onclick="applySelectedBeadCandidateById('${candidate.id}')" ${previewUrl ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>选这版继续</button>
+    <button class="btn-primary" onclick="applySelectedBeadCandidateByIdWithPerfectPixel('${candidate.id}')" ${previewUrl ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>图像处理</button>
   `;
 }
 
@@ -2279,11 +2189,12 @@ function buildAiCandidateSourcePreview(candidate, payload) {
 }
 
 function buildAiCandidateGeneratedPreview(candidate) {
-  const previewUrl = candidate.convertedPreviewUrl || '';
+  // ★ 简化后：优先展示 AI 原图，不等工程拼豆图
+  const previewUrl = candidate.previewUrl || candidate.convertedPreviewUrl || '';
   if (previewUrl) {
     return `<img class="candidate-image" src="${previewUrl}" alt="${candidate.title}" style="width:100%;height:100%;object-fit:cover;border-radius:14px">`;
   }
-  return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text2);gap:8px;background:linear-gradient(135deg,#fff6fb,#f4ecff);border-radius:14px"><div style="font-size:26px">🧩</div><div style="font-size:12px">拼豆图生成中...</div></div>`;
+  return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text2);gap:8px;background:linear-gradient(135deg,#fff6fb,#f4ecff);border-radius:14px"><div style="font-size:26px">🎨</div><div style="font-size:12px">AI 生成中...</div></div>`;
 }
 
 function initializeAiCandidatePlaceholders(payload) {
@@ -2793,50 +2704,46 @@ function commitAiCustomSize() {
 
 function buildAiGenerationPayload() {
   readAiConfigForm();
-  const prompt = (document.getElementById('ai-prompt') || {}).value?.trim() || '';
+  // 简化后：固定为 reference 模式，无需用户填写提示词
   const referenceFreedom = getReferenceFreedomMeta(getActiveTagText('ai-reference-freedom-tags') || '中');
   const referenceVariation = getReferenceVariationMeta(getActiveTagText('ai-reference-variation-tags') || '动作姿势');
   return {
-    mode: aiMode,
-    prompt,
+    mode: 'reference',
+    prompt: '',
     style: getActiveTagText('style-tags') || '卡通',
     intent: getActiveTagText('ai-intent-tags') || '平衡还原',
     size: parseAiSizeTag(getActiveTagText('ai-size-tags') || '中 58×58'),
-    referenceGoal: aiMode === 'reference' ? prompt : '',
-    referenceFreedom: aiMode === 'reference' ? referenceFreedom : null,
-    referenceVariation: aiMode === 'reference' ? referenceVariation : null,
+    referenceGoal: '',
+    referenceFreedom: referenceFreedom,
+    referenceVariation: referenceVariation,
     aiConfig: {
       baseUrl: aiConfig.baseUrl,
       model: aiConfig.model,
       candidateCount: aiConfig.candidateCount,
       beadSystem: aiConfig.beadSystem,
       apiKey: aiConfig.apiKey,
-      template: aiMode === 'reference' ? aiConfig.refTemplate : aiConfig.textTemplate,
+      template: aiConfig.refTemplate,
       intentMap: aiConfig.intentMap
     },
-    referenceImage: aiMode === 'reference' && aiReferenceImage ? {
+    referenceImage: aiReferenceImage ? {
       name: aiReferenceImage.name,
       size: aiReferenceImage.size,
       type: aiReferenceImage.type
     } : null,
-    referenceFile: aiMode === 'reference' ? aiReferenceImage : null
+    referenceFile: aiReferenceImage
   };
 }
 
 async function startAiGenerate() {
   if (aiGenerationRunning) return;
   const payload = buildAiGenerationPayload();
-  if (aiMode === 'text' && !payload.prompt) {
-    showToast('请先输入描述词');
-    return;
-  }
-  if (aiMode === 'reference' && !payload.referenceImage) {
-    showToast('请先上传参考图');
+  if (!payload.referenceImage) {
+    showToast('请先上传图片');
     return;
   }
   aiGenerationRunning = true;
   try {
-    if (payload.mode === 'reference' && payload.referenceFile) {
+    if (payload.referenceFile) {
       payload.sourcePreviewUrl = await fileToDataUrl(payload.referenceFile);
     } else {
       payload.sourcePreviewUrl = '';
@@ -2948,172 +2855,26 @@ function parsePromptMap(mapText) {
 }
 
 function buildCandidateSpecs(payload) {
-  const sizeLabel = `${payload.size.rows}×${payload.size.cols}`;
-  if (payload.mode === 'reference') {
-    const variationKey = payload.referenceVariation?.key || 'pose';
-    const freedomKey = payload.referenceFreedom?.key || 'medium';
-    const variationPromptMap = {
-      pose: [
-        '请优先保留主体身份，动作姿势只做小幅变化。',
-        '请重点探索不同动作和姿势，例如转头、挥手、坐姿、走动或跳跃。',
-        '请做一版动作变化更明显的方案，但不要丢失主体身份。'
-      ],
-      composition: [
-        '请优先保留主体身份，构图镜头只做小幅重排。',
-        '请重点探索构图和镜头，例如半身、特写、全身或偏构图。',
-        '请做一版构图变化更明显的方案，让主体位置和镜头关系有明显不同。'
-      ],
-      style: [
-        '请优先保留主体身份，风格类型只做小幅转换。',
-        '请重点探索不同风格类型，例如 Q版、像素块风、玩偶风、徽章风。',
-        '请做一版风格重构更明显的方案，但不要变成完全无关的新主体。'
-      ]
-    };
-    const freedomPromptMap = {
-      low: '整体变化幅度要保守，不要大改姿势、构图或主体关系。',
-      medium: '整体变化幅度适中，要能看出与原图不同，但仍保留主体识别特征。',
-      high: '整体变化幅度可以明显一点，不要只是原图轻微修饰。'
-    };
-    const variationPrompts = variationPromptMap[variationKey] || variationPromptMap.pose;
-    const freedomPrompt = freedomPromptMap[freedomKey] || freedomPromptMap.medium;
-    return [
-      {
-        id: 'reference_safe',
-        title: '保真优化版',
-        badge: '更像原图',
-        intent: '保主体、保识别、轻优化',
-        description: '优先保留原图主体和主要关系，只做拼豆友好化与少量优化。',
-        promptSuffix: `${variationPrompts[0]} ${freedomPrompt}`,
-        sizeLabel,
-        gradient: 'linear-gradient(135deg,#efe7f7,#ffe8ef)',
-        colorDelta: 0,
-        beadRatio: 0.74
-      },
-      {
-        id: 'reference_varied',
-        title: '变化探索版',
-        badge: '更有变化',
-        intent: '保主体，放大差异',
-        description: '在保留主体识别特征的前提下，重点探索动作、构图或风格变化。',
-        promptSuffix: `${variationPrompts[1]} ${freedomPrompt}`,
-        sizeLabel,
-        gradient: 'linear-gradient(135deg,#f7ecff,#fff5eb)',
-        colorDelta: -1,
-        beadRatio: 0.72
-      },
-      {
-        id: 'reference_creative',
-        title: '创意扩展版',
-        badge: '更发散',
-        intent: '同主体，多方案',
-        description: '允许更明显的变化，避免只是原图轻微修饰，但仍保主体身份。',
-        promptSuffix: `${variationPrompts[2]} ${freedomPrompt}`,
-        sizeLabel,
-        gradient: 'linear-gradient(135deg,#e8f1ff,#f7ebff)',
-        colorDelta: 2,
-        beadRatio: 0.76
-      }
-    ].slice(0, Math.max(1, Math.min(10, payload.aiConfig?.candidateCount || 3)));
-  }
-  return [
-    {
-      id: 'balanced',
-      title: '爆款平衡版',
-      badge: '系统推荐',
-      intent: '平衡观感与可制作性',
-      description: '优先平衡好看、稳定和可制作性，适合作为大多数用户最容易喜欢的一版。',
-      promptSuffix: '请优先保证主体完整、背景干净但不要完全抹掉必要场景关系，轮廓利落、颜色分区稳定，尽量减少显眼噪点、脏色、小块杂色和孤立色点，让整体更干净、更稳妥、更像适合直接做成拼豆成品的主推荐方案。',
-      sizeLabel,
-      gradient: 'linear-gradient(135deg,#efe7f7,#ffe8ef)',
-      colorDelta: 0,
-      beadRatio: 0.74
-    },
-    {
-      id: 'soft',
-      title: '动漫友好版',
-      badge: '更讨喜',
-      intent: '更适合二次元与头像风格',
-      description: '更适合动漫、插画、头像和情侣照，强调讨喜感、柔和气质和更舒服的成品观感。',
-      promptSuffix: '请让画面更讨喜、更适合头像和动漫风格，适度增强人物表情、五官和发型的顺眼程度，保留柔和且必要的背景关系，不要把背景完全清空，避免主体像贴纸一样悬空，同时保持色块干净、轮廓清楚和较好的拼豆可制作性。',
-      sizeLabel,
-      gradient: 'linear-gradient(135deg,#f7ecff,#fff5eb)',
-      colorDelta: -1,
-      beadRatio: 0.72
-    },
-    {
-      id: 'detail',
-      title: '细节保留版',
-      badge: '细节更强',
-      intent: '更像原始设定',
-      description: '保留更多局部结构和表情特征，适合宠物、头像和需要神态识别的图案。',
-      promptSuffix: '请尽量保留五官、表情、毛发和局部识别特征，同时控制肤色与暖色区域的自然度，避免脸部偏红、偏脏、偏橘或局部颜色过重。请让人物脸部、头发和肩颈边界清楚，背景保留必要关系，不要因为保细节而引入过多杂色和碎点。',
-      sizeLabel,
-      gradient: 'linear-gradient(135deg,#e8f1ff,#f7ebff)',
-      colorDelta: 4,
-      beadRatio: 0.79
-    },
-    {
-      id: 'clean',
-      title: '省豆易做版',
-      badge: '更好拼',
-      intent: '减少翻车与脏点',
-      description: '进一步压缩杂色与碎细节，减少材料复杂度，适合新手和真实制作。',
-      promptSuffix: '请优先压缩碎细节和杂色，减少颜色数量与孤立色点，让画面更容易真实制作，但不要把背景和场景关系完全去掉。请保留主体周围最必要的轮廓和环境信息，让成品既省豆、好做，又不会显得太空或太假。',
-      sizeLabel,
-      gradient: 'linear-gradient(135deg,#f4ecff,#fff0e7)',
-      colorDelta: -5,
-      beadRatio: 0.68
-    },
-    {
-      id: 'contrast',
-      title: '高对比清晰版',
-      badge: '更清晰',
-      intent: '增强层次和边界',
-      description: '适当提高明暗与边界对比，让主体更突出，适合希望成品更醒目的图案。',
-      promptSuffix: '请适度增强主体与背景的层次对比，保证边界更清晰、主体更突出，同时保留必要的场景关系和整体自然感，避免对比过硬、颜色过脏或边缘过于生硬。',
-      sizeLabel,
-      gradient: 'linear-gradient(135deg,#eaf3ff,#ffeef4)',
-      colorDelta: 2,
-      beadRatio: 0.76
-    }
-  ].slice(0, Math.max(1, Math.min(10, payload.aiConfig?.candidateCount || 3)));
+  // 简化后：固定生戛1张，不再为不同候选拼豆派教不同的 promptSuffix
+  return [{
+    id: 'result',
+    title: 'AI 生成图',
+    badge: '',
+    intent: '',
+    description: '',
+    promptSuffix: '',
+    sizeLabel: '',
+    gradient: 'linear-gradient(135deg,#efe7f7,#ffe8ef)',
+    colorDelta: 0,
+    beadRatio: 0.74
+  }];
 }
 
 function composeAiPrompt(payload, spec) {
-  const template = payload.aiConfig?.template || '';
-  const stylePromptMap = parsePromptMap(payload.aiConfig?.styleMap);
-  const strategyPromptMap = parsePromptMap(payload.aiConfig?.strategyMap);
-  const stylePrompt = stylePromptMap[payload.style] || '';
-  const strategyPrompt = strategyPromptMap[payload.intent] || '';
-  const parts = [template];
-  if (payload.prompt) parts.push(`用户需求：${payload.prompt}`);
-  if (payload.mode === 'reference' && payload.referenceGoal) parts.push(`参考图再创作目标：${payload.referenceGoal}`);
-  if (payload.mode === 'reference' && payload.referenceFreedom) {
-    parts.push(`多元程度：${payload.referenceFreedom.key}`);
-    parts.push(`多元程度要求：${payload.referenceFreedom.promptRule}`);
-  }
-  if (payload.mode === 'reference' && payload.referenceVariation) {
-    parts.push(`变化方向：${payload.referenceVariation.key}`);
-    parts.push(`变化方向要求：${payload.referenceVariation.promptRule}`);
-  }
-  parts.push(`风格：${payload.style}`);
-  if (stylePrompt) parts.push(`风格提示词：${stylePrompt}`);
-  if (payload.mode !== 'reference') {
-    parts.push(`转换策略：${payload.intent}`);
-    if (strategyPrompt) parts.push(`转换策略提示词：${strategyPrompt}`);
-  }
-  parts.push(`拼豆成品候选：${spec.title}，${spec.intent}`);
-  parts.push(`目标拼豆尺寸：${payload.size.rows}×${payload.size.cols}`);
-  if (payload.mode === 'reference') {
-    parts.push(`网格生成要求：请把用户选择的 ${payload.size.rows} 格理解为参考图最终拼豆网格的短边格数，长边必须按原图比例自然推导，不要为了凑正方形去压缩、拉伸或改坏原图构图。`);
-  } else {
-    parts.push(`网格生成要求：请严格按 ${payload.size.rows}×${payload.size.cols} 的拼豆网格思维组织画面，把主体概括成清楚的大色块和块面边界，让结果看起来更像已经初步像素化/拼豆化的源图，而不是普通高清插画。`);
-  }
-  parts.push('块面要求：优先大色块、少渐变、少纹理、少碎点、少高频细节，允许必要层次，但不要出现大量细碎真实材质。');
-  parts.push('工程友好要求：让后续工程转换主要做色板映射、少量边界修正和颗数统计，而不是重新压缩整张图。');
-  parts.push(spec.promptSuffix);
-  return parts.filter(Boolean).join('\n');
+  // 简化后：只使用固定提示词模板，删除所有额外拼接
+  return (payload.aiConfig?.template || '').trim();
 }
+
 
 function normalizeBaseUrl(url) {
   return (url || '').replace(/\/+$/, '');
@@ -3625,6 +3386,16 @@ function renderAiBeadCandidates(candidates, payload) {
   renderAiPickViewer(effectivePayload, candidates);
 }
 
+function downloadAiImage(candidateId) {
+  const candidate = (aiBeadCandidates || []).find(c => c.id === candidateId);
+  const url = candidate?.previewUrl || candidate?.convertedPreviewUrl || '';
+  if (!url) { showToast('图片还未生成，请稍等'); return; }
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ai-gen-${Date.now()}.png`;
+  a.click();
+}
+
 function previewAiCandidate(candidateId) {
   const candidate = aiBeadCandidates.find(item => item.id === candidateId);
   if (!candidate) return;
@@ -3635,6 +3406,20 @@ function applySelectedBeadCandidateById(candidateId) {
   const candidate = aiBeadCandidates.find(item => item.id === candidateId);
   if (!candidate) return;
   applySelectedBeadCandidate(candidate);
+}
+
+function applySelectedBeadCandidateByIdWithPerfectPixel(candidateId) {
+  const candidate = aiBeadCandidates.find(item => item.id === candidateId);
+  if (!candidate) return;
+  applySelectedBeadCandidateWithPerfectPixel(candidate);
+}
+
+function applySelectedBeadCandidateWithPerfectPixel(candidate) {
+  selectedAiCandidate = candidate;
+  const payload = buildImageConvertPayloadFromAiCandidate(candidate);
+  payload.usePerfectPixel = true;
+  postImageConvertMessage('god-dou:image-convert:import-ai-candidate', payload);
+  goPage('page-img-convert');
 }
 
 function resolveEngineeringProfileFromAiCandidate(candidate) {
@@ -3747,8 +3532,8 @@ function applySelectedBeadCandidate(candidate) {
 function checkAiGenBtn() {
   const btn = document.getElementById('ai-gen-btn');
   if (!btn) return;
-  const prompt = (document.getElementById('ai-prompt') || {}).value?.trim() || '';
-  const canGenerate = aiMode === 'reference' ? !!aiReferenceImage : prompt.length > 0;
+  // 简化后：只需要有图片就可以生成
+  const canGenerate = !!aiReferenceImage;
   btn.disabled = !canGenerate;
   btn.style.opacity = canGenerate ? '1' : '0.5';
   btn.style.cursor = canGenerate ? 'pointer' : 'not-allowed';
@@ -4531,7 +4316,8 @@ window.addEventListener('load', function() {
   initializeCartStore();
   updateGreeting();
   loadAiConfig();
-  switchAiMode('text');
+  // 简化后：固定 reference 模式，不再切换
+  checkAiGenBtn();
   syncAiCustomSize();
   checkAiGenBtn();
   // Privacy check on first visit
