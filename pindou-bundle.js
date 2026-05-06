@@ -6792,7 +6792,7 @@ function setFinalQuality(level) {
   renderFinalArtwork();
   const plan = resolveSafeFinalExportPlan(level);
   if (plan.requested && !isFinalExportEstimateSafe(plan.requested)) {
-    showToast(`${plan.requested.label} 可能超过浏览器导出限制，保存时会自动降级`);
+    showToast(`当前设备保存不了最高规格时，会自动为你保存清晰版本`);
   }
 }
 function renderFinalLegend() {
@@ -8731,7 +8731,7 @@ async function saveImage(target) {
       appState.finalQuality = plan.selected.level;
       syncFinalQualityChip();
       renderFinalArtwork();
-      showToast(`${plan.requested.label} 超出浏览器限制，已自动降级为 ${plan.selected.label}`);
+      showToast(`已为你保存 ${plan.selected.label} 版本`);
     }
     const scale = Math.max(1, Number(plan.selected.exportMultiplier || 1));
     const exportCanvas = document.createElement('canvas');

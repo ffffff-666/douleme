@@ -57,45 +57,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .ai-mode-desc{font-size:10px;color:var(--text2);margin-top:3px;line-height:1.35}
 .ai-helper{font-size:11px;line-height:1.5;color:#8b7ba8;background:rgba(184,169,201,.12);border:1px solid rgba(184,169,201,.18);padding:8px 10px;border-radius:10px;margin-bottom:10px}
 .ai-subhint{font-size:10.5px;color:var(--text2);line-height:1.45;margin:0 0 8px}
-.ai-config-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:10px}
-.ai-config-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:8px}
-.ai-config-title{font-size:12px;font-weight:700;color:var(--text)}
-.ai-config-summary{font-size:10px;color:var(--text2);flex:1;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ai-config-arrow{font-size:12px;color:var(--text2);transition:transform .2s}
-.ai-config-card.open .ai-config-arrow{transform:rotate(180deg)}
-.ai-config-body{display:none;padding-top:10px}
-.ai-config-card.open .ai-config-body{display:block}
-.ai-endpoint-list{display:flex;flex-direction:column;gap:8px}
-.ai-endpoint-card{border:1px solid #e7deef;border-radius:10px;padding:10px;background:#fafafa;position:relative}
-.ai-endpoint-card.disabled{opacity:.55}
-.ai-endpoint-card .ep-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
-.ai-endpoint-card .ep-index{font-weight:600;color:#7c5fbb;font-size:12px;background:#efe7fb;padding:2px 8px;border-radius:8px}
-.ai-endpoint-card .ep-name-input{flex:1;min-width:80px;font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:6px;background:#fff}
-.ai-endpoint-card .ep-actions{display:flex;gap:4px;align-items:center}
-.ai-endpoint-card .ep-btn{font-size:11px;padding:3px 8px;border:1px solid #ddd;background:#fff;border-radius:6px;cursor:pointer;color:#555}
-.ai-endpoint-card .ep-btn:hover{background:#f0f0f0}
-.ai-endpoint-card .ep-btn.danger{color:#c4453d;border-color:#f0c4c0}
-.ai-endpoint-card .ep-toggle{width:36px;height:18px;border-radius:10px;background:#ccc;position:relative;cursor:pointer;transition:background .15s;flex-shrink:0}
-.ai-endpoint-card .ep-toggle.on{background:#7c5fbb}
-.ai-endpoint-card .ep-toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .15s}
-.ai-endpoint-card .ep-toggle.on::after{left:20px}
-.ai-endpoint-card .ep-fields{display:grid;grid-template-columns:1fr;gap:6px}
-.ai-endpoint-card .ep-field-label{font-size:11px;color:#888;margin-bottom:2px}
-.ai-endpoint-card .ep-input{font-size:12px;padding:5px 8px;border:1px solid #ddd;border-radius:6px;background:#fff;width:100%;box-sizing:border-box}
-.ai-endpoint-card .ep-test-bar{display:flex;align-items:center;gap:6px;margin-top:6px}
-.ai-endpoint-card .ep-test-status{font-size:11px;color:#888;flex:1}
-.ai-endpoint-card .ep-test-status.ok{color:#3ba76e}
-.ai-endpoint-card .ep-test-status.fail{color:#c4453d}
-.ai-endpoint-card .ep-test-status.testing{color:#c87f1e}
-.ai-config-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ai-config-item{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
-.ai-config-item.full{grid-column:1 / -1}
-.ai-config-label{font-size:11px;font-weight:600;color:var(--text)}
-.ai-config-tip{font-size:10px;color:var(--text2);line-height:1.35}
-.ai-config-actions{display:flex;gap:8px;margin-top:6px}
-.ai-config-actions .btn-secondary,.ai-config-actions .btn-primary{padding:10px 0;font-size:12px}
-.ai-config-input{padding:9px 10px !important;font-size:12px !important}
-.ai-config-textarea{padding:9px 10px !important;font-size:12px !important;min-height:72px;line-height:1.45}
 .ai-input-zone{background:#fff;border:1px solid #e7e0ef;border-radius:18px;padding:12px;margin-bottom:12px}
 .ai-prompt-engine{position:relative;overflow:hidden;background:linear-gradient(160deg,#fff 0%,#fbf7ff 56%,#fff0f6 100%);border:1px solid rgba(184,169,201,.28);border-radius:var(--radius-xl);padding:14px;margin-bottom:12px;box-shadow:var(--shadow-purple-lg)}
 .ai-prompt-engine::before{content:'';position:absolute;right:-34px;top:-44px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,158,181,.28),rgba(255,158,181,0));pointer-events:none}
@@ -106,18 +67,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .ai-prompt-engine-sub{font-size:11px;color:#8b7ba8;line-height:1.45;margin-top:4px}
 .ai-prompt-engine-badge{font-size:10px;color:#7d5fa5;white-space:nowrap;background:rgba(255,255,255,.78);border:1px solid rgba(184,169,201,.25);padding:6px 9px;border-radius:999px;box-shadow:0 4px 12px rgba(93,68,121,.06)}
 .ai-pe-summary{position:relative;background:rgba(255,255,255,.72);border:1px solid rgba(231,224,239,.95);border-radius:16px;padding:9px 10px;margin-bottom:10px;font-size:11px;line-height:1.45;color:#7d6b92}
-.ai-pe-internal-toggle{position:relative;margin-top:10px;border:1px solid rgba(231,224,239,.95);background:rgba(255,255,255,.66);border-radius:18px;overflow:hidden}
-.ai-pe-internal-toggle-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;cursor:pointer}
-.ai-pe-internal-toggle-title{font-size:12px;font-weight:900;color:#5e4a78}
-.ai-pe-internal-toggle-desc{font-size:10px;color:#9a8eaa;margin-top:2px}
-.ai-pe-internal-toggle-arrow{font-size:13px;color:#9b7fd0;transition:transform .18s}
-.ai-pe-internal-toggle.open .ai-pe-internal-toggle-arrow{transform:rotate(180deg)}
-.ai-pe-internal-toggle-body{display:none;padding:0 11px 11px}
-.ai-pe-internal-toggle.open .ai-pe-internal-toggle-body{display:block}
-.ai-pe-mode-btn{border:1.5px solid #eadff1;border-radius:14px;background:#fff;padding:9px 10px;text-align:left;cursor:pointer;color:#6f6284;font-family:inherit;transition:all .16s;width:100%;margin-bottom:8px}
-.ai-pe-mode-btn strong{display:block;font-size:12px;color:#4f4064}
-.ai-pe-mode-btn span{display:block;font-size:10px;margin-top:2px;line-height:1.3;color:#9a8eaa}
-.ai-pe-mode-btn.active{border-color:#9b7fd0;background:linear-gradient(135deg,#f5efff,#fff7fa);box-shadow:0 8px 22px rgba(93,68,121,.12);color:#4f4064}
 .ai-pe-section{position:relative;background:rgba(255,255,255,.7);border:1px solid rgba(231,224,239,.92);border-radius:20px;padding:11px;margin-top:9px}
 .ai-pe-section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
 .ai-pe-section-title{font-size:12px;font-weight:900;color:#5e4a78}
@@ -137,9 +86,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .ai-pe-check{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #ece3f4;border-radius:14px;padding:9px 10px;font-size:11px;font-weight:700;color:#5b4c6d;cursor:pointer;transition:all .15s}
 .ai-pe-check:hover{border-color:#cbbadf;background:#fbf7ff}
 .ai-pe-check input{width:auto;margin:0;accent-color:#9b7fd0}
-.ai-pe-internal{display:none}
-.ai-pe-internal.show{display:block;background:linear-gradient(135deg,rgba(255,248,231,.88),rgba(255,239,247,.9));border-color:rgba(236,178,91,.28)}
-.ai-pe-internal-note{font-size:10px;line-height:1.5;color:#9a6b2f;background:rgba(255,255,255,.72);border:1px solid rgba(236,178,91,.24);border-radius:12px;padding:8px 9px;margin-bottom:8px}
 .ai-pe-textarea{width:100%;box-sizing:border-box;border:1.5px solid rgba(216,205,230,.9);border-radius:16px;background:#fff;padding:11px 12px;font-size:12px;color:var(--text);font-family:inherit;outline:none;min-height:92px;line-height:1.55;resize:vertical}
 .ai-pe-textarea:focus{border-color:#b8a9c9;box-shadow:0 0 0 3px rgba(184,169,201,.14)}
 .ai-settings-zone{background:#f6f4f8;border:1.5px solid #dcd3e7;border-radius:24px;padding:14px;margin-bottom:12px}
@@ -175,16 +121,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .ai-note-chip{padding:6px 10px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:11px;color:var(--text2)}
 .page-ai-compact .content{padding:10px 12px 14px !important;overflow-y:auto;background:linear-gradient(180deg,#f7f4fb 0%,#fdf6f8 60%,#fff 100%)}
 .page-ai-compact .ai-helper{display:none}
-
-.page-ai-compact .ai-config-card{margin:0 0 10px;padding:0;border:none;background:transparent;box-shadow:none;border-radius:0}
-.page-ai-compact .ai-config-head{padding:9px 12px;background:#fff;border:1px solid rgba(231,224,239,.95);border-radius:14px;box-shadow:0 4px 14px rgba(93,68,121,.05);gap:8px;align-items:center;cursor:pointer}
-.page-ai-compact .ai-config-card.open .ai-config-head{border-radius:14px 14px 0 0;border-bottom:none}
-.page-ai-compact .ai-config-icon{font-size:14px;line-height:1;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:8px;background:linear-gradient(135deg,#efe7fb,#fff1f5);color:#7c5fbb}
-.page-ai-compact .ai-config-title{font-size:12px;font-weight:800;color:#47375d;flex-shrink:0}
-.page-ai-compact .ai-config-summary{display:block;font-size:10.5px;color:#9a8eaa;flex:1;text-align:right;font-weight:600;letter-spacing:.2px}
-.page-ai-compact .ai-config-arrow{color:#9b7fd0;font-size:13px;flex-shrink:0}
-.page-ai-compact .ai-config-body{padding:12px;background:#fff;border:1px solid rgba(231,224,239,.95);border-top:none;border-radius:0 0 14px 14px;max-height:52vh;overflow:auto;box-shadow:0 4px 14px rgba(93,68,121,.05)}
-
 .page-ai-compact .ai-input-zone{margin:0 0 10px;padding:0;background:transparent;border:none}
 .page-ai-compact .ai-zone-title{display:none}
 .page-ai-compact .ai-upload-hero{margin:0;padding:14px;border-radius:18px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:linear-gradient(135deg,#fff 0%,#faf5ff 100%);border:1.5px dashed #cdb9e6;box-shadow:0 8px 22px rgba(93,68,121,.08);transition:all .2s}
@@ -228,55 +164,147 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .page-ai-compact #ai-pe-structure-focus{display:none}
 .page-ai-compact #ai-pe-structure-intensity-row{margin-top:5px;margin-bottom:0!important}
 
-.page-ai-compact .ai-pe-internal-toggle{margin-top:0;border-radius:14px;border:1px solid #efe9f5;background:#fbf9fd}
-.page-ai-compact .ai-pe-internal-toggle-head{padding:9px 11px}
-.page-ai-compact .ai-pe-internal-toggle-desc{display:none}
-.page-ai-compact .ai-config-internal-toggle .ai-pe-internal.show{display:block;margin-top:8px;padding:9px;border-radius:12px}
-.page-ai-compact .ai-config-internal-toggle .ai-pe-section-head{display:flex;margin-bottom:8px}
-.page-ai-compact .ai-config-internal-toggle .ai-pe-section-note{display:none}
-.page-ai-compact .ai-config-internal-toggle .ai-pe-internal-note{margin-bottom:8px}
-.page-ai-compact .ai-config-internal-toggle .ai-pe-textarea{min-height:84px}
-
 .page-ai-compact .ai-gen-cta{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 0;font-size:15px;font-weight:800;letter-spacing:.5px;border-radius:16px;background:linear-gradient(135deg,#ff6b35 0%,#ff8c6b 50%,#ff6b9d 100%);box-shadow:0 12px 26px rgba(255,107,53,.32);transition:all .2s}
 .page-ai-compact .ai-gen-cta:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 14px 30px rgba(255,107,53,.38)}
 .page-ai-compact .ai-gen-cta:disabled{background:#e6e1eb;color:#b8aac6;box-shadow:none;cursor:not-allowed;opacity:1}
 .page-ai-compact .ai-gen-cta-icon{font-size:16px;line-height:1}
 .page-ai-compact .ai-gen-cta-label{line-height:1}
 
+/* AI subpage uses the same pixel-workshop language as the home page. */
+#page-ai-gen{background-color:#fff1c9;background-image:linear-gradient(rgba(86,61,105,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(86,61,105,.08) 1px,transparent 1px),linear-gradient(180deg,#fff3d2 0%,#ffeef6 56%,#f3ecff 100%);background-size:18px 18px,18px 18px,100% 100%}
+#page-ai-gen .nav-bar{background:#fff9e8;border-bottom:3px solid #3c2d4c;box-shadow:0 4px 0 rgba(60,45,76,.12)}
+#page-ai-gen .nav-bar .title{font-weight:950;color:#3c2d4c;text-shadow:1px 1px 0 #ffd978}
+#page-ai-gen .nav-bar .back,#page-ai-gen .right-icon{border-radius:0!important;border:2px solid #3c2d4c!important;background:#fff!important;box-shadow:3px 3px 0 rgba(60,45,76,.14);color:#3c2d4c}
+.page-ai-compact .content{background:transparent!important}
+.page-ai-compact .ai-upload-hero{border:3px solid #3c2d4c;border-radius:0;background:#fff9e8;box-shadow:5px 5px 0 #cdb5ef}
+.page-ai-compact .ai-upload-hero:hover{border-color:#3c2d4c;background:#fff6df}
+.page-ai-compact .ai-upload-hero.has-image{border-color:#3c2d4c;background:#fff9e8}
+.page-ai-compact .ai-upload-thumb{border:2px solid #3c2d4c;border-radius:0;background-color:#fff;background-image:linear-gradient(rgba(60,45,76,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(60,45,76,.08) 1px,transparent 1px);background-size:10px 10px;box-shadow:3px 3px 0 #ff9fb3;color:#3c2d4c}
+.page-ai-compact .ai-upload-title{font-weight:950;color:#2e223a}
+.page-ai-compact .ai-upload-desc{color:#6d5c78}
+.page-ai-compact .ai-upload-cta{border-radius:0;background:#ffb36f;color:#2e223a;border:2px solid #3c2d4c;box-shadow:3px 3px 0 rgba(60,45,76,.16)}
+.page-ai-compact .ai-prompt-engine{border:3px solid #3c2d4c;border-radius:0;background:#fff9e8;box-shadow:5px 5px 0 #cdb5ef}
+.page-ai-compact .ai-pe-section + .ai-pe-section{border-top:2px dashed rgba(60,45,76,.24)}
+.page-ai-compact .ai-pe-section-title{font-weight:950;color:#3c2d4c}
+.page-ai-compact .ai-pe-choice,.page-ai-compact .ai-pe-pill,.ai-pe-segmented{border-radius:0!important;border:2px solid #3c2d4c!important;background:#fff!important;box-shadow:2px 2px 0 rgba(60,45,76,.12)}
+.page-ai-compact .ai-pe-choice.active,.page-ai-compact .ai-pe-pill.active,.ai-pe-seg.active{background:#5e4a78!important;color:#fff!important;border-color:#3c2d4c!important;box-shadow:2px 2px 0 #ffd978!important}
+.page-ai-compact .ai-pe-choice.active .name{color:#fff}
+.ai-pe-seg{border-radius:0!important}
+.page-ai-compact .ai-gen-cta{border-radius:0;border:3px solid #3c2d4c;background:#ff8f6b;color:#2e223a;box-shadow:5px 5px 0 #cdb5ef;font-weight:950}
+.page-ai-compact .ai-gen-cta:disabled{background:#e6e1eb;color:#8d819a;border-color:#3c2d4c;box-shadow:4px 4px 0 rgba(60,45,76,.14)}
+
+/* AI picks page */
+#page-ai-bead-picks{background-color:#fff1c9;background-image:linear-gradient(rgba(86,61,105,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(86,61,105,.08) 1px,transparent 1px),linear-gradient(180deg,#fff3d2 0%,#ffeef6 56%,#f3ecff 100%);background-size:18px 18px,18px 18px,100% 100%}
+#page-ai-bead-picks .nav-bar{background:#fff9e8;border-bottom:3px solid #3c2d4c;box-shadow:0 4px 0 rgba(60,45,76,.12)}
+#page-ai-bead-picks .nav-bar .title{font-weight:950;color:#3c2d4c;text-shadow:1px 1px 0 #ffd978}
+#page-ai-bead-picks .nav-bar .back,#page-ai-bead-picks .right-icon{border-radius:0!important;border:2px solid #3c2d4c!important;background:#fff!important;box-shadow:3px 3px 0 rgba(60,45,76,.14);color:#3c2d4c}
+#page-ai-bead-picks .ai-picks-content{background:transparent!important}
+#page-ai-bead-picks .ai-picks-progress-card,#page-ai-bead-picks .ai-picks-viewer-card{border:3px solid #3c2d4c!important;border-radius:0!important;background:#fff9e8!important;box-shadow:5px 5px 0 #cdb5ef!important}
+#page-ai-bead-picks #inline-gen-progress-text{font-weight:950!important;color:#2e223a!important;text-shadow:1px 1px 0 #ffd978}
+#page-ai-bead-picks #inline-gen-api-detail,#page-ai-bead-picks #inline-gen-api-status,#page-ai-bead-picks #inline-gen-active-tab-hint,#page-ai-bead-picks #inline-gen-progress-percent{color:#6d5c78!important;font-weight:800}
+#page-ai-bead-picks .ai-picks-progress-track{height:10px!important;border-radius:0!important;border:2px solid #3c2d4c;background:#fff!important;box-shadow:2px 2px 0 rgba(60,45,76,.12)}
+#page-ai-bead-picks #inline-gen-progress-bar{border-radius:0!important;background:#ff8f6b!important}
+#page-ai-bead-picks #inline-gen-error-box{border:2px solid #3c2d4c!important;border-radius:0!important;background:#fff!important;box-shadow:3px 3px 0 rgba(60,45,76,.14)}
+#page-ai-bead-picks #ai-picks-tabbar{justify-content:flex-start;padding:2px 2px 12px 0!important}
+#page-ai-bead-picks #ai-picks-tabbar button{border:2px solid #3c2d4c!important;border-radius:0!important;background:#fff!important;color:#3c2d4c!important;box-shadow:3px 3px 0 rgba(60,45,76,.14)!important;font-weight:950!important}
+#page-ai-bead-picks #ai-picks-tabbar button[style*="linear-gradient"]{background:#5e4a78!important;color:#fff!important;box-shadow:2px 2px 0 #ffd978!important}
+#page-ai-bead-picks #ai-picks-viewer-media{border:3px solid #3c2d4c!important;border-radius:0!important;background-color:#fff!important;background-image:linear-gradient(rgba(60,45,76,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(60,45,76,.08) 1px,transparent 1px)!important;background-size:12px 12px!important;box-shadow:4px 4px 0 rgba(60,45,76,.14);min-height:350px!important}
+#page-ai-bead-picks #ai-picks-viewer-media img{border-radius:0!important;image-rendering:auto}
+#page-ai-bead-picks #ai-picks-viewer-caption{color:#6d5c78!important;text-align:center;font-weight:800}
+#page-ai-bead-picks #ai-picks-viewer-stats{justify-content:center!important}
+#page-ai-bead-picks #ai-picks-viewer-stats .info-badge{border:2px solid #3c2d4c;border-radius:0;background:#fff;color:#3c2d4c;box-shadow:3px 3px 0 rgba(60,45,76,.14);font-weight:950}
+#page-ai-bead-picks #ai-picks-viewer-actions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px!important}
+#page-ai-bead-picks #ai-picks-viewer-actions .btn-secondary,#page-ai-bead-picks #ai-picks-viewer-actions .btn-primary{border-radius:0!important;border:2px solid #3c2d4c!important;box-shadow:3px 3px 0 rgba(60,45,76,.14);font-weight:950;white-space:nowrap}
+#page-ai-bead-picks #ai-picks-viewer-actions .btn-primary{background:#ff8f6b!important;color:#2e223a!important}
+#page-ai-bead-picks #ai-picks-viewer-actions .btn-secondary{background:#fff!important;color:#3c2d4c!important}
+
+/* Hidden AI developer config */
+.ai-dev-config-modal{align-items:center;justify-content:center;padding:18px;background:rgba(30,22,42,.58)}
+.ai-dev-config-panel{width:340px;max-height:82vh;overflow:auto;text-align:left;border-radius:0!important;border:3px solid #3c2d4c;background:#fff9e8!important;box-shadow:6px 6px 0 #cdb5ef!important;padding:14px!important}
+.ai-dev-config-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.ai-dev-config-title{font-size:15px;font-weight:950;color:#3c2d4c;text-shadow:1px 1px 0 #ffd978}
+.ai-dev-config-close{border:2px solid #3c2d4c;background:#fff;color:#3c2d4c;box-shadow:2px 2px 0 rgba(60,45,76,.14);width:30px;height:30px;font-size:18px;font-weight:950;cursor:pointer}
+.ai-dev-config-item{margin-bottom:10px}
+.ai-dev-config-label{font-size:11px;font-weight:950;color:#3c2d4c;margin-bottom:5px}
+.ai-dev-config-tip{font-size:10px;line-height:1.45;color:#7a6a86;margin-top:4px}
+.ai-dev-config-input,.ai-dev-config-textarea{width:100%;box-sizing:border-box;border-radius:0;border:2px solid #3c2d4c;background:#fff;color:#2e223a;box-shadow:2px 2px 0 rgba(60,45,76,.12);font-family:inherit;font-size:12px;outline:none}
+.ai-dev-config-input{height:34px;padding:6px 8px}
+.ai-dev-config-textarea{min-height:92px;padding:8px;line-height:1.45;resize:vertical}
+.ai-dev-config-textarea.endpoints{min-height:118px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.5px}
+.ai-dev-config-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.ai-dev-config-actions button{border-radius:0!important;border:2px solid #3c2d4c!important;box-shadow:3px 3px 0 rgba(60,45,76,.14);font-weight:950!important;padding:9px 0!important;font-size:12px!important}
+.ai-endpoint-list{display:flex;flex-direction:column;gap:9px}
+.ai-endpoint-card{border:2px solid #3c2d4c;background:#fff;box-shadow:3px 3px 0 rgba(60,45,76,.12);padding:9px}
+.ai-endpoint-card.disabled{opacity:.58}
+.ai-endpoint-head{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.ai-endpoint-index{font-size:10px;font-weight:950;color:#fff;background:#3c2d4c;padding:3px 6px;box-shadow:2px 2px 0 #ffd978}
+.ai-endpoint-name{flex:1;min-width:0}
+.ai-endpoint-tools{display:flex;gap:4px}
+.ai-endpoint-mini{border:1px solid #3c2d4c;background:#fff9e8;color:#3c2d4c;font-size:10px;font-weight:950;height:24px;min-width:24px;cursor:pointer}
+.ai-endpoint-grid{display:grid;grid-template-columns:1fr;gap:6px}
+.ai-endpoint-field{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:6px}
+.ai-endpoint-field span{font-size:10px;font-weight:950;color:#6d5c78}
+.ai-endpoint-card input[type="text"],.ai-endpoint-card input[type="password"]{width:100%;box-sizing:border-box;border-radius:0;border:1px solid #3c2d4c;background:#fff;color:#2e223a;font-size:11px;padding:5px 6px;outline:none}
+.ai-endpoint-toggle{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:950;color:#3c2d4c;white-space:nowrap}
+.ai-endpoint-add{width:100%;margin-top:8px;border-radius:0!important;border:2px dashed #3c2d4c!important;background:#fff!important;color:#3c2d4c!important;font-weight:950!important;padding:9px!important}
+
 /* ==================== Home Page Polish ==================== */
-#page-home{background:linear-gradient(180deg,#f5eefb 0%,#fdf4f7 36%,#f5f5f7 100%)}
-#page-home .nav-bar{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(255,255,255,.55) !important}
-#page-home .nav-bar .title{font-weight:800;color:#3f2f55;letter-spacing:.3px}
-#page-home #greeting-text{padding:0 16px 12px !important;color:#6e5d8b !important;font-size:13px !important;font-weight:600;display:flex;align-items:center;gap:6px}
-#page-home .grid-2{padding:0 16px}
-#page-home .bento-card{position:relative;overflow:hidden;border-radius:var(--radius-xl);padding:22px 18px;min-height:138px;align-items:flex-start;justify-content:space-between;box-shadow:var(--shadow-purple-lg);transition:transform .18s,box-shadow .18s}
-#page-home .bento-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-xl)}
-#page-home .bento-card::before{content:'';position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.32),rgba(255,255,255,0));pointer-events:none}
-#page-home .bento-card::after{content:'';position:absolute;left:-26px;bottom:-46px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),rgba(255,255,255,0));pointer-events:none}
-#page-home .bento-card .emoji{font-size:30px;width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
-#page-home .bento-card .label{font-size:17px;font-weight:800;color:#fff;letter-spacing:.3px;line-height:1.2}
-#page-home .bento-card .desc{font-size:11px;color:rgba(255,255,255,.85);font-weight:500;letter-spacing:.2px}
-#page-home .bento-card-body{display:flex;flex-direction:column;gap:4px}
-
-#page-home #home-tabs{background:transparent;border:none;padding:0 16px;margin:6px 0 0;display:inline-flex;gap:6px}
-#page-home #home-tabs .tab{padding:8px 16px;font-size:13px;font-weight:700;color:#9a8eaa;border-radius:999px;background:rgba(255,255,255,.6);border:1px solid rgba(184,169,201,.18);transition:all .15s}
-#page-home #home-tabs .tab.active{color:#fff;background:linear-gradient(135deg,#9b7fd0,#b8a9c9);border-color:transparent;box-shadow:0 6px 14px rgba(155,127,208,.32)}
+#page-home{background-color:#fff1c9;background-image:linear-gradient(rgba(86,61,105,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(86,61,105,.08) 1px,transparent 1px),linear-gradient(180deg,#fff3d2 0%,#ffeef6 54%,#f3ecff 100%);background-size:18px 18px,18px 18px,100% 100%}
+#page-home .nav-bar{backdrop-filter:none;-webkit-backdrop-filter:none;background:#fff9e8 !important;border-bottom:3px solid #3c2d4c;box-shadow:0 4px 0 rgba(60,45,76,.12)}
+#page-home .nav-bar .title{font-weight:950;color:#3c2d4c;letter-spacing:.4px;text-shadow:1px 1px 0 #ffd978}
+#page-home .nav-bar{display:grid;grid-template-columns:64px 1fr 64px;align-items:center}
+#page-home .nav-bar>span:first-child{justify-self:start}
+#page-home .nav-bar>span:last-child{justify-self:end}
+#page-home #greeting-text{display:none}
+#page-home .content{background:transparent}
+#page-home .home-start-card{margin:0 16px 12px;padding:12px;border-radius:0;background:#fff9e8;border:3px solid #3c2d4c;box-shadow:5px 5px 0 #cdb5ef}
+#page-home .home-start-head{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;margin-bottom:12px}
+#page-home .home-pixel-kicker{display:inline-flex;background:#3c2d4c;color:#fff9e8;padding:3px 6px;font-size:9px;font-weight:950;letter-spacing:.7px;box-shadow:2px 2px 0 #ffd978;margin-bottom:7px}
+#page-home .home-start-title{font-size:18px;font-weight:950;color:#2e223a;line-height:1.2;letter-spacing:.2px}
+#page-home .home-start-sub{font-size:11px;color:#6d5c78;line-height:1.45;margin-top:4px;max-width:186px}
+#page-home .home-pixel-board{width:76px;height:76px;background:#fff;border:3px solid #3c2d4c;box-shadow:3px 3px 0 #ff9fb3;display:flex;align-items:center;justify-content:center;image-rendering:pixelated}
+#page-home .home-pixel-sprite{display:grid;grid-template-columns:repeat(7,8px);grid-template-rows:repeat(7,8px);gap:0}
+#page-home .home-pixel-sprite span{width:8px;height:8px;background:transparent}
+#page-home .home-pixel-sprite .p1{background:#3c2d4c}
+#page-home .home-pixel-sprite .p2{background:#ff8f6b}
+#page-home .home-pixel-sprite .p3{background:#ffd978}
+#page-home .home-pixel-sprite .p4{background:#98d8c8}
+#page-home .home-primary-grid{display:grid;grid-template-columns:.82fr 1.28fr;gap:9px}
+#page-home .home-action-card{border:3px solid #3c2d4c;border-radius:0;padding:11px 10px;text-align:center;font-family:inherit;cursor:pointer;min-height:82px;position:relative;overflow:hidden;color:#2e223a;box-shadow:4px 4px 0 rgba(60,45,76,.18);display:flex;flex-direction:column;align-items:center;justify-content:center}
+#page-home .home-action-card::after{content:'';position:absolute;right:8px;bottom:8px;width:30px;height:30px;background:linear-gradient(90deg,rgba(255,255,255,.38) 50%,transparent 50%) 0 0/10px 10px,linear-gradient(rgba(255,255,255,.38) 50%,transparent 50%) 0 0/10px 10px;opacity:.5}
+#page-home .home-action-card.main{background:#ffb36f}
+#page-home .home-action-card.sub{background:#cdb5ef}
+#page-home .home-action-card.ai-hero{background:#ff8f6b;min-height:92px;box-shadow:5px 5px 0 #cdb5ef}
+#page-home .home-action-card.ai-hero::before{content:'✦';position:absolute;top:7px;right:8px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;background:#fff9e8;border:2px solid #3c2d4c;color:#5e4a78;font-size:11px;font-weight:950;box-shadow:2px 2px 0 #ffd978}
+#page-home .home-action-card.ai-hero .home-action-label{font-size:18px}
+#page-home .home-action-label{display:block;font-size:15px;font-weight:950;line-height:1.15;position:relative}
+#page-home .home-action-desc{display:block;font-size:10px;line-height:1.25;margin-top:6px;position:relative;color:rgba(46,34,58,.78)}
+#page-home .home-shortcuts{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:0 16px 12px}
+#page-home .home-shortcut{border:2px solid #3c2d4c;border-radius:0;background:#fff;color:#3c2d4c;padding:8px 4px;font-family:inherit;box-shadow:3px 3px 0 rgba(60,45,76,.14);cursor:pointer}
+#page-home .home-shortcut-icon{display:flex;align-items:center;justify-content:center;width:22px;height:22px;margin:0 auto 5px;background:#fff1c9;border:2px solid #3c2d4c;font-size:12px;font-weight:950;line-height:1}
+#page-home .home-shortcut-title{display:block;font-size:10px;font-weight:950;white-space:nowrap}
+#page-home #home-tabs{background:transparent;border:none;padding:0 16px;margin:0;display:inline-flex;gap:6px}
+#page-home #home-tabs .tab{padding:7px 12px;font-size:12px;font-weight:950;color:#5b4a67;border-radius:0;background:#fff;border:2px solid #3c2d4c;box-shadow:2px 2px 0 rgba(60,45,76,.12);transition:all .15s}
+#page-home #home-tabs .tab.active{color:#fff;background:#5e4a78;border-color:#3c2d4c;box-shadow:2px 2px 0 #ffd978}
 #page-home #home-tabs .tab.active::after{display:none}
-
 #page-home #home-tab-content{padding:0 0 12px}
-#page-home #home-recent,#page-home #home-templates{padding:14px 16px 20px;gap:10px}
-#page-home .product-card{border-radius:18px;background:#fff;box-shadow:0 6px 16px rgba(60,40,90,.08);transition:transform .18s,box-shadow .18s;overflow:hidden}
-#page-home .product-card:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(60,40,90,.14)}
-#page-home .product-card .img-area{height:128px;font-size:42px;background:linear-gradient(135deg,#f5edff 0%,#ffeef3 100%);position:relative}
+#page-home #home-recent,#page-home #home-templates{padding:11px 16px 20px;gap:10px}
+#page-home .product-card{border-radius:0;background:#fff;box-shadow:4px 4px 0 rgba(60,45,76,.14);transition:transform .18s,box-shadow .18s;overflow:hidden;border:2px solid #3c2d4c}
+#page-home .product-card:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 rgba(60,45,76,.2)}
+#page-home .product-card .img-area{height:132px;font-size:38px;background-color:#fff3d2;background-image:linear-gradient(rgba(60,45,76,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(60,45,76,.08) 1px,transparent 1px),linear-gradient(135deg,#fff2d2 0%,#ffeaf2 52%,#efe7fb 100%);background-size:12px 12px,12px 12px,100% 100%;position:relative}
+#page-home .product-card .img-area::after{content:'';position:absolute;right:10px;bottom:10px;width:34px;height:34px;background:linear-gradient(90deg,rgba(255,255,255,.64) 50%,transparent 50%) 0 0/10px 10px,linear-gradient(rgba(255,255,255,.64) 50%,transparent 50%) 0 0/10px 10px;opacity:.7}
+#page-home .home-demo-img{width:100%;height:100%;object-fit:contain;padding:3px;image-rendering:pixelated;position:relative;z-index:1}
 #page-home .product-card .body{padding:10px 12px 12px}
-#page-home .product-card .body>div:first-child{font-size:13px;font-weight:700;color:#3f2f55;line-height:1.2}
-#page-home .product-card .body>div:last-child{font-size:11px;color:#9a8eaa;margin-top:3px}
+#page-home .product-card .body>div:first-child{font-size:13px;font-weight:800;color:#3f2f55;line-height:1.2}
+#page-home .product-card .body>div:last-child{font-size:11px;color:#8f819e;margin-top:4px;line-height:1.35}
 
-#main-tabbar{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(184,169,201,.16);box-shadow:0 -4px 16px rgba(60,40,90,.06)}
-#main-tabbar .tab-item{font-weight:700;color:#a89cb6;letter-spacing:.2px}
-#main-tabbar .tab-item .icon{transition:transform .15s}
-#main-tabbar .tab-item.active{color:#7c5fbb}
-#main-tabbar .tab-item.active .icon{transform:translateY(-2px) scale(1.08)}
+.tabbar{height:62px;background:#fff9e8;border-top:4px solid #3c2d4c;box-shadow:0 -4px 0 #cdb5ef,0 -8px 0 rgba(60,45,76,.08);padding:5px 8px 7px;gap:6px;position:relative}
+.tabbar::before{content:'';position:absolute;left:0;right:0;top:-8px;height:4px;background:repeating-linear-gradient(90deg,#3c2d4c 0 8px,transparent 8px 16px);opacity:.14;pointer-events:none}
+.tabbar .tab-item{height:46px;border:2px solid transparent;box-sizing:border-box;font-weight:950;color:#7d6d88;letter-spacing:.2px;gap:1px;border-radius:0}
+.tabbar .tab-item .icon{width:23px;height:23px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid #3c2d4c;box-shadow:2px 2px 0 rgba(60,45,76,.14);font-size:15px;line-height:1;transition:transform .12s,box-shadow .12s}
+.tabbar .tab-item.active{background:#ffe8a6;border-color:#3c2d4c;color:#3c2d4c;box-shadow:3px 3px 0 #ffb36f}
+.tabbar .tab-item.active .icon{background:#3c2d4c;color:#fff9e8;box-shadow:2px 2px 0 #ffd978;transform:translateY(-2px)}
+.tabbar .tab-item:active .icon{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(60,45,76,.14)}
 
 /* ==================== Order Confirm - SKU Row ==================== */
 .order-sku-row{display:grid;grid-template-columns:50px 1fr auto;gap:10px;align-items:center}
@@ -319,6 +347,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
 #ai-picks-viewer-actions .btn-secondary,#ai-picks-viewer-actions .btn-primary{padding:10px 4px!important;font-size:12px!important;line-height:1.1;white-space:nowrap;border-radius:14px}
 #inline-gen-candidate-status{display:none}
 #inline-gen-api-status{font-weight:700;color:#8b7ba8}
+#gen-status-log{display:none!important}
 #ai-prompt{padding:10px 12px;font-size:13px;min-height:68px}
 .candidate-stack{display:flex;flex-direction:column;gap:12px;padding:16px}
 .candidate-card{background:#fff;border-radius:18px;padding:14px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.03)}
@@ -444,77 +473,97 @@ input:focus,textarea:focus{border-color:var(--primary)}
 <div id="page-home" class="page active">
   <div class="nav-bar" style="background:transparent;position:absolute;top:0;left:0;right:0;z-index:10">
     <span style="font-size:14px;cursor:pointer" onclick="goPage('page-search')">🔍</span>
-    <span class="title" style="color:var(--text)">拼豆创作</span>
+    <span class="title" style="color:var(--text)">拼豆工坊</span>
     <span style="display:flex;align-items:center;gap:12px"><span style="font-size:14px;position:relative;cursor:pointer" onclick="showToast('暂无新通知')">🔔<span class="badge" style="font-size:8px;top:-2px;right:-6px">3</span></span><span style="font-size:14px;position:relative;cursor:pointer" onclick="goPage('page-cart')" id="home-cart-icon">🛒<span class="badge" id="home-cart-badge" style="font-size:8px;top:-2px;right:-6px;display:none">0</span></span></span>
   </div>
   <div class="content" style="padding-top:88px;display:flex;flex-direction:column;overflow:hidden">
     <div style="flex-shrink:0">
       <div id="greeting-text">☀️ 下午好，拼豆创作者8821</div>
-      <div class="grid-2" style="margin-bottom:16px">
-        <div class="bento-card" style="background:linear-gradient(135deg,#7e57c2,#b8a9c9)" onclick="startNewAiGeneration()">
-          <div class="emoji">✨</div>
-          <div class="bento-card-body">
-            <div class="label">AI 生图</div>
-            <div class="desc">一键生成拼豆灵感</div>
+      <div class="home-start-card">
+        <div class="home-start-head">
+          <div>
+            <div class="home-pixel-kicker">像素拼豆</div>
+            <div class="home-start-title">拼豆工坊</div>
+            <div class="home-start-sub">照片生成图纸，自动配色号和颗数。</div>
+          </div>
+          <div class="home-pixel-board" aria-hidden="true">
+            <div class="home-pixel-sprite">
+              <span></span><span></span><span></span><span class="p1"></span><span></span><span></span><span></span>
+              <span></span><span></span><span class="p1"></span><span class="p1"></span><span class="p1"></span><span></span><span></span>
+              <span></span><span class="p1"></span><span class="p2"></span><span class="p2"></span><span class="p2"></span><span class="p1"></span><span></span>
+              <span class="p1"></span><span class="p2"></span><span class="p2"></span><span class="p3"></span><span class="p2"></span><span class="p2"></span><span class="p1"></span>
+              <span class="p1"></span><span class="p2"></span><span class="p4"></span><span class="p4"></span><span class="p4"></span><span class="p2"></span><span class="p1"></span>
+              <span class="p1"></span><span class="p2"></span><span class="p4"></span><span class="p1"></span><span class="p4"></span><span class="p2"></span><span class="p1"></span>
+              <span class="p1"></span><span class="p1"></span><span class="p1"></span><span class="p1"></span><span class="p1"></span><span class="p1"></span><span class="p1"></span>
+            </div>
           </div>
         </div>
-        <div class="bento-card" style="background:linear-gradient(135deg,#ec6f88,#ffb7c5)" onclick="startNewImageConvert()">
-          <div class="emoji">🖼️</div>
-          <div class="bento-card-body">
-            <div class="label">图片转换</div>
-            <div class="desc">照片秒变拼豆图</div>
-          </div>
+        <div class="home-primary-grid">
+          <button class="home-action-card main" type="button" onclick="startNewImageConvert()">
+            <span class="home-action-label">照片转图纸</span>
+            <span class="home-action-desc">上传图片出图纸</span>
+          </button>
+          <button class="home-action-card sub ai-hero" type="button" onclick="startNewAiGeneration()">
+            <span class="home-action-label">AI生图</span>
+            <span class="home-action-desc">一句话生成可拼素材</span>
+          </button>
         </div>
       </div>
+      <div class="home-shortcuts">
+        <button class="home-shortcut" type="button" onclick="showToast('色卡功能整理中')"><span class="home-shortcut-icon">C</span><span class="home-shortcut-title">色卡</span></button>
+        <button class="home-shortcut" type="button" onclick="goPage('page-material')"><span class="home-shortcut-icon">B</span><span class="home-shortcut-title">材料清单</span></button>
+        <button class="home-shortcut" type="button" onclick="goPage('page-history')"><span class="home-shortcut-icon">□</span><span class="home-shortcut-title">我的仓库</span></button>
+        <button class="home-shortcut" type="button" onclick="goPage('page-history')"><span class="home-shortcut-icon">★</span><span class="home-shortcut-title">我的图纸</span></button>
+      </div>
       <div class="tabs" id="home-tabs">
-        <div class="tab active" onclick="switchHomeTab(0)">最近创作</div>
-        <div class="tab" onclick="switchHomeTab(1)">官方模板</div>
+        <div class="tab active" onclick="switchHomeTab(0)">继续制作</div>
+        <div class="tab" onclick="switchHomeTab(1)">灵感图纸</div>
       </div>
     </div>
     <div id="home-tab-content" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;padding-bottom:20px">
       <!-- Tab 0: Recent creations -->
       <div id="home-recent" class="grid-2" style="padding-top:12px;padding-bottom:20px">
         <div class="product-card" onclick="openGenResultBento()">
-          <div class="img-area">🐕</div>
-          <div class="body"><div style="font-size:13px;font-weight:500">柴犬拼豆</div><div style="font-size:11px;color:var(--text2)">58×58 · 24色</div></div>
+          <div class="img-area"><img class="home-demo-img" src="./image/1.png" alt="小侦探拼豆图纸"></div>
+          <div class="body"><div style="font-size:13px;font-weight:500">小侦探头像</div><div style="font-size:11px;color:var(--text2)">58×58 · 24 色 · 可继续编辑</div></div>
         </div>
         <div class="product-card" onclick="openGenResultBento()">
-          <div class="img-area">🐱</div>
-          <div class="body"><div style="font-size:13px;font-weight:500">橘猫像素</div><div style="font-size:11px;color:var(--text2)">29×29 · 16色</div></div>
+          <div class="img-area"><img class="home-demo-img" src="./image/2.png" alt="白猫拼豆图纸"></div>
+          <div class="body"><div style="font-size:13px;font-weight:500">白猫小挂件</div><div style="font-size:11px;color:var(--text2)">39×39 · 10 色 · 少色易拼</div></div>
+        </div>
+        <div class="product-card" onclick="openGenResultBento()">
+          <div class="img-area"><img class="home-demo-img" src="./image/3.png" alt="怪盗少年拼豆图纸"></div>
+          <div class="body"><div style="font-size:13px;font-weight:500">怪盗少年</div><div style="font-size:11px;color:var(--text2)">100×100 · 32 色 · 图纸预览</div></div>
+        </div>
+        <div class="product-card" onclick="openGenResultBento()">
+          <div class="img-area"><img class="home-demo-img" src="./image/4.png" alt="礼帽小熊拼豆图纸"></div>
+          <div class="body"><div style="font-size:13px;font-weight:500">礼帽小熊</div><div style="font-size:11px;color:var(--text2)">254×256 · 40 色 · 大幅图纸</div></div>
         </div>
       </div>
       <!-- Tab 0: Empty state (toggle display to show) -->
       <div id="home-recent-empty" style="display:none;text-align:center;padding:48px 16px">
         <div style="font-size:56px;margin-bottom:12px">🎨</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:6px">还没有创作作品哦</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:20px">快来生成你的第一个拼豆图案吧</div>
-        <button class="btn-primary" style="width:auto;padding:10px 32px;display:inline-block" onclick="startNewAiGeneration()">开始创作 ✨</button>
+        <div style="font-size:15px;font-weight:600;margin-bottom:6px">还没有拼豆图纸</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:20px">上传一张喜欢的图片，先做第一张图纸。</div>
+        <button class="btn-primary" style="width:auto;padding:10px 32px;display:inline-block" onclick="startNewImageConvert()">上传图片生成</button>
       </div>
       <!-- Tab 1: Official templates -->
       <div id="home-templates" class="grid-2" style="padding-top:12px;padding-bottom:20px;display:none">
-        <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:var(--surface-soft)">🌸</div>
-          <div class="body"><div style="font-size:13px;font-weight:500">樱花树</div><div style="font-size:11px;color:var(--text2)">87×87 · 32色 · 官方</div></div>
+        <div class="product-card" onclick="startNewImageConvert()">
+          <div class="img-area"><img class="home-demo-img" src="./image/3.png" alt="怪盗少年拼豆图纸"></div>
+          <div class="body"><div style="font-size:13px;font-weight:500">怪盗少年</div><div style="font-size:11px;color:var(--text2)">100×100 · 32 色 · 图纸预览</div></div>
         </div>
-        <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:var(--surface-soft)">🎮</div>
-          <div class="body"><div style="font-size:13px;font-weight:500">游戏手柄</div><div style="font-size:11px;color:var(--text2)">29×29 · 8色 · 官方</div></div>
+        <div class="product-card" onclick="startNewImageConvert()">
+          <div class="img-area"><img class="home-demo-img" src="./image/4.png" alt="礼帽小熊拼豆图纸"></div>
+          <div class="body"><div style="font-size:13px;font-weight:500">礼帽小熊</div><div style="font-size:11px;color:var(--text2)">254×256 · 40 色 · 大幅图纸</div></div>
         </div>
-        <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:var(--surface-soft)">🦊</div>
-          <div class="body"><div style="font-size:13px;font-weight:500">小狐狸</div><div style="font-size:11px;color:var(--text2)">58×58 · 20色 · 官方</div></div>
+        <div class="product-card" onclick="startNewImageConvert()">
+          <div class="img-area"><img class="home-demo-img" src="./image/1.png" alt="小侦探拼豆图纸"></div>
+          <div class="body"><div style="font-size:13px;font-weight:500">小侦探头像</div><div style="font-size:11px;color:var(--text2)">58×58 · 24 色 · 轮廓清楚</div></div>
         </div>
-        <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:var(--surface-soft)">🍄</div>
-          <div class="body"><div style="font-size:13px;font-weight:500">超级蘑菇</div><div style="font-size:11px;color:var(--text2)">29×29 · 12色 · 官方</div></div>
-        </div>
-        <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:var(--surface-soft)">⭐</div>
-          <div class="body"><div style="font-size:13px;font-weight:500">星之卡比</div><div style="font-size:11px;color:var(--text2)">58×58 · 16色 · 官方</div></div>
-        </div>
-        <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:var(--surface-soft)">🌻</div>
-          <div class="body"><div style="font-size:13px;font-weight:500">向日葵</div><div style="font-size:11px;color:var(--text2)">58×58 · 18色 · 官方</div></div>
+        <div class="product-card" onclick="startNewImageConvert()">
+          <div class="img-area"><img class="home-demo-img" src="./image/2.png" alt="白猫拼豆图纸"></div>
+          <div class="body"><div style="font-size:13px;font-weight:500">白猫小挂件</div><div style="font-size:11px;color:var(--text2)">39×39 · 10 色 · 少色易拼</div></div>
         </div>
       </div>
     </div>
@@ -634,101 +683,10 @@ input:focus,textarea:focus{border-color:var(--primary)}
 <div id="page-ai-gen" class="page sub-page page-ai-compact">
   <div class="nav-bar">
     <div class="back" onclick="goBack()">←</div>
-    <span class="title">AI 生图</span>
+    <span class="title" onclick="handleAiTitleSecretTap()">AI生图</span>
     <span class="right-icon" onclick="goPage('page-history')">📋</span>
   </div>
   <div class="content" style="padding:12px 12px 14px">
-    <div class="ai-config-card" id="ai-config-card">
-      <div class="ai-config-head" onclick="toggleAiConfigPanel()">
-        <span class="ai-config-icon" aria-hidden="true">⚙️</span>
-        <div class="ai-config-title">参数配置</div>
-        <div class="ai-config-summary" id="ai-config-summary"></div>
-        <div class="ai-config-arrow">⌄</div>
-      </div>
-      <div class="ai-config-body">
-        <div class="ai-config-grid">
-          <div class="ai-config-item full">
-            <div class="ai-config-label">节点列表（按顺序优先级，第一个失败自动尝试下一个）</div>
-            <div id="ai-endpoint-list" class="ai-endpoint-list"></div>
-            <button class="btn-secondary" style="margin-top:8px;width:100%" onclick="addAiEndpoint();event.stopPropagation()">+ 添加节点</button>
-            <div class="ai-config-tip" style="margin-top:6px">每个节点独立配置 baseUrl / 模型 / API Key。可调整顺序、临时禁用、单独测试连通性。</div>
-          </div>
-          <div class="ai-config-item">
-            <div class="ai-config-label">输出候选数</div>
-            <input id="ai-config-candidate-count" class="ai-config-input" type="number" min="1" max="5" value="3">
-          </div>
-          <div class="ai-config-item">
-            <div class="ai-config-label">说明</div>
-            <div class="ai-config-tip" style="line-height:1.6">候选数越多，等待越久，token 消耗也越多。</div>
-          </div>
-          <div class="ai-config-item full">
-            <div class="ai-config-label">图转图提示词模板（固定，不对用户开放）</div>
-            <textarea id="ai-config-ref-template" class="ai-config-textarea">你是一个严格模拟复古游戏机渲染器的像素画引擎。你的硬件渲染缓冲区有绝对的物理限制：角色精灵图（sprite buffer）最多只能存储 60×60 个像素，超过这个尺寸硬件会崩溃。
-
-[TASK]
-根据参考图，在这个硬件限制下渲染一个 Q版角色精灵图。
-
-[RENDERING PIPELINE - 严格按顺序执行]
-Step 1: 分配精灵缓冲区 — 最多 60×60 像素（绝对不可突破，no exception, hard hardware limit）。
-Step 2: 缩放参考图主体，填满缓冲区，最长边 ≤ 60 像素，不得小于 40 像素。
-Step 3: 量化颜色到 4~12 色的调色板（palette），纯色填充，每个像素 1 种颜色。
-Step 4: 按像素网格渲染，每个像素是一个正方形色块，无抗锯齿，无渐变，无半透明，无描边。
-Step 5: 输出到 1024×1024 画布，用 nearest-neighbor 放大（必须是硬边、大块、锯齿状的像素块，不是高清图）。
-
-[VISUAL ANCHORS]
-Style: chunky 8-bit sprite, similar density to Game Boy Color sprite (≤60px), NOT detailed modern pixel art.
-The final image must look like it was rendered at MAXIMUM 60×60 pixel resolution, then scaled up. Every "pixel" must be a huge visible square block.
-
-[STRICT CONSTRAINTS]
-- 硬件上限：最长边 ≤ 60 像素（HARD LIMIT, 违反 = 渲染失败）
-- 色彩上限：≤ 12 种纯色
-- 背景：纯白，无文字，无网格线，无描边
-- 主体撑满缓冲区，四周边距 ≤ 2 像素
-- 优先保证"像原图"的程度，但绝不能通过增加像素数来实现
-
-[FAILURE CONDITIONS - 满足任一条即判定输出失败]
-- 最长边超过 60 像素 ❌
-- 单个色块内部出现多种颜色或更小的色块 ❌
-- 出现抗锯齿、渐变、软边缘 ❌
-- 像素大小不一或不是正方形 ❌</textarea>
-          </div>
-          <div class="ai-config-item full">
-            <div class="ai-pe-internal-toggle ai-config-internal-toggle" id="ai-pe-internal-toggle">
-              <div class="ai-pe-internal-toggle-head" onclick="toggleAiInternalPromptPanel()">
-                <div>
-                  <div class="ai-pe-internal-toggle-title">内部文字生图</div>
-                  <div class="ai-pe-internal-toggle-desc">默认收起</div>
-                </div>
-                <div class="ai-pe-internal-toggle-arrow">⌄</div>
-              </div>
-              <div class="ai-pe-internal-toggle-body">
-                <button class="ai-pe-mode-btn" data-pe-field="mode" data-pe-value="internal-text" onclick="selectAiPromptEngineOption(this)">
-                  <strong>启用内部文字生图</strong>
-                  <span>直接用描述生成</span>
-                </button>
-                <button class="ai-pe-mode-btn" data-pe-field="mode" data-pe-value="reference" onclick="selectAiPromptEngineOption(this)">
-                  <strong>回到参考图改造</strong>
-                  <span>回到上传图片</span>
-                </button>
-                <div class="ai-pe-internal ai-pe-section" id="ai-pe-internal-box">
-                  <div class="ai-pe-section-head">
-                    <div class="ai-pe-section-title">内部自定义描述</div>
-                    <div class="ai-pe-section-note">上线前隐藏</div>
-                  </div>
-                  <div class="ai-pe-internal-note">只给内部测试用，上线可隐藏。</div>
-                  <textarea id="ai-pe-internal-prompt" class="ai-pe-textarea" maxlength="500" placeholder="例：生成一只蓝色猫咪，Q版，正面坐姿，背景干净，适合做中尺寸拼豆图。" oninput="syncAiPromptEngineUi()"></textarea>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="ai-config-actions">
-          <button class="btn-secondary" onclick="saveAiConfig();event.stopPropagation()">保存配置</button>
-          <button class="btn-secondary" onclick="resetAiConfig();event.stopPropagation()">恢复默认</button>
-        </div>
-      </div>
-    </div>
-
     <div class="ai-input-zone">
       <div id="ai-reference-panel">
         <div class="ai-upload-box ai-upload-hero" id="ai-reference-upload" onclick="document.getElementById('ai-reference-input').click()">
@@ -813,8 +771,37 @@ The final image must look like it was rendered at MAXIMUM 60×60 pixel resolutio
 
     <button class="btn-primary ai-gen-cta" id="ai-gen-btn" onclick="startAiGenerate()" disabled>
       <span class="ai-gen-cta-icon">✨</span>
-      <span class="ai-gen-cta-label">生成拼豆图</span>
+      <span class="ai-gen-cta-label">生成拼豆方案</span>
     </button>
+  </div>
+</div>
+
+<div id="ai-dev-config-modal" class="modal-overlay ai-dev-config-modal">
+  <div class="modal ai-dev-config-panel">
+    <div class="ai-dev-config-head">
+      <div class="ai-dev-config-title">AI 开发配置</div>
+      <button class="ai-dev-config-close" type="button" onclick="closeAiDevConfig()">×</button>
+    </div>
+    <div class="ai-dev-config-item">
+      <div class="ai-dev-config-label">输出候选数</div>
+      <input id="ai-config-candidate-count" class="ai-dev-config-input" type="number" min="1" max="5" value="1">
+      <div class="ai-dev-config-tip">客户页不展示，只影响内部配置。</div>
+    </div>
+    <div class="ai-dev-config-item">
+      <div class="ai-dev-config-label">图转图提示词模板</div>
+      <textarea id="ai-config-ref-template" class="ai-dev-config-textarea"></textarea>
+    </div>
+    <div class="ai-dev-config-item">
+      <div class="ai-dev-config-label">API 节点顺序</div>
+      <div id="ai-endpoint-list" class="ai-endpoint-list"></div>
+      <button class="ai-endpoint-add" type="button" onclick="addAiEndpoint()">+ 添加节点</button>
+      <div class="ai-dev-config-tip">从上到下依次尝试，失败后自动切到下一个启用节点。</div>
+    </div>
+    <div class="ai-dev-config-actions">
+      <button class="btn-secondary" type="button" onclick="resetAiConfig()">恢复默认</button>
+      <button class="btn-secondary" type="button" onclick="closeAiDevConfig()">关闭</button>
+      <button class="btn-primary" type="button" onclick="saveAiConfig()">保存</button>
+    </div>
   </div>
 </div>
 
@@ -824,8 +811,8 @@ The final image must look like it was rendered at MAXIMUM 60×60 pixel resolutio
     <span class="title">挑选拼豆方案</span>
     <span class="right-icon" onclick="showToast('已为你保留本次候选')">✨</span>
   </div>
-  <div class="content" style="padding:16px">
-    <div style="background:linear-gradient(135deg,#f5ecff,#fff1f5);border-radius:20px;padding:14px;box-shadow:var(--shadow);margin-bottom:12px">
+  <div class="content ai-picks-content" style="padding:16px">
+    <div class="ai-picks-progress-card" style="background:linear-gradient(135deg,#f5ecff,#fff1f5);border-radius:20px;padding:14px;box-shadow:var(--shadow);margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px">
         <div>
           <div id="inline-gen-progress-text" style="font-size:15px;font-weight:700;color:var(--text)">等待开始</div>
@@ -836,7 +823,7 @@ The final image must look like it was rendered at MAXIMUM 60×60 pixel resolutio
           <div id="inline-gen-progress-percent" style="font-size:12px;color:var(--text2);margin-top:4px">0%</div>
         </div>
       </div>
-      <div style="width:100%;height:6px;background:rgba(184,169,201,.2);border-radius:999px;overflow:hidden;margin-bottom:8px">
+      <div class="ai-picks-progress-track" style="width:100%;height:6px;background:rgba(184,169,201,.2);border-radius:999px;overflow:hidden;margin-bottom:8px">
         <div id="inline-gen-progress-bar" style="width:0%;height:100%;background:linear-gradient(90deg,#b8a9c9,#ffb7c5);border-radius:999px;transition:width .35s ease"></div>
       </div>
       <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--text2)">
@@ -844,14 +831,14 @@ The final image must look like it was rendered at MAXIMUM 60×60 pixel resolutio
         <span id="inline-gen-active-tab-hint">滑动切换候选</span>
       </div>
       <div id="inline-gen-error-box" style="display:none;padding:10px 12px;border-radius:12px;background:#fff4f4;margin-top:10px">
-        <div style="font-size:12px;font-weight:700;color:#d14343;margin-bottom:4px">错误详情</div>
+        <div style="font-size:12px;font-weight:700;color:#d14343;margin-bottom:4px">处理提示</div>
         <div id="inline-gen-error-text" style="font-size:12px;line-height:1.6;color:#a33a3a;word-break:break-word"></div>
       </div>
     </div>
 
     <div id="ai-picks-tabbar" style="display:flex;gap:6px;overflow-x:auto;padding:2px 2px 10px 0;scrollbar-width:none;-ms-overflow-style:none"></div>
 
-    <div style="background:#fff;border-radius:20px;padding:12px;box-shadow:var(--shadow)">
+    <div class="ai-picks-viewer-card" style="background:#fff;border-radius:20px;padding:12px;box-shadow:var(--shadow)">
       <div id="ai-picks-viewer-media" style="min-height:360px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#f5effa,#fff3f7);display:flex;align-items:center;justify-content:center"></div>
       <div id="ai-picks-viewer-caption" style="font-size:13px;color:var(--text2);line-height:1.6;margin-top:10px"></div>
       <div id="ai-picks-viewer-stats" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"></div>
@@ -867,7 +854,7 @@ The final image must look like it was rendered at MAXIMUM 60×60 pixel resolutio
       id="image-convert-frame"
       class="image-convert-embed-frame"
       title="图片转换"
-      src="./图像生成.html?embedded=1&v=20260426-ai-ui-polish"
+      src="./图像生成.html?embedded=1&v=20260507-center-fixes"
     ></iframe>
   </div>
 </div>
@@ -1374,8 +1361,8 @@ The final image must look like it was rendered at MAXIMUM 60×60 pixel resolutio
 <div id="ai-generating-overlay" class="modal-overlay" style="background:linear-gradient(135deg,rgba(184,169,201,.95),rgba(255,183,197,.95));flex-direction:column;gap:24px">
   <div style="text-align:center;color:#fff">
     <div style="font-size:var(--font-3xl);animation:genPulse 2s ease-in-out infinite">✨</div>
-    <div style="font-size:20px;font-weight:700;margin:16px 0 8px">AI 正在创作中...</div>
-    <div style="font-size:14px;opacity:.8" id="gen-progress-text">分析描述词，匹配风格模型</div>
+    <div style="font-size:20px;font-weight:700;margin:16px 0 8px">正在生成拼豆方案...</div>
+    <div style="font-size:14px;opacity:.8" id="gen-progress-text">正在识别主体轮廓</div>
     <div style="margin-top:24px;width:200px;height:4px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden;margin-left:auto;margin-right:auto">
       <div id="gen-progress-bar" style="width:0%;height:100%;background:#fff;border-radius:2px;transition:width .5s ease"></div>
     </div>
@@ -1386,12 +1373,12 @@ The final image must look like it was rendered at MAXIMUM 60×60 pixel resolutio
         <span id="gen-candidate-status">0/0</span>
       </div>
       <div style="display:flex;justify-content:space-between;gap:12px;font-size:12px;opacity:.92;margin-bottom:8px">
-        <span>生成状态</span>
+        <span>方案状态</span>
         <span id="gen-api-status">等待开始</span>
       </div>
-      <div id="gen-api-detail" style="font-size:12px;line-height:1.6;opacity:.78;margin-bottom:10px">准备建立生成任务...</div>
+      <div id="gen-api-detail" style="font-size:12px;line-height:1.6;opacity:.78;margin-bottom:10px">准备整理拼豆方案...</div>
       <div id="gen-error-box" style="display:none;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.18);margin-bottom:10px">
-        <div style="font-size:12px;font-weight:700;margin-bottom:4px">错误详情</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:4px">处理提示</div>
         <div id="gen-error-text" style="font-size:12px;line-height:1.6;opacity:.92;word-break:break-word"></div>
       </div>
       <div style="font-size:12px;font-weight:700;margin-bottom:6px;opacity:.92">当前候选状态</div>
@@ -2374,18 +2361,18 @@ function getBeadSystemLabel(channel) {
 const DEFAULT_ENDPOINTS = [
   {
     id: 'ep-default-1',
-    name: 'OpenRouter',
-    baseUrl: 'https://openrouter.ai/api',
-    apiKey: '',
-    model: 'google/gemini-3.1-flash-image-preview',
-    enabled: true
-  },
-  {
-    id: 'ep-default-2',
     name: 'yunwu',
     baseUrl: 'https://yunwu.ai',
     apiKey: 'sk-rJNnTrudP8tawUFXevdjRTVEW5R8WjNaqynbdDWohKl9NBbK',
     model: 'gemini-3.1-flash-image-preview',
+    enabled: true
+  },
+  {
+    id: 'ep-default-2',
+    name: 'OpenRouter',
+    baseUrl: 'https://openrouter.ai/api',
+    apiKey: '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',
+    model: 'google/gemini-3.1-flash-image-preview',
     enabled: true
   },
   {
@@ -2485,9 +2472,9 @@ const aiGenerationApi = {
 function createDefaultAiGenerationUiState() {
   return {
     progress: 0,
-    message: '分析描述词，匹配风格模型',
+    message: '正在识别主体轮廓',
     apiStatus: '等待开始',
-    detail: '准备建立生成任务...',
+    detail: '准备整理拼豆方案...',
     error: '',
     logs: [],
     candidateStates: [],
@@ -2507,14 +2494,14 @@ function renderAiGeneratingState() {
   if (!state.failed && progress >= 100 && !allDone) progress = 95;
   const publicStatus = state.failed
     ? '生成失败'
-    : (allDone ? '生成完成' : (aiPhaseDone || progress >= 95 ? '工程预览生成中' : 'AI 生图中'));
+    : (allDone ? '生成完成' : (aiPhaseDone || progress >= 95 ? '正在整理拼豆图纸' : '正在生成拼豆方案'));
   const publicDetail = state.failed
-    ? '生成遇到问题，请查看错误详情'
+    ? '这张图暂时没处理好，可以换图或重试'
     : (allDone
-        ? '全部候选已就绪，准备进入结果页'
+        ? '拼豆方案已准备好，马上可以挑选'
         : (aiPhaseDone || progress >= 95
-            ? 'AI 候选原图已返回，正在生成工程拼豆图'
-            : '正在生成拼豆图，请稍等'));
+            ? '正在匹配色号和颗数，请稍等'
+            : '正在识别主体轮廓，请稍等'));
   const bars = ['gen-progress-bar', 'inline-gen-progress-bar'].map(id => document.getElementById(id)).filter(Boolean);
   const texts = ['gen-progress-text', 'inline-gen-progress-text'].map(id => document.getElementById(id)).filter(Boolean);
   const percents = ['gen-progress-percent', 'inline-gen-progress-percent'].map(id => document.getElementById(id)).filter(Boolean);
@@ -2540,13 +2527,13 @@ function renderAiGeneratingState() {
   });
   errorBoxes.forEach(({ box, text }) => {
     box.style.display = state.error ? 'block' : 'none';
-    text.textContent = state.error || '';
+    text.textContent = state.error ? '这张图暂时没处理好，可以换图或重试' : '';
   });
   candidateLists.forEach(candidateList => {
     candidateList.innerHTML = '';
     const statusTextMap = {
       waiting: '等待中',
-      running: '请求中',
+      running: '生成中',
       success: '已完成',
       failed: '失败'
     };
@@ -2582,11 +2569,11 @@ function renderAiGeneratingState() {
       detail.style.lineHeight = '1.5';
       detail.style.opacity = '.82';
       detail.textContent = item.status === 'success'
-        ? '图片已生成'
+        ? '方案已完成'
         : item.status === 'failed'
-          ? '生成失败，请查看错误详情'
+          ? '这个方案没处理好'
           : item.status === 'running'
-            ? 'AI 正在生成图片'
+            ? '正在整理成拼豆图纸'
             : '等待开始';
       row.appendChild(header);
       row.appendChild(detail);
@@ -2597,10 +2584,10 @@ function renderAiGeneratingState() {
   if (logList) {
     logList.innerHTML = '';
     const publicLogs = state.failed
-      ? ['生成失败，请查看错误详情']
+      ? ['这张图暂时没处理好，可以换图或重试']
       : progress >= 100
         ? ['生成完成，正在整理候选方案']
-        : ['AI 生图中，请稍等'];
+        : ['正在生成拼豆方案，请稍等'];
     publicLogs.forEach(item => {
       const row = document.createElement('div');
       row.style.fontSize = '12px';
@@ -2628,7 +2615,7 @@ function renderAiGenerationSourcePanel(payload) {
 function getAiPickTabs(payload, candidates) {
   const tabs = [];
   if (payload?.mode === 'reference' && payload?.sourcePreviewUrl) {
-    tabs.push({ id: 'source', type: 'source', title: '原图' });
+    tabs.push({ id: 'source', type: 'source', title: '参考图' });
   }
   (candidates || []).forEach((candidate, index) => {
     const candidateState = aiGenerationUiState?.candidateStates?.[index];
@@ -2663,11 +2650,11 @@ function renderAiPickViewer(payload, candidates) {
     return;
   }
   if (hint) {
-    hint.textContent = activeTab.type === 'source' ? '当前查看原图' : `当前查看 ${activeTab.title}`;
+    hint.textContent = activeTab.type === 'source' ? '当前查看参考图' : `当前查看 ${activeTab.title}`;
   }
   if (activeTab.type === 'source') {
-    viewerMedia.innerHTML = `<img src="${payload.sourcePreviewUrl}" alt="原图" style="width:100%;height:100%;object-fit:contain;background:#fff;display:block">`;
-    caption.textContent = '原图预览，用于和下方各个 AI 候选结果进行对比。';
+    viewerMedia.innerHTML = `<img src="${payload.sourcePreviewUrl}" alt="参考图" style="width:100%;height:100%;object-fit:contain;background:#fff;display:block">`;
+    caption.textContent = '参考图只用于对比，下面选择更适合制作的拼豆方案。';
     stats.innerHTML = '';
     actions.innerHTML = '';
     return;
@@ -2679,21 +2666,21 @@ function renderAiPickViewer(payload, candidates) {
   if (previewUrl) {
     viewerMedia.innerHTML = `<img src="${previewUrl}" alt="${candidate.title}" style="width:100%;height:100%;object-fit:contain;background:#fff;display:block">`;
   } else {
-    viewerMedia.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--text2)"><div style="font-size:30px">🎨</div><div style="font-size:13px">AI 生成中...</div></div>`;
+    viewerMedia.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--text2)"><div style="font-size:30px">🎨</div><div style="font-size:13px">正在生成方案...</div></div>`;
   }
   caption.textContent = previewUrl
-    ? `${candidate.title || 'AI 生成图'} · 当前展示和继续处理均使用 AI 原图`
+    ? `${candidate.title || '拼豆方案'} · 适合继续做成拼豆图纸`
     : `${candidate.title || ''} · 生成中`;
   stats.innerHTML = `
     <span class="info-badge purple">📐 ${candidate.sizeLabel || ''}</span>
-    <span class="info-badge pink">🎨 AI 原图</span>
-    ${engineeringPreviewUrl ? `<span class="info-badge purple">工程预览 ${candidate.convertedRows || '?'}×${candidate.convertedCols || '?'}</span>` : '<span class="info-badge">工程预览生成中</span>'}
+    <span class="info-badge pink">🎨 拼豆效果图</span>
+    ${engineeringPreviewUrl ? `<span class="info-badge purple">图纸 ${candidate.convertedRows || '?'}×${candidate.convertedCols || '?'}</span>` : '<span class="info-badge">正在整理图纸</span>'}
   `;
   actions.innerHTML = `
     <button class="btn-secondary" onclick="downloadAiImage('${candidate.id}')">保存</button>
-    <button class="btn-secondary" onclick="previewAiCandidate('${candidate.id}')">说明</button>
-    <button class="btn-primary" onclick="applySelectedBeadCandidateById('${candidate.id}')" ${previewUrl ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>继续</button>
-    <button class="btn-primary" onclick="applySelectedBeadCandidateByIdWithPerfectPixel('${candidate.id}')" ${previewUrl ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>精修</button>
+    <button class="btn-secondary" onclick="previewAiCandidate('${candidate.id}')">看要点</button>
+    <button class="btn-primary" onclick="applySelectedBeadCandidateById('${candidate.id}')" ${previewUrl ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>选这个方案</button>
+    <button class="btn-primary" onclick="applySelectedBeadCandidateByIdWithPerfectPixel('${candidate.id}')" ${previewUrl ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>编辑图纸</button>
   `;
 }
 
@@ -2714,7 +2701,7 @@ function buildAiCandidateGeneratedPreview(candidate) {
   if (previewUrl) {
     return `<img class="candidate-image" src="${previewUrl}" alt="${candidate.title}" style="width:100%;height:100%;object-fit:cover;border-radius:14px">`;
   }
-  return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text2);gap:8px;background:linear-gradient(135deg,#fff6fb,#f4ecff);border-radius:14px"><div style="font-size:26px">🎨</div><div style="font-size:12px">AI 生成中...</div></div>`;
+  return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text2);gap:8px;background:linear-gradient(135deg,#fff6fb,#f4ecff);border-radius:14px"><div style="font-size:26px">🎨</div><div style="font-size:12px">正在生成方案...</div></div>`;
 }
 
 function getAiCandidateDisplayUrl(candidate) {
@@ -2836,15 +2823,15 @@ function resetAiGenerationUiState(payload) {
   aiGenerationUiState = createDefaultAiGenerationUiState();
   updateAiGenerationUiState({
     progress: 4,
-    message: payload?.mode === 'reference' ? '读取参考图并建立再创作策略' : '分析描述词，匹配适合拼豆的生成策略',
-    apiStatus: '准备发起请求',
-    detail: `${payload?.mode === 'reference' ? '图转图' : '文生图'} · 模型 ${payload?.aiConfig?.model || '未设置'} · 共 ${totalCandidates} 个候选`,
+    message: payload?.mode === 'reference' ? '正在读取参考图' : '正在理解你的图案描述',
+    apiStatus: '准备中',
+    detail: `准备生成 ${totalCandidates} 个拼豆方案`,
     totalCandidates,
     completedCandidates: 0,
     candidateStates: Array.from({ length: totalCandidates }, (_, index) => ({
       title: `候选方案 ${index + 1}`,
       status: 'waiting',
-      detail: '等待建立请求'
+      detail: '等待开始'
     })),
     error: '',
     failed: false,
@@ -2858,8 +2845,8 @@ function showAiGenerationFailure(errorMessage) {
   updateAiGenerationUiState({
     progress: 100,
     apiStatus: '生成失败',
-    detail: '接口返回异常，等待你调整参数后重试',
-    error: errorMessage || '生成失败，请稍后重试',
+    detail: '这张图暂时没处理好，可以换图或重试',
+    error: '这张图暂时没处理好，可以换图或重试',
     failed: true
   }, {
     logMessage: `失败：${errorMessage || '生成失败，请稍后重试'}`
@@ -3056,193 +3043,8 @@ function updateCharCount() {
   document.getElementById('char-count').textContent = ta.value.length;
 }
 
-function toggleAiConfigPanel(forceOpen) {
-  const card = document.getElementById('ai-config-card');
-  if (!card) return;
-  if (typeof forceOpen === 'boolean') {
-    card.classList.toggle('open', forceOpen);
-  } else {
-    card.classList.toggle('open');
-  }
-}
-
 function syncAiConfigSummary() {
-  const summary = document.getElementById('ai-config-summary');
-  if (summary) summary.textContent = '';
   syncAiEngineeringMapping();
-}
-
-// ==================== AI Endpoints UI ====================
-function renderAiEndpointList() {
-  const host = document.getElementById('ai-endpoint-list');
-  if (!host) return;
-  const endpoints = aiConfig.endpoints || [];
-  host.innerHTML = '';
-  endpoints.forEach((ep, idx) => {
-    const card = document.createElement('div');
-    card.className = `ai-endpoint-card${ep.enabled ? '' : ' disabled'}`;
-    card.dataset.epId = ep.id;
-    card.innerHTML = `
-      <div class="ep-head">
-        <span class="ep-index">#${idx + 1}</span>
-        <input class="ep-name-input" data-field="name" value="${escapeHtml(ep.name || '')}" placeholder="节点名称">
-        <div class="ep-toggle ${ep.enabled ? 'on' : ''}" data-action="toggle" title="启用/禁用"></div>
-        <div class="ep-actions">
-          <button class="ep-btn" data-action="up" ${idx === 0 ? 'disabled' : ''} title="上移">↑</button>
-          <button class="ep-btn" data-action="down" ${idx === endpoints.length - 1 ? 'disabled' : ''} title="下移">↓</button>
-          <button class="ep-btn danger" data-action="remove" title="删除">✕</button>
-        </div>
-      </div>
-      <div class="ep-fields">
-        <div>
-          <div class="ep-field-label">Base URL</div>
-          <input class="ep-input" data-field="baseUrl" value="${escapeHtml(ep.baseUrl || '')}" placeholder="https://openrouter.ai/api">
-        </div>
-        <div>
-          <div class="ep-field-label">Model</div>
-          <input class="ep-input" data-field="model" value="${escapeHtml(ep.model || '')}" placeholder="google/gemini-3.1-flash-image-preview">
-        </div>
-        <div>
-          <div class="ep-field-label">API Key</div>
-          <input class="ep-input" data-field="apiKey" type="password" value="${escapeHtml(ep.apiKey || '')}" placeholder="sk-...">
-        </div>
-      </div>
-      <div class="ep-test-bar">
-        <button class="ep-btn" data-action="test">测试连通性</button>
-        <span class="ep-test-status" data-role="test-status">未测试</span>
-      </div>
-    `;
-    host.appendChild(card);
-
-    card.querySelectorAll('input[data-field]').forEach(input => {
-      input.addEventListener('input', e => {
-        const field = e.target.dataset.field;
-        ep[field] = e.target.value;
-        syncAiConfigSummary();
-      });
-      input.addEventListener('click', e => e.stopPropagation());
-    });
-    card.querySelector('[data-action="toggle"]').addEventListener('click', e => {
-      e.stopPropagation();
-      ep.enabled = !ep.enabled;
-      renderAiEndpointList();
-      syncAiConfigSummary();
-    });
-    card.querySelector('[data-action="up"]').addEventListener('click', e => {
-      e.stopPropagation();
-      if (idx === 0) return;
-      const arr = aiConfig.endpoints;
-      [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
-      renderAiEndpointList();
-      syncAiConfigSummary();
-    });
-    card.querySelector('[data-action="down"]').addEventListener('click', e => {
-      e.stopPropagation();
-      const arr = aiConfig.endpoints;
-      if (idx >= arr.length - 1) return;
-      [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]];
-      renderAiEndpointList();
-      syncAiConfigSummary();
-    });
-    card.querySelector('[data-action="remove"]').addEventListener('click', e => {
-      e.stopPropagation();
-      if ((aiConfig.endpoints || []).length <= 1) {
-        showToast('至少保留一个节点');
-        return;
-      }
-      aiConfig.endpoints.splice(idx, 1);
-      renderAiEndpointList();
-      syncAiConfigSummary();
-    });
-    card.querySelector('[data-action="test"]').addEventListener('click', e => {
-      e.stopPropagation();
-      testAiEndpoint(ep, card);
-    });
-  });
-}
-
-function escapeHtml(str) {
-  return String(str || '').replace(/[&<>"']/g, ch => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[ch]));
-}
-
-function addAiEndpoint() {
-  if (!Array.isArray(aiConfig.endpoints)) aiConfig.endpoints = [];
-  aiConfig.endpoints.push({
-    id: `ep-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-    name: `节点 ${aiConfig.endpoints.length + 1}`,
-    baseUrl: '',
-    apiKey: '',
-    model: '',
-    enabled: true
-  });
-  renderAiEndpointList();
-  syncAiConfigSummary();
-}
-
-async function testAiEndpoint(ep, card) {
-  const status = card.querySelector('[data-role="test-status"]');
-  if (!ep.baseUrl || !ep.apiKey || !ep.model) {
-    status.className = 'ep-test-status fail';
-    status.textContent = '请先填全 baseUrl / model / apiKey';
-    return;
-  }
-  status.className = 'ep-test-status testing';
-  const capability = describeAiEndpointCapability(ep);
-  status.textContent = `测试中...${capability.label ? ` ${capability.label}` : ''}`;
-  try {
-    const url = `${normalizeBaseUrl(ep.baseUrl)}/v1/chat/completions`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${ep.apiKey}`
-      },
-      body: JSON.stringify({
-        model: ep.model,
-        messages: [{ role: 'user', content: 'ping' }],
-        max_tokens: 1
-      })
-    });
-    if (response.ok || response.status === 400) {
-      status.className = 'ep-test-status ok';
-      status.textContent = `✓ 鉴权可用 (HTTP ${response.status})；${capability.testNote}`;
-    } else if (response.status === 401 || response.status === 403) {
-      status.className = 'ep-test-status fail';
-      status.textContent = `✗ 鉴权失败 (HTTP ${response.status})`;
-    } else if (response.status === 404) {
-      status.className = 'ep-test-status fail';
-      status.textContent = `✗ 端点不存在 (HTTP 404)，检查 baseUrl`;
-    } else {
-      status.className = 'ep-test-status fail';
-      status.textContent = `✗ HTTP ${response.status}`;
-    }
-  } catch (err) {
-    status.className = 'ep-test-status fail';
-    status.textContent = `✗ 网络错误: ${err.message || err}`;
-  }
-}
-
-function describeAiEndpointCapability(ep) {
-  const baseUrl = normalizeBaseUrl(ep?.baseUrl || '');
-  const model = ep?.model || '';
-  if (isGeminiImageModel(model, baseUrl)) {
-    return {
-      label: 'Gemini 原生图像链路',
-      testNote: '当前只测鉴权，真实生图走 Gemini generateContent'
-    };
-  }
-  if (/openrouter\.ai/i.test(baseUrl)) {
-    return {
-      label: 'OpenRouter 图像链路',
-      testNote: '当前只测鉴权，真实生图需走 image 接口验证'
-    };
-  }
-  return {
-    label: 'OpenAI 兼容图像链路',
-    testNote: '当前只测鉴权，真实生图需走 images 接口验证'
-  };
 }
 
 function syncAiEngineeringMapping() {
@@ -3251,7 +3053,7 @@ function syncAiEngineeringMapping() {
   const style = getActiveTagText('style-tags') || '卡通';
   const size = parseAiSizeTag(getActiveTagText('ai-size-tags') || '29格');
   if (aiMode !== 'reference') {
-    box.innerHTML = `当前为文生图模式：<br>风格：<b>${style}</b>；尺寸：<b>${size.rows}×${size.cols}</b>。<br>工程承接预设将主要按候选类型默认映射。`;
+    box.innerHTML = `当前方案：<br>风格：<b>${style}</b>；尺寸：<b>${size.rows}×${size.cols}</b>。`;
     return;
   }
   const payload = {
@@ -3261,13 +3063,89 @@ function syncAiEngineeringMapping() {
     referenceFreedom: getReferenceFreedomMeta(getActiveTagText('ai-reference-freedom-tags') || '中'),
     referenceVariation: getReferenceVariationMeta(getActiveTagText('ai-reference-variation-tags') || '动作姿势')
   };
-  const specs = buildCandidateSpecs(payload);
-  const mapping = specs.slice(0, 3).map((spec) => {
-    const preset = resolveEngineeringPresetFromAiControls(payload, spec);
-    const options = resolveEngineeringOptionsFromAiControls(payload, spec);
-    return `- ${spec.title} → ${preset}（去背景:${options.removeBg ? '开' : '关'} / 简化:${options.simplifyLevel} / 抖动:${options.ditherStrength} / 结果编号:${options.showLabels ? '开' : '关'} / 最终编号:${options.finalShowLabels ? '开' : '关'} / 最终清晰度:${options.finalQuality}）`;
-  }).join('<br>');
-  box.innerHTML = `参考图模式当前选择：<br>风格：<b>${style}</b>；多元程度：<b>${payload.referenceFreedom.key}</b>；变化方向：<b>${payload.referenceVariation.key}</b>；短边格数：<b>${size.rows}</b>。<br><br>工程承接映射：<br>${mapping}`;
+  box.innerHTML = `当前方案：<br>风格：<b>${style}</b>；尺寸：<b>${size.rows}×${size.cols}</b>。`;
+}
+
+function renderAiEndpointList() {
+  const list = document.getElementById('ai-endpoint-list');
+  if (!list) return;
+  const endpoints = aiConfig.endpoints || [];
+  list.innerHTML = endpoints.map((ep, index) => `
+    <div class="ai-endpoint-card ${ep.enabled === false ? 'disabled' : ''}" data-ep-id="${escapeHtml(ep.id || '')}">
+      <div class="ai-endpoint-head">
+        <span class="ai-endpoint-index">#${index + 1}</span>
+        <input class="ai-endpoint-name" data-ep-field="name" type="text" value="${escapeHtml(ep.name || `节点 ${index + 1}`)}" placeholder="节点名">
+        <label class="ai-endpoint-toggle">
+          <input data-ep-field="enabled" type="checkbox" ${ep.enabled === false ? '' : 'checked'} onchange="toggleAiEndpointCardState(this)">
+          启用
+        </label>
+        <div class="ai-endpoint-tools">
+          <button class="ai-endpoint-mini" type="button" onclick="moveAiEndpoint(${index}, -1)">↑</button>
+          <button class="ai-endpoint-mini" type="button" onclick="moveAiEndpoint(${index}, 1)">↓</button>
+          <button class="ai-endpoint-mini" type="button" onclick="removeAiEndpoint(${index})">×</button>
+        </div>
+      </div>
+      <div class="ai-endpoint-grid">
+        <label class="ai-endpoint-field"><span>地址</span><input data-ep-field="baseUrl" type="text" value="${escapeHtml(ep.baseUrl || '')}" placeholder="https://..."></label>
+        <label class="ai-endpoint-field"><span>模型</span><input data-ep-field="model" type="text" value="${escapeHtml(ep.model || '')}" placeholder="gemini-3.1-flash-image-preview"></label>
+        <label class="ai-endpoint-field"><span>Key</span><input data-ep-field="apiKey" type="password" value="${escapeHtml(ep.apiKey || '')}" placeholder="sk-..."></label>
+      </div>
+    </div>
+  `).join('');
+}
+
+function readAiEndpointCards() {
+  const list = document.getElementById('ai-endpoint-list');
+  if (!list) return aiConfig.endpoints || [];
+  return [...list.querySelectorAll('.ai-endpoint-card')].map((card, index) => ({
+    id: card.dataset.epId || `ep-${Date.now()}-${index}`,
+    name: card.querySelector('[data-ep-field="name"]')?.value?.trim() || `节点 ${index + 1}`,
+    baseUrl: card.querySelector('[data-ep-field="baseUrl"]')?.value?.trim() || '',
+    apiKey: card.querySelector('[data-ep-field="apiKey"]')?.value?.trim() || '',
+    model: card.querySelector('[data-ep-field="model"]')?.value?.trim() || '',
+    enabled: card.querySelector('[data-ep-field="enabled"]')?.checked !== false
+  }));
+}
+
+function syncAiEndpointCardsToConfig() {
+  aiConfig = {
+    ...aiConfig,
+    endpoints: readAiEndpointCards()
+  };
+}
+
+function addAiEndpoint() {
+  syncAiEndpointCardsToConfig();
+  aiConfig.endpoints = [
+    ...(aiConfig.endpoints || []),
+    {
+      id: `ep-${Date.now()}`,
+      name: `节点 ${(aiConfig.endpoints || []).length + 1}`,
+      baseUrl: '',
+      apiKey: '',
+      model: '',
+      enabled: true
+    }
+  ];
+  renderAiEndpointList();
+}
+
+function removeAiEndpoint(index) {
+  syncAiEndpointCardsToConfig();
+  aiConfig.endpoints.splice(index, 1);
+  renderAiEndpointList();
+}
+
+function moveAiEndpoint(index, direction) {
+  syncAiEndpointCardsToConfig();
+  const target = index + direction;
+  if (target < 0 || target >= aiConfig.endpoints.length) return;
+  [aiConfig.endpoints[index], aiConfig.endpoints[target]] = [aiConfig.endpoints[target], aiConfig.endpoints[index]];
+  renderAiEndpointList();
+}
+
+function toggleAiEndpointCardState(input) {
+  input.closest('.ai-endpoint-card')?.classList.toggle('disabled', !input.checked);
 }
 
 function fillAiConfigForm() {
@@ -3280,13 +3158,21 @@ function fillAiConfigForm() {
 }
 
 function readAiConfigForm() {
+  const candidateCountInput = document.getElementById('ai-config-candidate-count');
+  const refTemplateInput = document.getElementById('ai-config-ref-template');
+  const nextEndpoints = readAiEndpointCards();
   aiConfig = {
     ...aiConfig,
-    candidateCount: Math.max(1, Math.min(5, parseInt(document.getElementById('ai-config-candidate-count')?.value || String(defaultAiConfig.candidateCount), 10) || defaultAiConfig.candidateCount)),
+    candidateCount: candidateCountInput
+      ? Math.max(1, Math.min(5, parseInt(candidateCountInput.value || String(defaultAiConfig.candidateCount), 10) || defaultAiConfig.candidateCount))
+      : (aiConfig.candidateCount || defaultAiConfig.candidateCount),
     beadSystem: getBeadSystemDefaults('ai-generate'),
-    refTemplate: document.getElementById('ai-config-ref-template')?.value?.trim() || defaultAiConfig.refTemplate,
-    endpoints: aiConfig.endpoints || []
+    refTemplate: refTemplateInput
+      ? (refTemplateInput.value?.trim() || defaultAiConfig.refTemplate)
+      : (aiConfig.refTemplate || defaultAiConfig.refTemplate),
+    endpoints: nextEndpoints
   };
+  aiConfig = migrateAiConfig(aiConfig);
   const primary = (aiConfig.endpoints || []).find(ep => ep.enabled) || aiConfig.endpoints?.[0];
   if (primary) {
     aiConfig.baseUrl = primary.baseUrl;
@@ -3294,6 +3180,8 @@ function readAiConfigForm() {
     aiConfig.apiKey = primary.apiKey;
   }
   syncAiConfigSummary();
+  fillAiConfigForm();
+  return true;
 }
 
 function migrateAiConfig(cfg) {
@@ -3357,10 +3245,37 @@ async function loadAiConfig() {
   fillAiConfigForm();
 }
 
+let aiTitleSecretTapCount = 0;
+let aiTitleSecretTapTimer = null;
+
+function handleAiTitleSecretTap() {
+  clearTimeout(aiTitleSecretTapTimer);
+  aiTitleSecretTapCount += 1;
+  if (aiTitleSecretTapCount >= 5) {
+    aiTitleSecretTapCount = 0;
+    openAiDevConfig();
+    return;
+  }
+  aiTitleSecretTapTimer = setTimeout(() => {
+    aiTitleSecretTapCount = 0;
+  }, 1200);
+}
+
+function openAiDevConfig() {
+  fillAiConfigForm();
+  document.getElementById('ai-dev-config-modal')?.classList.add('show');
+}
+
+function closeAiDevConfig() {
+  document.getElementById('ai-dev-config-modal')?.classList.remove('show');
+}
+
 function saveAiConfig() {
-  readAiConfigForm();
+  if (readAiConfigForm() === false) return false;
   localStorage.setItem(AI_CONFIG_STORAGE_KEY, JSON.stringify(aiConfig));
   showToast('模型配置已保存');
+  closeAiDevConfig();
+  return true;
 }
 
 async function resetAiConfig() {
@@ -3453,12 +3368,6 @@ function selectAiPromptEngineOption(el) {
   syncAiPromptEngineUi();
 }
 
-function toggleAiInternalPromptPanel(forceOpen) {
-  const panel = document.getElementById('ai-pe-internal-toggle');
-  if (!panel) return;
-  panel.classList.toggle('open', typeof forceOpen === 'boolean' ? forceOpen : !panel.classList.contains('open'));
-}
-
 function getAiPromptEngineSelection() {
   const presets = getAiPromptPresets();
   const mode = getAiPeActiveValue('mode', 'reference');
@@ -3471,7 +3380,6 @@ function getAiPromptEngineSelection() {
   const focus = focusHost
     ? Array.from(focusHost.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.value)
     : ['expression', 'background', 'pose', 'position'];
-  const internalPrompt = (document.getElementById('ai-pe-internal-prompt')?.value || '').trim();
   const style = presets.styles?.[styleKey] || presets.styles?.cute;
   const grid = presets.gridSizes?.[gridKey] || presets.gridSizes?.medium || presets.gridSizes?.[58];
   const structure = presets.structureIntensity?.[intensityKey] || presets.structureIntensity?.medium;
@@ -3487,8 +3395,7 @@ function getAiPromptEngineSelection() {
     structure,
     backgroundKey,
     background,
-    focus,
-    internalPrompt
+    focus
   };
 }
 
@@ -3521,16 +3428,13 @@ function buildPromptEngineFragments(selection) {
     getPromptEngineVariationMeta(selection).promptRule,
     selection.background?.prompt
   ].filter(Boolean);
-  if (selection.mode === 'internal-text' && selection.internalPrompt) {
-    fragments.push(`内部自定义需求：${selection.internalPrompt}`);
-  }
   return fragments;
 }
 
 function updateAiPromptEngineSummary(selection) {
   const el = document.getElementById('ai-pe-summary');
   if (!el) return;
-  const mode = selection.mode === 'internal-text' ? '内部文字生图' : '参考图改造';
+  const mode = '参考图改造';
   const structure = selection.structureAllow === 'keep'
     ? '尽量不变'
     : ({ low: '轻微变化', medium: '适度变化', high: '明显变化' }[selection.intensityKey] || '适度变化');
@@ -3540,22 +3444,16 @@ function updateAiPromptEngineSummary(selection) {
 
 function syncAiPromptEngineUi() {
   const selection = getAiPromptEngineSelection();
-  const internalBox = document.getElementById('ai-pe-internal-box');
   const refPanel = document.getElementById('ai-reference-panel');
   const inputTitle = document.getElementById('ai-input-zone-title');
   const helper = document.getElementById('ai-helper-text');
   const focusBox = document.getElementById('ai-pe-structure-focus');
   const intensity = document.getElementById('ai-pe-structure-intensity-row');
-  const isInternal = selection.mode === 'internal-text';
-  aiMode = isInternal ? 'text' : 'reference';
-  if (internalBox) internalBox.classList.toggle('show', isInternal);
-  if (isInternal) toggleAiInternalPromptPanel(true);
-  if (refPanel) refPanel.style.display = isInternal ? 'none' : '';
-  if (inputTitle) inputTitle.textContent = isInternal ? '内部文字生图' : '上传图片';
+  aiMode = 'reference';
+  if (refPanel) refPanel.style.display = '';
+  if (inputTitle) inputTitle.textContent = '上传图片';
   if (helper) {
-    helper.textContent = isInternal
-      ? '内部模式：用自然语言直接生成拼豆图。'
-      : '上传图片，生成拼豆图。';
+    helper.textContent = '上传图片，生成拼豆图。';
   }
   if (focusBox) focusBox.style.opacity = selection.structureAllow === 'keep' ? '0.55' : '1';
   if (intensity) intensity.style.opacity = selection.structureAllow === 'keep' ? '0.45' : '1';
@@ -3579,8 +3477,8 @@ function switchAiMode(mode, el) {
   if (refPanel) refPanel.style.display = mode === 'reference' ? '' : 'none';
   if (helper) {
     helper.textContent = mode === 'reference'
-      ? '系统会基于你的参考图做再创作，再自动生成多个拼豆候选结果，避免只是把原图硬转成拼豆。'
-      : '系统不会直接给你普通 AI 原图，而是生成多个更适合拼豆落地的候选方案，最后让你挑选最终拼豆图。';
+      ? '上传一张灵感图，系统会整理成更适合制作的拼豆方案。'
+      : '描述你想要的图案，系统会生成可继续制作的拼豆方案。';
   }
   if (label) label.textContent = mode === 'reference' ? '改造要求（可选）' : '描述你想要的图案';
   if (textarea) textarea.placeholder = mode === 'reference'
@@ -3681,10 +3579,9 @@ function commitAiCustomSize() {
 function buildAiGenerationPayload() {
   readAiConfigForm();
   const promptEngine = getAiPromptEngineSelection();
-  const isInternalText = promptEngine.mode === 'internal-text';
   return {
-    mode: isInternalText ? 'text' : 'reference',
-    prompt: isInternalText ? promptEngine.internalPrompt : '',
+    mode: 'reference',
+    prompt: '',
     style: '卡通',
     intent: '平衡还原',
     size: {
@@ -3743,7 +3640,7 @@ async function startAiGenerate() {
   } catch (error) {
     console.error(error);
     showAiGenerationFailure(error?.message || '生成失败，请稍后重试');
-    showToast('生成失败，错误详情已显示在页面中');
+    showToast('这张图暂时没处理好，可以换图或重试');
   } finally {
     aiGenerationRunning = false;
   }
@@ -3778,8 +3675,8 @@ async function pollAiBeadTask(taskId) {
       return {
         status: 'running',
         progress: aiGenerationUiState?.progress || 12,
-        message: aiGenerationUiState?.message || (aiMode === 'reference' ? '正在调用图转图模型并生成拼豆候选方案' : '正在调用文生图模型并生成拼豆候选方案'),
-        apiStatus: aiGenerationUiState?.apiStatus || '请求中',
+        message: aiGenerationUiState?.message || '正在生成拼豆方案',
+        apiStatus: aiGenerationUiState?.apiStatus || '生成中',
         detail: aiGenerationUiState?.detail || '',
         error: aiGenerationUiState?.error || '',
         completedCandidates: aiGenerationUiState?.completedCandidates || 0,
@@ -4247,17 +4144,17 @@ async function requestAiBeadCandidates(payload) {
     }
     updateAiCandidateState(index, {
       status: 'running',
-      detail: 'AI 候选图已生成，正在转换为工程拼豆图'
+      detail: '效果图已生成，正在整理拼豆图纸'
     });
     if (!failed) {
       updateAiGenerationUiState({
         progress: Math.min(94, Math.round((completedCount / specs.length) * 80) + 12),
-        message: completedCount >= specs.length ? 'AI 候选已全部返回，正在生成工程拼豆图' : `已完成 ${completedCount}/${specs.length} 张 AI 候选图`,
+        message: completedCount >= specs.length ? '效果图已生成，正在整理拼豆图纸' : `已完成 ${completedCount}/${specs.length} 个方案`,
         apiStatus: completedCount >= specs.length ? '响应完成' : '部分完成',
-        detail: `${spec.title} 的 AI 候选图已返回，正在继续生成工程拼豆图`,
+        detail: `${spec.title} 已生成，正在匹配色号和颗数`,
         completedCandidates: completedCount
       }, {
-        logMessage: `候选 ${index + 1}/${specs.length} 的 AI 原图已完成，等待工程拼豆图` 
+        logMessage: `候选 ${index + 1}/${specs.length} 的效果图已完成，等待拼豆图纸` 
       });
     }
     return {
@@ -4457,7 +4354,7 @@ function downloadAiImage(candidateId) {
 function previewAiCandidate(candidateId) {
   const candidate = aiBeadCandidates.find(item => item.id === candidateId);
   if (!candidate) return;
-  showToast(`${candidate.title}：${candidate.intent}（工程预设：${resolveEngineeringPresetFromAiCandidate(candidate)}）`);
+  showToast(`${candidate.title || '拼豆方案'}：适合继续做成拼豆图纸`);
 }
 
 function applySelectedBeadCandidateById(candidateId) {
@@ -4648,10 +4545,7 @@ function applySelectedBeadCandidate(candidate) {
 function checkAiGenBtn() {
   const btn = document.getElementById('ai-gen-btn');
   if (!btn) return;
-  const selection = getAiPromptEngineSelection();
-  const canGenerate = selection.mode === 'internal-text'
-    ? !!selection.internalPrompt
-    : !!aiReferenceImage;
+  const canGenerate = !!aiReferenceImage;
   btn.disabled = !canGenerate;
 }
 
@@ -5120,7 +5014,7 @@ function handleImageConvertBridgeMessage(event) {
       if (candidateIndex >= 0) {
         updateAiCandidateState(candidateIndex, {
           status: 'success',
-          detail: `工程预览已生成${Number.isInteger(payload.rows) && Number.isInteger(payload.cols) ? ` (${payload.rows}×${payload.cols})` : ''}`
+          detail: `拼豆图纸已生成${Number.isInteger(payload.rows) && Number.isInteger(payload.cols) ? ` (${payload.rows}×${payload.cols})` : ''}`
         });
       }
       renderAiBeadCandidates(aiBeadCandidates, currentAiGenerationPayload || { mode: candidate.sourceMode || aiMode, prompt: candidate.prompt || '' });
@@ -5263,10 +5157,10 @@ function showGeneratingOverlay() {
   const text = document.getElementById('gen-progress-text');
   bar.style.width = '0%';
   const steps = [
-    {w:'20%',t:'分析描述词，匹配风格模型'},
-    {w:'45%',t:'生成像素图案中...'},
-    {w:'70%',t:'优化颜色搭配...'},
-    {w:'90%',t:'生成材料清单...'},
+    {w:'20%',t:'识别主体轮廓'},
+    {w:'45%',t:'整理成拼豆格子'},
+    {w:'70%',t:'匹配合适色号'},
+    {w:'90%',t:'准备材料清单'},
     {w:'100%',t:'即将完成！'}
   ];
   steps.forEach((s,i) => {

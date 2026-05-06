@@ -5,18 +5,18 @@
   "endpoints": [
     {
       "id": "ep-default-1",
-      "name": "OpenRouter",
-      "baseUrl": "https://openrouter.ai/api",
-      "apiKey": "",
-      "model": "google/gemini-3.1-flash-image-preview",
+      "name": "yunwu",
+      "baseUrl": "https://yunwu.ai",
+      "apiKey": "sk-rJNnTrudP8tawUFXevdjRTVEW5R8WjNaqynbdDWohKl9NBbK",
+      "model": "gemini-3.1-flash-image-preview",
       "enabled": true
     },
     {
       "id": "ep-default-2",
-      "name": "yunwu",
-      "baseUrl": "https://yunwu.ai",
-      "apiKey": "",
-      "model": "gemini-3.1-flash-image-preview",
+      "name": "OpenRouter",
+      "baseUrl": "https://openrouter.ai/api",
+      "apiKey": "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",
+      "model": "google/gemini-3.1-flash-image-preview",
       "enabled": true
     },
     {

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>图片转拼豆图纸</title>
-<link rel="stylesheet" href="./ui.css?v=20260426-ai-ui-polish">
+<link rel="stylesheet" href="./ui.css?v=20260507-center-fixes">
 </head>
 <body>
 <div class="app" id="app">
@@ -12,14 +12,14 @@
 <div id="page-convert" class="page active">
   <div class="nav-bar" id="convertNavBar">
     <span class="back" id="convertBackBtn" onclick="godDouBack()"></span>
-    <span class="title" id="convertPageTitle">图像生成</span>
-    <span style="width:32px"></span>
+    <span class="title" id="convertPageTitle">照片转拼豆图纸</span>
+    <span style="width:36px"></span>
   </div>
   <div class="preview-section" id="previewSection">
     <div class="preview-toolbar">
       <div class="preview-tabs">
         <button class="preview-tab" id="previewTabOrig" type="button" onclick="setPreviewMode('original')">原图</button>
-        <button class="preview-tab active" id="previewTabBeads" type="button" onclick="setPreviewMode('beads')">生成图</button>
+        <button class="preview-tab active" id="previewTabBeads" type="button" onclick="setPreviewMode('beads')">拼豆图纸</button>
       </div>
       <div class="preview-stats" id="previewStats"></div>
     </div>
@@ -84,7 +84,7 @@
     <div style="padding:0 16px">
       <span class="tag active" id="paletteSystemTag">MARD（221色）</span>
     </div>
-    <div class="section-title">生图类型</div>
+    <div class="section-title">图纸风格</div>
     <div class="profile-tags" id="profileTags">
       <span class="tag active" id="profileSmart" onclick="selectRenderProfile('smart')">智能推荐</span>
       <span class="tag" id="profileDetailKeep" onclick="selectRenderProfile('detail_keep')">细节保真</span>
@@ -94,7 +94,7 @@
     <div class="slider-desc" id="profileHint" style="padding:6px 16px 0">根据图片自动选择最优参数（推荐）</div>
     <div class="card" style="margin-top:12px">
       <div class="advanced-toggle" onclick="toggleAdvanced()">
-        <span>高级设置 <span style="font-size:11px;color:var(--text2);font-weight:400">可手动微调参数</span></span>
+        <span>细节调整 <span style="font-size:11px;color:var(--text2);font-weight:400">需要时再打开</span></span>
         <span class="arrow" id="advArrow"></span>
       </div>
       <div class="advanced-body" id="advBody">
@@ -107,7 +107,7 @@
           <span class="label">手绘风格引导 <span style="font-size:10px;color:var(--accent);font-weight:700">NEW</span></span>
           <div class="toggle on" id="handcraftToggle" onclick="this.classList.toggle('on');onHandcraftToggle()"></div>
         </div>
-        <div class="slider-desc">开启后根据99张手绘拼豆样本的风格特征引导生成，让结果更接近手绘效果</div>
+        <div class="slider-desc">开启后会让轮廓和色块更接近手工拼豆图纸。</div>
         <div class="slider-wrap">
           <label><span>颜色精简</span><span id="smLevelVal">0种</span></label>
           <input type="range" id="smLevelSlider" min="0" max="100" value="0" oninput="onSliderManual()">
@@ -115,17 +115,17 @@
         <div class="slider-desc" id="smLevelDesc" style="display:none"></div>
         <div id="ditherGroup">
           <div class="slider-wrap">
-            <label><span>抖动强度（Floyd-Steinberg）</span><span id="ditherVal">0</span></label>
+            <label><span>颜色过渡</span><span id="ditherVal">0</span></label>
             <input type="range" id="ditherSlider" min="0" max="100" value="0" oninput="onSliderManual()">
           </div>
-          <div class="slider-desc">0=关闭抖动，数值越大颜色过渡越平滑，但纯色区可能出现噪点</div>
+          <div class="slider-desc">数值越大过渡越柔和；如果想更清爽，可以保持默认。</div>
         </div>
         <div class="exp-panel">
           <div class="exp-panel-title">
-            <span>实验调参（人物头发）</span>
-            <span class="exp-badge">临时</span>
+            <span>人物细节优化</span>
+            <span class="exp-badge">进阶</span>
           </div>
-          <div class="exp-panel-note">你可以边拖边看，只影响当前页面预览。重点帮我观察：头发断层、灰色混入、衣服是否被带脏、肩膀边界是否更清楚。</div>
+          <div class="exp-panel-note">适合人物头像，主要帮助头发、肩颈和边界更清楚。</div>
           <div class="exp-row">
             <label><span>优化场景</span></label>
             <select id="expSceneSelect" class="exp-select" onchange="onExperimentControlChange()">
@@ -160,7 +160,7 @@
           </div>
           <div class="exp-actions">
             <button class="btn-secondary" type="button" onclick="resetExperimentControls()">恢复默认</button>
-            <button class="btn-secondary" type="button" onclick="copyExperimentSettings()">复制参数</button>
+            <button class="btn-secondary" type="button" onclick="copyExperimentSettings()">复制设置</button>
           </div>
         </div>
       </div>
@@ -169,7 +169,7 @@
   <div style="padding:12px 16px;background:var(--white);border-top:1px solid var(--border);flex-shrink:0" id="bottomBar">
     <div class="bottom-actions">
       <button class="btn-secondary" id="homeBtn" type="button" onclick="godDouBack()" style="display:none">返回首页</button>
-      <button class="btn-primary" id="convertBtn" disabled onclick="navigateToResult()" style="display:none">详细清单</button>
+      <button class="btn-primary" id="convertBtn" disabled onclick="navigateToResult()" style="display:none">查看图纸</button>
     </div>
   </div>
 </div>
@@ -210,12 +210,12 @@
   <div class="nav-bar result-nav-bar">
     <span class="back" id="resultNavSpacer" onclick="postHostMessage('god-dou:image-convert:go-back',{})" title="返回"></span>
     <div class="workspace-switch workspace-switch-nav">
-      <button class="workspace-tab active" id="workspaceTabPreview" type="button" onclick="setWorkspaceMode('preview')">查看</button>
-      <button class="workspace-tab" id="workspaceTabEdit" type="button" onclick="setWorkspaceMode('edit')">编辑</button>
+      <button class="workspace-tab active" id="workspaceTabPreview" type="button" onclick="setWorkspaceMode('preview')">预览图纸</button>
+      <button class="workspace-tab" id="workspaceTabEdit" type="button" onclick="setWorkspaceMode('edit')">编辑图纸</button>
     </div>
-    <span style="display:flex;gap:8px;align-items:center">
-      <button class="btn-secondary" type="button" style="width:auto;padding:6px 12px;font-size:12px" onclick="saveImage()">保存</button>
-      <span onclick="goHostHome()" title="回首页" style="font-size:18px;cursor:pointer;width:32px;text-align:center">🏠</span>
+    <span class="result-nav-actions">
+      <button class="btn-secondary result-save-btn" type="button" onclick="saveImage()">保存</button>
+      <span class="result-home-btn" onclick="goHostHome()" title="回首页">🏠</span>
     </span>
   </div>
   <div class="workspace-panel result-preview-panel active" id="workspacePreviewPanel">
@@ -232,19 +232,19 @@
       <div class="section-title" style="padding-bottom:4px">色板统计</div>
       <div class="color-panel-v2" id="colorPanelV2">
         <div class="slider-wrap color-slider-wrap">
-          <label><span>色板规模</span><span id="colorSliderVal">— / — 色</span></label>
+          <label><span>颜色数量</span><span id="colorSliderVal">— / — 色</span></label>
           <input type="range" id="colorSlider" class="color-slider" min="2" max="2" value="2">
         </div>
-        <div class="slider-desc">向右滑动逐步合并最次要的颜色，前 4 主色受保护不会被砍。点击色块上的 ✕ 可单独删除，点 ↺ 恢复。</div>
+        <div class="slider-desc">向右滑动会减少不重要的小杂色，主要颜色会优先保留。点击色块上的 ✕ 可单独删除，点 ↺ 恢复。</div>
         <div class="color-list color-list--interactive" id="colorTiles"></div>
       </div>
       <div class="color-list" id="colorList"></div>
       <div class="result-material-entry">
         <div class="result-material-copy">
-          <div class="result-material-title">材料明细与备料估算</div>
+          <div class="result-material-title">材料清单与备料建议</div>
           <div class="result-material-desc">查看每种颜色的色号、所需颗数和估算购买数量。</div>
         </div>
-        <button class="btn-secondary" type="button" onclick="openMaterialSheet()">查看材料明细</button>
+        <button class="btn-secondary" type="button" onclick="openMaterialSheet()">查看材料清单</button>
       </div>
     </div>
     <div class="action-bar">
@@ -284,7 +284,7 @@
   <div class="material-sheet" id="materialSheet">
     <div class="material-sheet-handle"></div>
     <div class="material-sheet-head">
-      <div class="material-sheet-title">材料明细与备料</div>
+      <div class="material-sheet-title">材料清单与备料</div>
       <div class="material-sheet-head-actions">
         <button class="material-sheet-link" type="button" onclick="goFinalArtworkFromMaterial()">确认效果</button>
         <button class="material-sheet-close" type="button" onclick="closeMaterialSheet()">关闭</button>
@@ -319,8 +319,8 @@
     <div class="final-setting-card">
       <div class="final-setting-row">
         <div>
-          <div class="final-setting-title">添加编号</div>
-          <div class="final-setting-desc">控制格子内色号显示，导出同步生效。</div>
+          <div class="final-setting-title">显示色号</div>
+          <div class="final-setting-desc">打开后，每个格子会显示对应色号。</div>
         </div>
         <button class="toggle-chip on" id="finalLabelChip" type="button" onclick="toggleFinalLabel()">已开启</button>
       </div>
@@ -328,7 +328,7 @@
       <div class="final-setting-row final-setting-row-quality">
         <div>
           <div class="final-setting-title">图片清晰度</div>
-          <div class="final-setting-desc">越高越清楚，超限会自动降级保存。</div>
+          <div class="final-setting-desc">按保存用途选择，系统会自动处理适合的清晰度。</div>
         </div>
         <div class="final-quality-group">
           <button class="toggle-chip" id="finalQualityStandard" type="button" onclick="setFinalQuality('standard')">普通</button>
@@ -340,11 +340,11 @@
       </div>
     </div>
     <div class="final-note">
-      当前预览会实时反映“编号”和“清晰度”设置；保存相册前会自动检查浏览器导出上限，8K/16K 超限时会降级保存。
+      保存后可直接查看色号编号和颜色图例，方便照着摆豆制作。
     </div>
     <div class="final-actions">
-      <button class="btn-primary" type="button" onclick="saveImage('final')">保存相册</button>
-      <button class="btn-secondary" type="button" onclick="saveToBeanWarehouse()">保存豆仓</button>
+      <button class="btn-primary" type="button" onclick="saveImage('final')">保存图纸</button>
+      <button class="btn-secondary" type="button" onclick="saveToBeanWarehouse()">存入豆仓</button>
       <button class="btn-secondary" type="button" onclick="addCurrentToFavorites()">加入收藏</button>
     </div>
   </div>
@@ -373,6 +373,6 @@
   </div>
 </div>
 </div>
-<script src="./pindou-bundle.js?v=20260426-ai-ui-polish"></script>
+<script src="./pindou-bundle.js?v=20260506-pixel-workshop"></script>
 </body>
 </html>
