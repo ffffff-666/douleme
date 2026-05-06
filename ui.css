@@ -113,7 +113,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue'
 .edit-actions button{flex:1}
 .stats-bar{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px}
 .toggle-bar{display:flex;gap:8px;padding:4px 16px;flex-wrap:wrap}
-.toggle-chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--white);transition:all .2s}
+.toggle-chip{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--white);transition:all .2s;white-space:nowrap;writing-mode:horizontal-tb;line-height:1.1}
 .toggle-chip.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 .color-list{padding:8px 16px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .color-item{display:flex;align-items:center;gap:5px;padding:5px 6px;font-size:10px;border:1px solid var(--border);border-radius:10px;background:var(--white);min-width:0}
@@ -234,13 +234,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue'
 .final-legend-swatch{display:flex;width:10px;height:10px;border-radius:2px;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(0,0,0,.08);font-size:4px;font-weight:800;line-height:1}
 .final-legend-code{display:none}
 .final-legend-count{display:block;font-size:3px;color:#666;white-space:nowrap;line-height:0.9;font-weight:700;margin-left:0;opacity:1}
-.final-setting-card{display:block;margin-top:12px;padding:14px 16px;background:#fff;border-radius:16px;box-shadow:var(--shadow)}
-.final-setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%}
-.final-setting-row-quality{align-items:flex-start}
+.final-setting-card{display:block;margin-top:12px;padding:12px;background:#fff;border-radius:18px;box-shadow:var(--shadow)}
+.final-setting-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;width:100%}
+.final-setting-row-quality{grid-template-columns:minmax(0,1fr);align-items:start;gap:10px}
 .final-setting-divider{height:1px;background:rgba(0,0,0,.06);margin:14px 0}
 .final-setting-title{font-size:14px;font-weight:600;color:var(--text)}
-.final-setting-desc{margin-top:4px;font-size:12px;line-height:1.5;color:var(--text2)}
-.final-quality-group{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;max-width:240px}
+.final-setting-desc{margin-top:3px;font-size:11px;line-height:1.4;color:var(--text2)}
+.final-quality-group{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;width:100%;max-width:none}
+.final-quality-group .toggle-chip{width:100%;min-width:0;padding:9px 4px;border-radius:12px;font-size:11px}
+#finalLabelChip{min-width:68px;padding:8px 12px;border-radius:12px}
 .final-note{font-size:12px;color:var(--text2);line-height:1.6;margin:12px 4px 16px}
 .final-actions{display:flex;flex-direction:column;gap:10px}
 /* Palette interactive layer */

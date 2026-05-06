@@ -6,7 +6,14 @@
 <title>拼豆小程序 - 交互原型</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#B8A9C9;--pink:#FFB7C5;--green:#98D8C8;--accent:#FF6B35;--accent-light:#FF8C6B;--bg:#F5F5F7;--text:#333;--text2:#999;--border:#E5E5E5;--white:#fff;--shadow:0 2px 8px rgba(0,0,0,.05);--radius:16px}
+:root{--primary:#B8A9C9;--pink:#FFB7C5;--green:#98D8C8;--accent:#FF6B35;--accent-light:#FF8C6B;--bg:#F5F5F7;--text:#333;--text2:#999;--border:#E5E5E5;--white:#fff;
+--radius-xs:6px;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:22px;--radius-pill:999px;--radius:var(--radius-lg);
+--shadow-sm:0 1px 2px rgba(0,0,0,.04);--shadow-md:0 4px 12px rgba(0,0,0,.06);--shadow-lg:0 8px 24px rgba(0,0,0,.08);--shadow-xl:0 16px 36px rgba(0,0,0,.10);--shadow-fab:0 12px 26px rgba(255,107,53,.32);--shadow-purple-md:0 8px 22px rgba(93,68,121,.10);--shadow-purple-lg:0 16px 36px rgba(93,68,121,.16);--shadow:var(--shadow-md);
+--font-xs:10px;--font-sm:12px;--font-base:14px;--font-md:16px;--font-lg:20px;--font-xl:24px;--font-2xl:32px;--font-3xl:40px;--font-4xl:56px;--font-5xl:72px;
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;
+--purple-300:#B8A9C9;--purple-400:#9b7fd0;--purple-500:#7c5fbb;--purple-600:#5e4a78;--purple-700:#47375d;--purple-rgb:93,68,121;
+--icon-sm:16px;--icon-md:20px;--icon-lg:24px;
+--surface-soft:#FAF8FB}
 body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;background:#1a1a2e;color:var(--text);overflow-x:hidden;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px 0}
 .app{width:375px;height:812px;position:relative;background:var(--bg);overflow:hidden;border-radius:30px;box-shadow:0 0 60px rgba(0,0,0,.3);flex-shrink:0}
 .page{position:absolute;top:0;left:0;width:100%;height:100%;background:var(--bg);display:none;flex-direction:column;overflow:hidden;z-index:1}
@@ -22,7 +29,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue'
 .tabbar .tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--text2);transition:all .2s;gap:2px}
 .tabbar .tab-item.active{color:var(--primary)}
 .tabbar .tab-item .icon{font-size:22px}
-.btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-light));color:#fff;border:none;border-radius:44px;padding:14px 0;font-size:16px;font-weight:600;cursor:pointer;width:100%;text-align:center;transition:opacity .2s;display:block}
+.btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-light));color:#fff;border:none;border-radius:var(--radius-pill);padding:14px 0;font-size:var(--font-md);font-weight:600;cursor:pointer;width:100%;text-align:center;transition:opacity .2s;display:block}
 .btn-primary:hover{opacity:.9}
 .btn-primary:active{opacity:.8}
 .btn-secondary{background:var(--white);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px 0;font-size:14px;cursor:pointer;width:100%;text-align:center;display:block}
@@ -58,6 +65,28 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .ai-config-card.open .ai-config-arrow{transform:rotate(180deg)}
 .ai-config-body{display:none;padding-top:10px}
 .ai-config-card.open .ai-config-body{display:block}
+.ai-endpoint-list{display:flex;flex-direction:column;gap:8px}
+.ai-endpoint-card{border:1px solid #e7deef;border-radius:10px;padding:10px;background:#fafafa;position:relative}
+.ai-endpoint-card.disabled{opacity:.55}
+.ai-endpoint-card .ep-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.ai-endpoint-card .ep-index{font-weight:600;color:#7c5fbb;font-size:12px;background:#efe7fb;padding:2px 8px;border-radius:8px}
+.ai-endpoint-card .ep-name-input{flex:1;min-width:80px;font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:6px;background:#fff}
+.ai-endpoint-card .ep-actions{display:flex;gap:4px;align-items:center}
+.ai-endpoint-card .ep-btn{font-size:11px;padding:3px 8px;border:1px solid #ddd;background:#fff;border-radius:6px;cursor:pointer;color:#555}
+.ai-endpoint-card .ep-btn:hover{background:#f0f0f0}
+.ai-endpoint-card .ep-btn.danger{color:#c4453d;border-color:#f0c4c0}
+.ai-endpoint-card .ep-toggle{width:36px;height:18px;border-radius:10px;background:#ccc;position:relative;cursor:pointer;transition:background .15s;flex-shrink:0}
+.ai-endpoint-card .ep-toggle.on{background:#7c5fbb}
+.ai-endpoint-card .ep-toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .15s}
+.ai-endpoint-card .ep-toggle.on::after{left:20px}
+.ai-endpoint-card .ep-fields{display:grid;grid-template-columns:1fr;gap:6px}
+.ai-endpoint-card .ep-field-label{font-size:11px;color:#888;margin-bottom:2px}
+.ai-endpoint-card .ep-input{font-size:12px;padding:5px 8px;border:1px solid #ddd;border-radius:6px;background:#fff;width:100%;box-sizing:border-box}
+.ai-endpoint-card .ep-test-bar{display:flex;align-items:center;gap:6px;margin-top:6px}
+.ai-endpoint-card .ep-test-status{font-size:11px;color:#888;flex:1}
+.ai-endpoint-card .ep-test-status.ok{color:#3ba76e}
+.ai-endpoint-card .ep-test-status.fail{color:#c4453d}
+.ai-endpoint-card .ep-test-status.testing{color:#c87f1e}
 .ai-config-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ai-config-item{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
 .ai-config-item.full{grid-column:1 / -1}
@@ -68,6 +97,51 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .ai-config-input{padding:9px 10px !important;font-size:12px !important}
 .ai-config-textarea{padding:9px 10px !important;font-size:12px !important;min-height:72px;line-height:1.45}
 .ai-input-zone{background:#fff;border:1px solid #e7e0ef;border-radius:18px;padding:12px;margin-bottom:12px}
+.ai-prompt-engine{position:relative;overflow:hidden;background:linear-gradient(160deg,#fff 0%,#fbf7ff 56%,#fff0f6 100%);border:1px solid rgba(184,169,201,.28);border-radius:var(--radius-xl);padding:14px;margin-bottom:12px;box-shadow:var(--shadow-purple-lg)}
+.ai-prompt-engine::before{content:'';position:absolute;right:-34px;top:-44px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,158,181,.28),rgba(255,158,181,0));pointer-events:none}
+.ai-prompt-engine::after{content:'';position:absolute;left:-42px;bottom:-70px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(155,127,208,.18),rgba(155,127,208,0));pointer-events:none}
+.ai-prompt-engine-head{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
+.ai-prompt-engine-kicker{font-size:10px;font-weight:800;color:#9b7fd0;letter-spacing:.8px;text-transform:uppercase;margin-bottom:3px}
+.ai-prompt-engine-title{font-size:16px;font-weight:900;color:#47375d;letter-spacing:.1px;line-height:1.2}
+.ai-prompt-engine-sub{font-size:11px;color:#8b7ba8;line-height:1.45;margin-top:4px}
+.ai-prompt-engine-badge{font-size:10px;color:#7d5fa5;white-space:nowrap;background:rgba(255,255,255,.78);border:1px solid rgba(184,169,201,.25);padding:6px 9px;border-radius:999px;box-shadow:0 4px 12px rgba(93,68,121,.06)}
+.ai-pe-summary{position:relative;background:rgba(255,255,255,.72);border:1px solid rgba(231,224,239,.95);border-radius:16px;padding:9px 10px;margin-bottom:10px;font-size:11px;line-height:1.45;color:#7d6b92}
+.ai-pe-internal-toggle{position:relative;margin-top:10px;border:1px solid rgba(231,224,239,.95);background:rgba(255,255,255,.66);border-radius:18px;overflow:hidden}
+.ai-pe-internal-toggle-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;cursor:pointer}
+.ai-pe-internal-toggle-title{font-size:12px;font-weight:900;color:#5e4a78}
+.ai-pe-internal-toggle-desc{font-size:10px;color:#9a8eaa;margin-top:2px}
+.ai-pe-internal-toggle-arrow{font-size:13px;color:#9b7fd0;transition:transform .18s}
+.ai-pe-internal-toggle.open .ai-pe-internal-toggle-arrow{transform:rotate(180deg)}
+.ai-pe-internal-toggle-body{display:none;padding:0 11px 11px}
+.ai-pe-internal-toggle.open .ai-pe-internal-toggle-body{display:block}
+.ai-pe-mode-btn{border:1.5px solid #eadff1;border-radius:14px;background:#fff;padding:9px 10px;text-align:left;cursor:pointer;color:#6f6284;font-family:inherit;transition:all .16s;width:100%;margin-bottom:8px}
+.ai-pe-mode-btn strong{display:block;font-size:12px;color:#4f4064}
+.ai-pe-mode-btn span{display:block;font-size:10px;margin-top:2px;line-height:1.3;color:#9a8eaa}
+.ai-pe-mode-btn.active{border-color:#9b7fd0;background:linear-gradient(135deg,#f5efff,#fff7fa);box-shadow:0 8px 22px rgba(93,68,121,.12);color:#4f4064}
+.ai-pe-section{position:relative;background:rgba(255,255,255,.7);border:1px solid rgba(231,224,239,.92);border-radius:20px;padding:11px;margin-top:9px}
+.ai-pe-section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.ai-pe-section-title{font-size:12px;font-weight:900;color:#5e4a78}
+.ai-pe-section-note{font-size:10px;color:#9a8eaa}
+.ai-pe-card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.ai-pe-card-grid.style{grid-template-columns:repeat(3,1fr)}
+.ai-pe-choice{border:1.5px solid #eadff1;background:#fff;border-radius:15px;padding:9px 8px;text-align:left;font-family:inherit;cursor:pointer;color:#5b4c6d;transition:all .16s;min-height:54px}
+.ai-pe-choice:hover{transform:translateY(-1px);border-color:#d2c0e6;box-shadow:0 8px 18px rgba(93,68,121,.08)}
+.ai-pe-choice.active{border-color:#9b7fd0;background:linear-gradient(135deg,#f5efff,#fff7fa);box-shadow:0 10px 22px rgba(155,127,208,.16)}
+.ai-pe-choice .emoji{font-size:16px;display:block;margin-bottom:3px}
+.ai-pe-choice .name{display:block;font-size:11px;font-weight:900;color:#4f4064;line-height:1.2}
+.ai-pe-choice .desc{display:block;font-size:9.5px;color:#9a8eaa;line-height:1.25;margin-top:3px}
+.ai-pe-pill-row{display:flex;flex-wrap:wrap;gap:7px}
+.ai-pe-pill{border:1.5px solid #eadff1;background:#fff;border-radius:999px;padding:8px 11px;font-size:11px;font-weight:800;color:#6f6284;font-family:inherit;cursor:pointer;transition:all .16s}
+.ai-pe-pill.active{background:#5e4a78;color:#fff;border-color:#5e4a78;box-shadow:0 8px 18px rgba(94,74,120,.2)}
+.ai-pe-checks{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ai-pe-check{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #ece3f4;border-radius:14px;padding:9px 10px;font-size:11px;font-weight:700;color:#5b4c6d;cursor:pointer;transition:all .15s}
+.ai-pe-check:hover{border-color:#cbbadf;background:#fbf7ff}
+.ai-pe-check input{width:auto;margin:0;accent-color:#9b7fd0}
+.ai-pe-internal{display:none}
+.ai-pe-internal.show{display:block;background:linear-gradient(135deg,rgba(255,248,231,.88),rgba(255,239,247,.9));border-color:rgba(236,178,91,.28)}
+.ai-pe-internal-note{font-size:10px;line-height:1.5;color:#9a6b2f;background:rgba(255,255,255,.72);border:1px solid rgba(236,178,91,.24);border-radius:12px;padding:8px 9px;margin-bottom:8px}
+.ai-pe-textarea{width:100%;box-sizing:border-box;border:1.5px solid rgba(216,205,230,.9);border-radius:16px;background:#fff;padding:11px 12px;font-size:12px;color:var(--text);font-family:inherit;outline:none;min-height:92px;line-height:1.55;resize:vertical}
+.ai-pe-textarea:focus{border-color:#b8a9c9;box-shadow:0 0 0 3px rgba(184,169,201,.14)}
 .ai-settings-zone{background:#f6f4f8;border:1.5px solid #dcd3e7;border-radius:24px;padding:14px;margin-bottom:12px}
 .ai-zone-title{font-size:12px;font-weight:700;color:#6f6284;letter-spacing:.3px;margin-bottom:10px}
 .ai-settings-zone .section-label{margin-bottom:6px}
@@ -99,7 +173,152 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .ai-size-custom-meta{display:none}
 .ai-note-row{display:none}
 .ai-note-chip{padding:6px 10px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:11px;color:var(--text2)}
-.page-ai-compact .content{padding:12px 12px 14px !important;overflow-y:auto}
+.page-ai-compact .content{padding:10px 12px 14px !important;overflow-y:auto;background:linear-gradient(180deg,#f7f4fb 0%,#fdf6f8 60%,#fff 100%)}
+.page-ai-compact .ai-helper{display:none}
+
+.page-ai-compact .ai-config-card{margin:0 0 10px;padding:0;border:none;background:transparent;box-shadow:none;border-radius:0}
+.page-ai-compact .ai-config-head{padding:9px 12px;background:#fff;border:1px solid rgba(231,224,239,.95);border-radius:14px;box-shadow:0 4px 14px rgba(93,68,121,.05);gap:8px;align-items:center;cursor:pointer}
+.page-ai-compact .ai-config-card.open .ai-config-head{border-radius:14px 14px 0 0;border-bottom:none}
+.page-ai-compact .ai-config-icon{font-size:14px;line-height:1;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:8px;background:linear-gradient(135deg,#efe7fb,#fff1f5);color:#7c5fbb}
+.page-ai-compact .ai-config-title{font-size:12px;font-weight:800;color:#47375d;flex-shrink:0}
+.page-ai-compact .ai-config-summary{display:block;font-size:10.5px;color:#9a8eaa;flex:1;text-align:right;font-weight:600;letter-spacing:.2px}
+.page-ai-compact .ai-config-arrow{color:#9b7fd0;font-size:13px;flex-shrink:0}
+.page-ai-compact .ai-config-body{padding:12px;background:#fff;border:1px solid rgba(231,224,239,.95);border-top:none;border-radius:0 0 14px 14px;max-height:52vh;overflow:auto;box-shadow:0 4px 14px rgba(93,68,121,.05)}
+
+.page-ai-compact .ai-input-zone{margin:0 0 10px;padding:0;background:transparent;border:none}
+.page-ai-compact .ai-zone-title{display:none}
+.page-ai-compact .ai-upload-hero{margin:0;padding:14px;border-radius:18px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:linear-gradient(135deg,#fff 0%,#faf5ff 100%);border:1.5px dashed #cdb9e6;box-shadow:0 8px 22px rgba(93,68,121,.08);transition:all .2s}
+.page-ai-compact .ai-upload-hero:hover{border-color:#9b7fd0;background:linear-gradient(135deg,#fff 0%,#f5edff 100%)}
+.page-ai-compact .ai-upload-hero.has-image{border-style:solid;border-color:#9b7fd0;background:linear-gradient(135deg,rgba(184,169,201,.08),rgba(255,183,197,.08))}
+.page-ai-compact .ai-upload-thumb{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#f5efff,#fff1f5);font-size:28px;display:flex;align-items:center;justify-content:center;color:#9b7fd0;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(155,127,208,.15)}
+.page-ai-compact .ai-upload-meta{min-width:0}
+.page-ai-compact .ai-upload-title{font-size:14px;font-weight:800;color:#47375d;line-height:1.2}
+.page-ai-compact .ai-upload-desc{font-size:11px;color:#9a8eaa;line-height:1.5;margin-top:4px}
+.page-ai-compact .ai-upload-cta{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;box-shadow:0 6px 16px rgba(255,107,53,.32);flex-shrink:0}
+.page-ai-compact .ai-upload-hero.has-image .ai-upload-cta{background:#fff;color:#9b7fd0;box-shadow:inset 0 0 0 1.5px #d2c0e6;font-size:0}
+.page-ai-compact .ai-upload-hero.has-image .ai-upload-cta::before{content:'换';font-size:13px;font-weight:700}
+
+.page-ai-compact .ai-prompt-engine{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:18px;margin:0 0 14px;background:#fff;border:1px solid rgba(231,224,239,.95);box-shadow:0 4px 14px rgba(93,68,121,.05)}
+.page-ai-compact .ai-prompt-engine::before,.page-ai-compact .ai-prompt-engine::after{display:none}
+.page-ai-compact .ai-prompt-engine-head,.page-ai-compact .ai-prompt-engine-kicker,.page-ai-compact .ai-prompt-engine-sub,.page-ai-compact .ai-prompt-engine-badge,.page-ai-compact .ai-prompt-engine-title,.page-ai-compact .ai-pe-summary,.page-ai-compact .ai-pe-section-note{display:none}
+.page-ai-compact .ai-pe-section{display:grid;grid-template-columns:62px minmax(0,1fr);align-items:center;gap:10px;margin-top:0;padding:0;border-radius:0;background:transparent;border:none}
+.page-ai-compact .ai-pe-section + .ai-pe-section{padding-top:8px;border-top:1px dashed #efe9f5}
+.page-ai-compact .ai-pe-section-head{display:block;margin-bottom:0}
+.page-ai-compact .ai-pe-section-title{font-size:11.5px;font-weight:800;color:#5e4a78;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;letter-spacing:.2px}
+.page-ai-compact .ai-pe-icon{font-size:13px;line-height:1}
+.page-ai-compact .ai-pe-section > .ai-pe-card-grid,.page-ai-compact .ai-pe-section > .ai-pe-segmented,.page-ai-compact .ai-pe-section > .ai-pe-pill-row,.page-ai-compact .ai-pe-section > #ai-pe-structure-focus{grid-column:2}
+
+.page-ai-compact .ai-pe-card-grid.style{grid-template-columns:repeat(5,1fr);gap:5px}
+.page-ai-compact .ai-pe-choice{min-height:30px;padding:6px 2px;border-radius:10px;text-align:center;border:1.2px solid #ece3f4;background:#fafafd;color:#6f6284;transition:all .15s}
+.page-ai-compact .ai-pe-choice:hover{transform:none;border-color:#cbbadf;background:#fff}
+.page-ai-compact .ai-pe-choice.active{background:linear-gradient(135deg,#9b7fd0 0%,#b8a9c9 100%);border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(155,127,208,.32)}
+.page-ai-compact .ai-pe-choice.active .name{color:#fff}
+.page-ai-compact .ai-pe-choice .emoji,.page-ai-compact .ai-pe-choice .desc{display:none}
+.page-ai-compact .ai-pe-choice .name{font-size:11px;font-weight:700}
+
+.ai-pe-segmented{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:0;padding:3px;background:#f3eef8;border-radius:11px}
+.ai-pe-seg{border:none;background:transparent;font-size:11.5px;font-weight:700;color:#7c6e92;padding:7px 0;border-radius:9px;cursor:pointer;transition:all .15s;font-family:inherit}
+.ai-pe-seg.active{background:#fff;color:#5e4a78;box-shadow:0 2px 6px rgba(93,68,121,.18)}
+
+.page-ai-compact .ai-pe-pill-row{gap:5px;margin-bottom:0!important;display:flex;flex-wrap:wrap}
+.page-ai-compact .ai-pe-pill{padding:6px 11px;font-size:11px;font-weight:700;border-radius:999px;border:1.2px solid #ece3f4;background:#fafafd;color:#6f6284;transition:all .15s}
+.page-ai-compact .ai-pe-pill.active{background:linear-gradient(135deg,#5e4a78,#7c5fbb);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(94,74,120,.25)}
+.page-ai-compact .ai-pe-checks{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.page-ai-compact .ai-pe-check{padding:6px 8px;font-size:10.5px;border-radius:10px}
+.page-ai-compact #ai-pe-structure-focus{display:none}
+.page-ai-compact #ai-pe-structure-intensity-row{margin-top:5px;margin-bottom:0!important}
+
+.page-ai-compact .ai-pe-internal-toggle{margin-top:0;border-radius:14px;border:1px solid #efe9f5;background:#fbf9fd}
+.page-ai-compact .ai-pe-internal-toggle-head{padding:9px 11px}
+.page-ai-compact .ai-pe-internal-toggle-desc{display:none}
+.page-ai-compact .ai-config-internal-toggle .ai-pe-internal.show{display:block;margin-top:8px;padding:9px;border-radius:12px}
+.page-ai-compact .ai-config-internal-toggle .ai-pe-section-head{display:flex;margin-bottom:8px}
+.page-ai-compact .ai-config-internal-toggle .ai-pe-section-note{display:none}
+.page-ai-compact .ai-config-internal-toggle .ai-pe-internal-note{margin-bottom:8px}
+.page-ai-compact .ai-config-internal-toggle .ai-pe-textarea{min-height:84px}
+
+.page-ai-compact .ai-gen-cta{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 0;font-size:15px;font-weight:800;letter-spacing:.5px;border-radius:16px;background:linear-gradient(135deg,#ff6b35 0%,#ff8c6b 50%,#ff6b9d 100%);box-shadow:0 12px 26px rgba(255,107,53,.32);transition:all .2s}
+.page-ai-compact .ai-gen-cta:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 14px 30px rgba(255,107,53,.38)}
+.page-ai-compact .ai-gen-cta:disabled{background:#e6e1eb;color:#b8aac6;box-shadow:none;cursor:not-allowed;opacity:1}
+.page-ai-compact .ai-gen-cta-icon{font-size:16px;line-height:1}
+.page-ai-compact .ai-gen-cta-label{line-height:1}
+
+/* ==================== Home Page Polish ==================== */
+#page-home{background:linear-gradient(180deg,#f5eefb 0%,#fdf4f7 36%,#f5f5f7 100%)}
+#page-home .nav-bar{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(255,255,255,.55) !important}
+#page-home .nav-bar .title{font-weight:800;color:#3f2f55;letter-spacing:.3px}
+#page-home #greeting-text{padding:0 16px 12px !important;color:#6e5d8b !important;font-size:13px !important;font-weight:600;display:flex;align-items:center;gap:6px}
+#page-home .grid-2{padding:0 16px}
+#page-home .bento-card{position:relative;overflow:hidden;border-radius:var(--radius-xl);padding:22px 18px;min-height:138px;align-items:flex-start;justify-content:space-between;box-shadow:var(--shadow-purple-lg);transition:transform .18s,box-shadow .18s}
+#page-home .bento-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-xl)}
+#page-home .bento-card::before{content:'';position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.32),rgba(255,255,255,0));pointer-events:none}
+#page-home .bento-card::after{content:'';position:absolute;left:-26px;bottom:-46px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),rgba(255,255,255,0));pointer-events:none}
+#page-home .bento-card .emoji{font-size:30px;width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
+#page-home .bento-card .label{font-size:17px;font-weight:800;color:#fff;letter-spacing:.3px;line-height:1.2}
+#page-home .bento-card .desc{font-size:11px;color:rgba(255,255,255,.85);font-weight:500;letter-spacing:.2px}
+#page-home .bento-card-body{display:flex;flex-direction:column;gap:4px}
+
+#page-home #home-tabs{background:transparent;border:none;padding:0 16px;margin:6px 0 0;display:inline-flex;gap:6px}
+#page-home #home-tabs .tab{padding:8px 16px;font-size:13px;font-weight:700;color:#9a8eaa;border-radius:999px;background:rgba(255,255,255,.6);border:1px solid rgba(184,169,201,.18);transition:all .15s}
+#page-home #home-tabs .tab.active{color:#fff;background:linear-gradient(135deg,#9b7fd0,#b8a9c9);border-color:transparent;box-shadow:0 6px 14px rgba(155,127,208,.32)}
+#page-home #home-tabs .tab.active::after{display:none}
+
+#page-home #home-tab-content{padding:0 0 12px}
+#page-home #home-recent,#page-home #home-templates{padding:14px 16px 20px;gap:10px}
+#page-home .product-card{border-radius:18px;background:#fff;box-shadow:0 6px 16px rgba(60,40,90,.08);transition:transform .18s,box-shadow .18s;overflow:hidden}
+#page-home .product-card:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(60,40,90,.14)}
+#page-home .product-card .img-area{height:128px;font-size:42px;background:linear-gradient(135deg,#f5edff 0%,#ffeef3 100%);position:relative}
+#page-home .product-card .body{padding:10px 12px 12px}
+#page-home .product-card .body>div:first-child{font-size:13px;font-weight:700;color:#3f2f55;line-height:1.2}
+#page-home .product-card .body>div:last-child{font-size:11px;color:#9a8eaa;margin-top:3px}
+
+#main-tabbar{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(184,169,201,.16);box-shadow:0 -4px 16px rgba(60,40,90,.06)}
+#main-tabbar .tab-item{font-weight:700;color:#a89cb6;letter-spacing:.2px}
+#main-tabbar .tab-item .icon{transition:transform .15s}
+#main-tabbar .tab-item.active{color:#7c5fbb}
+#main-tabbar .tab-item.active .icon{transform:translateY(-2px) scale(1.08)}
+
+/* ==================== Order Confirm - SKU Row ==================== */
+.order-sku-row{display:grid;grid-template-columns:50px 1fr auto;gap:10px;align-items:center}
+.order-sku-thumb{width:50px;height:50px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.order-sku-meta{min-width:0}
+.order-sku-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.order-sku-spec{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.3}
+.order-sku-price{text-align:right;flex-shrink:0}
+.order-sku-unit{font-size:14px;font-weight:700;color:var(--accent);line-height:1.2}
+.order-sku-qty{font-size:11px;color:var(--text2);margin-top:3px}
+
+/* ==================== Profile - Stats & Order Grid ==================== */
+.profile-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px;padding:0 8px}
+.profile-stat{text-align:center;cursor:pointer;transition:transform .15s}
+.profile-stat:active{transform:scale(.95)}
+.profile-stat-num{font-size:18px;font-weight:800;color:var(--purple-600);line-height:1.1;letter-spacing:.3px}
+.profile-stat-label{font-size:11px;color:var(--text2);margin-top:3px;font-weight:500}
+.profile-orders{padding-bottom:14px}
+.profile-orders-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding-bottom:12px;border-bottom:1px dashed #efe9f5}
+.profile-orders-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}
+.profile-order-item{text-align:center;padding:6px 4px;border-radius:12px;cursor:pointer;transition:all .15s}
+.profile-order-item:hover{background:#fbf9fd}
+.profile-order-item:active{transform:scale(.95)}
+.profile-order-icon{font-size:24px;line-height:1.2}
+.profile-order-label{font-size:11px;color:var(--text2);margin-top:4px;font-weight:500}
+
+/* ==================== Shop - Product Card Refresh ==================== */
+.product-card .pc-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.product-card .pc-spec{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.product-card .pc-price-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:8px;gap:6px}
+.product-card .pc-price-block{display:flex;flex-direction:column;gap:2px;min-width:0}
+.product-card .pc-price{font-size:15px;font-weight:800;color:var(--accent);line-height:1.1}
+.product-card .pc-sales{font-size:10px;color:var(--text2);font-weight:500}
+
+/* ==================== Community Nav-bar Polish ==================== */
+#page-community .nav-bar{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(255,255,255,.85);border-bottom:1px solid rgba(184,169,201,.12)}
+#page-community .nav-bar > span:last-child{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#9b7fd0,#b8a9c9);color:#fff;font-size:18px;font-weight:600;box-shadow:0 4px 10px rgba(155,127,208,.32);transition:transform .15s}
+#page-community .nav-bar > span:last-child:hover{transform:scale(1.05)}
+#ai-picks-viewer-actions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px!important;margin-top:10px!important}
+#ai-picks-viewer-actions .btn-secondary,#ai-picks-viewer-actions .btn-primary{padding:10px 4px!important;font-size:12px!important;line-height:1.1;white-space:nowrap;border-radius:14px}
+#inline-gen-candidate-status{display:none}
+#inline-gen-api-status{font-weight:700;color:#8b7ba8}
 #ai-prompt{padding:10px 12px;font-size:13px;min-height:68px}
 .candidate-stack{display:flex;flex-direction:column;gap:12px;padding:16px}
 .candidate-card{background:#fff;border-radius:18px;padding:14px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.03)}
@@ -125,7 +344,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .info-badge.purple{background:rgba(184,169,201,.15);color:#8B7BA8}
 .info-badge.pink{background:rgba(255,183,197,.15);color:#E8889A}
 .info-badge.green{background:rgba(152,216,200,.15);color:#6BAE9E}
-.bento-card{border-radius:var(--radius);padding:28px 20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:130px;transition:transform .15s;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.bento-card{border-radius:var(--radius);padding:28px 20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:130px;transition:transform .15s;box-shadow:var(--shadow-md)}
 .bento-card:active{transform:scale(.96)}
 .bento-card .emoji{font-size:40px}
 .bento-card .label{font-size:15px;font-weight:600;color:#fff}
@@ -151,8 +370,8 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .cart-item .thumb{width:70px;height:70px;background:linear-gradient(135deg,#f0e8f5,#ffe8ee);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
 .cart-item .info{flex:1}
 .address-card{background:var(--white);border-radius:var(--radius);margin:8px 16px;padding:16px;box-shadow:var(--shadow);cursor:pointer}
-.profile-header{background:linear-gradient(135deg,var(--primary),var(--pink));padding:60px 16px 24px;color:#fff;text-align:center}
-.profile-header .avatar{width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.3);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:30px}
+.profile-header{background:var(--surface-soft);padding:60px 16px 24px;color:var(--text);text-align:center;border-bottom:1px solid rgba(var(--purple-rgb),.08)}
+.profile-header .avatar{width:68px;height:68px;border-radius:50%;background:var(--primary);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:30px;color:#fff;box-shadow:var(--shadow-purple-md)}
 .section-title{font-size:14px;font-weight:600;padding:16px 16px 8px;color:var(--text)}
 .canvas-area{flex:1;background:#fff;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .pixel-grid{display:grid;gap:1px;background:#ddd;padding:1px}
@@ -192,8 +411,8 @@ input:focus,textarea:focus{border-color:var(--primary)}
 .p-badge.p2{background:#34C759;color:#fff}
 .toast{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
-.fab-cart{position:absolute;right:16px;bottom:70px;z-index:90;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;box-shadow:0 4px 16px rgba(255,107,53,.4);transition:transform .2s,box-shadow .2s;border:none}
-.fab-cart:active{transform:scale(.9);box-shadow:0 2px 8px rgba(255,107,53,.3)}
+.fab-cart{position:absolute;right:16px;bottom:70px;z-index:90;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;box-shadow:var(--shadow-fab);transition:transform .2s,box-shadow .2s;border:none}
+.fab-cart:active{transform:scale(.9);box-shadow:var(--shadow-md)}
 .fab-cart .fab-badge{position:absolute;top:-2px;right:-2px;background:#FF3B30;color:#fff;font-size:11px;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;font-weight:700;border:2px solid var(--white)}
 .fab-cart .fab-icon{font-size:26px;line-height:1}
 .cart-toast{position:absolute;bottom:80px;left:16px;right:16px;background:var(--white);border-radius:12px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;z-index:250;box-shadow:0 4px 20px rgba(0,0,0,.15);transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none}
@@ -226,21 +445,25 @@ input:focus,textarea:focus{border-color:var(--primary)}
   <div class="nav-bar" style="background:transparent;position:absolute;top:0;left:0;right:0;z-index:10">
     <span style="font-size:14px;cursor:pointer" onclick="goPage('page-search')">🔍</span>
     <span class="title" style="color:var(--text)">拼豆创作</span>
-    <span style="display:flex;align-items:center;gap:12px"><span style="font-size:14px;position:relative;cursor:pointer" onclick="showToast('暂无新通知')">🔔<span class="badge" style="font-size:8px;top:-2px;right:-6px">3</span></span><span style="font-size:14px;position:relative;cursor:pointer" onclick="goPage('page-cart')" id="home-cart-icon">🛒<span class="badge" id="home-cart-badge" style="font-size:8px;top:-2px;right:-6px">2</span></span></span>
+    <span style="display:flex;align-items:center;gap:12px"><span style="font-size:14px;position:relative;cursor:pointer" onclick="showToast('暂无新通知')">🔔<span class="badge" style="font-size:8px;top:-2px;right:-6px">3</span></span><span style="font-size:14px;position:relative;cursor:pointer" onclick="goPage('page-cart')" id="home-cart-icon">🛒<span class="badge" id="home-cart-badge" style="font-size:8px;top:-2px;right:-6px;display:none">0</span></span></span>
   </div>
   <div class="content" style="padding-top:88px;display:flex;flex-direction:column;overflow:hidden">
-    <div style="flex-shrink:0;background:var(--bg)">
-      <div id="greeting-text" style="padding:0 16px 8px;color:var(--text2);font-size:13px">☀️ 下午好，拼豆创作者8821</div>
+    <div style="flex-shrink:0">
+      <div id="greeting-text">☀️ 下午好，拼豆创作者8821</div>
       <div class="grid-2" style="margin-bottom:16px">
-        <div class="bento-card" style="background:linear-gradient(135deg,#9B59B6,#B8A9C9)" onclick="goPage('page-ai-gen')">
+        <div class="bento-card" style="background:linear-gradient(135deg,#7e57c2,#b8a9c9)" onclick="startNewAiGeneration()">
           <div class="emoji">✨</div>
-          <div class="label">AI 生图</div>
-          <div class="desc">文字变拼豆图纸</div>
+          <div class="bento-card-body">
+            <div class="label">AI 生图</div>
+            <div class="desc">一键生成拼豆灵感</div>
+          </div>
         </div>
-        <div class="bento-card" style="background:linear-gradient(135deg,#E8889A,#FFB7C5)" onclick="goPage('page-img-convert')">
+        <div class="bento-card" style="background:linear-gradient(135deg,#ec6f88,#ffb7c5)" onclick="startNewImageConvert()">
           <div class="emoji">🖼️</div>
-          <div class="label">图片转换</div>
-          <div class="desc">照片变拼豆图案</div>
+          <div class="bento-card-body">
+            <div class="label">图片转换</div>
+            <div class="desc">照片秒变拼豆图</div>
+          </div>
         </div>
       </div>
       <div class="tabs" id="home-tabs">
@@ -251,11 +474,11 @@ input:focus,textarea:focus{border-color:var(--primary)}
     <div id="home-tab-content" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;padding-bottom:20px">
       <!-- Tab 0: Recent creations -->
       <div id="home-recent" class="grid-2" style="padding-top:12px;padding-bottom:20px">
-        <div class="product-card" onclick="goPage('page-gen-result')">
+        <div class="product-card" onclick="openGenResultBento()">
           <div class="img-area">🐕</div>
           <div class="body"><div style="font-size:13px;font-weight:500">柴犬拼豆</div><div style="font-size:11px;color:var(--text2)">58×58 · 24色</div></div>
         </div>
-        <div class="product-card" onclick="goPage('page-gen-result')">
+        <div class="product-card" onclick="openGenResultBento()">
           <div class="img-area">🐱</div>
           <div class="body"><div style="font-size:13px;font-weight:500">橘猫像素</div><div style="font-size:11px;color:var(--text2)">29×29 · 16色</div></div>
         </div>
@@ -265,32 +488,32 @@ input:focus,textarea:focus{border-color:var(--primary)}
         <div style="font-size:56px;margin-bottom:12px">🎨</div>
         <div style="font-size:15px;font-weight:600;margin-bottom:6px">还没有创作作品哦</div>
         <div style="font-size:13px;color:var(--text2);margin-bottom:20px">快来生成你的第一个拼豆图案吧</div>
-        <button class="btn-primary" style="width:auto;padding:10px 32px;display:inline-block" onclick="goPage('page-ai-gen')">开始创作 ✨</button>
+        <button class="btn-primary" style="width:auto;padding:10px 32px;display:inline-block" onclick="startNewAiGeneration()">开始创作 ✨</button>
       </div>
       <!-- Tab 1: Official templates -->
       <div id="home-templates" class="grid-2" style="padding-top:12px;padding-bottom:20px;display:none">
         <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:linear-gradient(135deg,#e8d8f5,#f0e8f5)">🌸</div>
+          <div class="img-area" style="background:var(--surface-soft)">🌸</div>
           <div class="body"><div style="font-size:13px;font-weight:500">樱花树</div><div style="font-size:11px;color:var(--text2)">87×87 · 32色 · 官方</div></div>
         </div>
         <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:linear-gradient(135deg,#f5f0e8,#f0e8d8)">🎮</div>
+          <div class="img-area" style="background:var(--surface-soft)">🎮</div>
           <div class="body"><div style="font-size:13px;font-weight:500">游戏手柄</div><div style="font-size:11px;color:var(--text2)">29×29 · 8色 · 官方</div></div>
         </div>
         <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:linear-gradient(135deg,#ffe8ee,#f5e8e8)">🦊</div>
+          <div class="img-area" style="background:var(--surface-soft)">🦊</div>
           <div class="body"><div style="font-size:13px;font-weight:500">小狐狸</div><div style="font-size:11px;color:var(--text2)">58×58 · 20色 · 官方</div></div>
         </div>
         <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:linear-gradient(135deg,#e8f5e8,#d8f0d8)">🍄</div>
+          <div class="img-area" style="background:var(--surface-soft)">🍄</div>
           <div class="body"><div style="font-size:13px;font-weight:500">超级蘑菇</div><div style="font-size:11px;color:var(--text2)">29×29 · 12色 · 官方</div></div>
         </div>
         <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:linear-gradient(135deg,#f0f0f5,#e8e8f0)">⭐</div>
+          <div class="img-area" style="background:var(--surface-soft)">⭐</div>
           <div class="body"><div style="font-size:13px;font-weight:500">星之卡比</div><div style="font-size:11px;color:var(--text2)">58×58 · 16色 · 官方</div></div>
         </div>
         <div class="product-card" onclick="goPage('page-gen-result')">
-          <div class="img-area" style="background:linear-gradient(135deg,#fff8e8,#f5f0d8)">🌻</div>
+          <div class="img-area" style="background:var(--surface-soft)">🌻</div>
           <div class="body"><div style="font-size:13px;font-weight:500">向日葵</div><div style="font-size:11px;color:var(--text2)">58×58 · 18色 · 官方</div></div>
         </div>
       </div>
@@ -309,7 +532,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
   <div class="nav-bar">
     <span style="font-size:14px;cursor:pointer" onclick="goPage('page-search')">🔍</span>
     <span class="title">社区</span>
-    <span></span>
+    <span style="font-size:14px;cursor:pointer" onclick="showToast('发帖功能开发中')" title="发帖">＋</span>
   </div>
   <div class="tabs" id="community-tabs">
     <div class="tab active" onclick="switchCommunityTab(0)">推荐</div>
@@ -415,36 +638,88 @@ input:focus,textarea:focus{border-color:var(--primary)}
     <span class="right-icon" onclick="goPage('page-history')">📋</span>
   </div>
   <div class="content" style="padding:12px 12px 14px">
-    <div class="ai-helper" id="ai-helper-text">上传一张图片，AI 会把它改造成更适合拼豆的风格，并直接展示改造后的原图效果。</div>
-
     <div class="ai-config-card" id="ai-config-card">
       <div class="ai-config-head" onclick="toggleAiConfigPanel()">
-        <div class="ai-config-title">模型配置</div>
-        <div class="ai-config-summary" id="ai-config-summary">点击展开配置 API、模型、密钥</div>
+        <span class="ai-config-icon" aria-hidden="true">⚙️</span>
+        <div class="ai-config-title">参数配置</div>
+        <div class="ai-config-summary" id="ai-config-summary"></div>
         <div class="ai-config-arrow">⌄</div>
       </div>
       <div class="ai-config-body">
         <div class="ai-config-grid">
           <div class="ai-config-item full">
-            <div class="ai-config-label">接口地址</div>
-            <input id="ai-config-base-url" class="ai-config-input" value="https://api.nkb.nkbpal.cn" placeholder="https://...">
-          </div>
-          <div class="ai-config-item">
-            <div class="ai-config-label">模型名</div>
-            <input id="ai-config-model" class="ai-config-input" value="gpt-image-1.5" placeholder="gpt-image-1.5">
+            <div class="ai-config-label">节点列表（按顺序优先级，第一个失败自动尝试下一个）</div>
+            <div id="ai-endpoint-list" class="ai-endpoint-list"></div>
+            <button class="btn-secondary" style="margin-top:8px;width:100%" onclick="addAiEndpoint();event.stopPropagation()">+ 添加节点</button>
+            <div class="ai-config-tip" style="margin-top:6px">每个节点独立配置 baseUrl / 模型 / API Key。可调整顺序、临时禁用、单独测试连通性。</div>
           </div>
           <div class="ai-config-item">
             <div class="ai-config-label">输出候选数</div>
             <input id="ai-config-candidate-count" class="ai-config-input" type="number" min="1" max="5" value="3">
           </div>
-          <div class="ai-config-item full">
-            <div class="ai-config-label">API 密钥（仅本机调试）</div>
-            <input id="ai-config-api-key" class="ai-config-input" type="password" placeholder="在本机填写，不会硬编码到页面里">
-            <div class="ai-config-tip">出于安全原因，我不会把你给过的密钥直接写进前端源码。这里只做本地输入与保存。</div>
+          <div class="ai-config-item">
+            <div class="ai-config-label">说明</div>
+            <div class="ai-config-tip" style="line-height:1.6">候选数越多，等待越久，token 消耗也越多。</div>
           </div>
           <div class="ai-config-item full">
             <div class="ai-config-label">图转图提示词模板（固定，不对用户开放）</div>
-            <textarea id="ai-config-ref-template" class="ai-config-textarea">请基于参考图进行再创作，尽量保留主体最关键的识别特征、人物关系和主要表情，同时把画面优化得更适合后续转换为拼豆效果图。请优先保证主体完整、构图稳定、背景简化、轮廓边界清楚、颜色分区明确，减少碎小细节、杂色、噪点、脏背景和复杂渐变。对于人物、情侣照、头像类图片，请尽量保证五官稳定、头发边界清楚、肩颈关系自然，不要出现主体裁切、人物重叠混乱、表情失真、肢体变形或额外人物。让结果在缩小到拼豆尺寸后仍然容易识别，并更适合后续映射到 MARD 色板、降低脏点和生成可制作的拼豆图纸。整体观感保持自然、干净、讨喜和有成品感。</textarea>
+            <textarea id="ai-config-ref-template" class="ai-config-textarea">你是一个严格模拟复古游戏机渲染器的像素画引擎。你的硬件渲染缓冲区有绝对的物理限制：角色精灵图（sprite buffer）最多只能存储 60×60 个像素，超过这个尺寸硬件会崩溃。
+
+[TASK]
+根据参考图，在这个硬件限制下渲染一个 Q版角色精灵图。
+
+[RENDERING PIPELINE - 严格按顺序执行]
+Step 1: 分配精灵缓冲区 — 最多 60×60 像素（绝对不可突破，no exception, hard hardware limit）。
+Step 2: 缩放参考图主体，填满缓冲区，最长边 ≤ 60 像素，不得小于 40 像素。
+Step 3: 量化颜色到 4~12 色的调色板（palette），纯色填充，每个像素 1 种颜色。
+Step 4: 按像素网格渲染，每个像素是一个正方形色块，无抗锯齿，无渐变，无半透明，无描边。
+Step 5: 输出到 1024×1024 画布，用 nearest-neighbor 放大（必须是硬边、大块、锯齿状的像素块，不是高清图）。
+
+[VISUAL ANCHORS]
+Style: chunky 8-bit sprite, similar density to Game Boy Color sprite (≤60px), NOT detailed modern pixel art.
+The final image must look like it was rendered at MAXIMUM 60×60 pixel resolution, then scaled up. Every "pixel" must be a huge visible square block.
+
+[STRICT CONSTRAINTS]
+- 硬件上限：最长边 ≤ 60 像素（HARD LIMIT, 违反 = 渲染失败）
+- 色彩上限：≤ 12 种纯色
+- 背景：纯白，无文字，无网格线，无描边
+- 主体撑满缓冲区，四周边距 ≤ 2 像素
+- 优先保证"像原图"的程度，但绝不能通过增加像素数来实现
+
+[FAILURE CONDITIONS - 满足任一条即判定输出失败]
+- 最长边超过 60 像素 ❌
+- 单个色块内部出现多种颜色或更小的色块 ❌
+- 出现抗锯齿、渐变、软边缘 ❌
+- 像素大小不一或不是正方形 ❌</textarea>
+          </div>
+          <div class="ai-config-item full">
+            <div class="ai-pe-internal-toggle ai-config-internal-toggle" id="ai-pe-internal-toggle">
+              <div class="ai-pe-internal-toggle-head" onclick="toggleAiInternalPromptPanel()">
+                <div>
+                  <div class="ai-pe-internal-toggle-title">内部文字生图</div>
+                  <div class="ai-pe-internal-toggle-desc">默认收起</div>
+                </div>
+                <div class="ai-pe-internal-toggle-arrow">⌄</div>
+              </div>
+              <div class="ai-pe-internal-toggle-body">
+                <button class="ai-pe-mode-btn" data-pe-field="mode" data-pe-value="internal-text" onclick="selectAiPromptEngineOption(this)">
+                  <strong>启用内部文字生图</strong>
+                  <span>直接用描述生成</span>
+                </button>
+                <button class="ai-pe-mode-btn" data-pe-field="mode" data-pe-value="reference" onclick="selectAiPromptEngineOption(this)">
+                  <strong>回到参考图改造</strong>
+                  <span>回到上传图片</span>
+                </button>
+                <div class="ai-pe-internal ai-pe-section" id="ai-pe-internal-box">
+                  <div class="ai-pe-section-head">
+                    <div class="ai-pe-section-title">内部自定义描述</div>
+                    <div class="ai-pe-section-note">上线前隐藏</div>
+                  </div>
+                  <div class="ai-pe-internal-note">只给内部测试用，上线可隐藏。</div>
+                  <textarea id="ai-pe-internal-prompt" class="ai-pe-textarea" maxlength="500" placeholder="例：生成一只蓝色猫咪，Q版，正面坐姿，背景干净，适合做中尺寸拼豆图。" oninput="syncAiPromptEngineUi()"></textarea>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="ai-config-actions">
@@ -455,20 +730,91 @@ input:focus,textarea:focus{border-color:var(--primary)}
     </div>
 
     <div class="ai-input-zone">
-    <div class="ai-zone-title" id="ai-input-zone-title">上传图片</div>
-    <div id="ai-reference-panel">
-      <div class="ai-upload-box" id="ai-reference-upload" onclick="document.getElementById('ai-reference-input').click()">
-        <input id="ai-reference-input" type="file" accept="image/*" style="display:none" onchange="handleAiReferenceUpload(event)">
-        <div class="ai-upload-thumb" id="ai-reference-thumb">🖼️</div>
-        <div class="ai-upload-meta">
-          <div class="ai-upload-title" id="ai-reference-name">添加一张图片</div>
-          <div class="ai-upload-desc" id="ai-reference-desc">上传宠物照、人物照、插画等，AI 会改造成更适合拼豆的新图。</div>
+      <div id="ai-reference-panel">
+        <div class="ai-upload-box ai-upload-hero" id="ai-reference-upload" onclick="document.getElementById('ai-reference-input').click()">
+          <input id="ai-reference-input" type="file" accept="image/*" style="display:none" onchange="handleAiReferenceUpload(event)">
+          <div class="ai-upload-thumb" id="ai-reference-thumb">📷</div>
+          <div class="ai-upload-meta">
+            <div class="ai-upload-title" id="ai-reference-name">点击上传灵感图</div>
+            <div class="ai-upload-desc" id="ai-reference-desc">主体清晰 · 背景简单 · 光线稳定</div>
+          </div>
+          <div class="ai-upload-cta">+</div>
         </div>
       </div>
     </div>
+
+    <div class="ai-prompt-engine" id="ai-prompt-engine">
+      <button style="display:none" class="active" data-pe-field="mode" data-pe-value="reference" type="button"></button>
+      <div class="ai-pe-summary" id="ai-pe-summary">当前：参考图改造 · 可爱 · 中 · 背景自动</div>
+
+      <div class="ai-pe-section">
+        <div class="ai-pe-section-head">
+          <div class="ai-pe-section-title"><span class="ai-pe-icon">🎨</span>风格</div>
+          <div class="ai-pe-section-note">展示</div>
+        </div>
+        <div class="ai-pe-card-grid style">
+          <button class="ai-pe-choice active" data-pe-field="style" data-pe-value="cute" onclick="selectAiPromptEngineOption(this)"><span class="name">可爱</span></button>
+          <button class="ai-pe-choice" data-pe-field="style" data-pe-value="pixel" onclick="selectAiPromptEngineOption(this)"><span class="name">像素</span></button>
+          <button class="ai-pe-choice" data-pe-field="style" data-pe-value="minimal" onclick="selectAiPromptEngineOption(this)"><span class="name">极简</span></button>
+          <button class="ai-pe-choice" data-pe-field="style" data-pe-value="realistic" onclick="selectAiPromptEngineOption(this)"><span class="name">写实</span></button>
+          <button class="ai-pe-choice" data-pe-field="style" data-pe-value="retro" onclick="selectAiPromptEngineOption(this)"><span class="name">复古</span></button>
+        </div>
+      </div>
+
+      <div class="ai-pe-section">
+        <div class="ai-pe-section-head">
+          <div class="ai-pe-section-title"><span class="ai-pe-icon">📐</span>大小</div>
+          <div class="ai-pe-section-note">展示</div>
+        </div>
+        <div class="ai-pe-segmented" data-pe-segmented="grid">
+          <button class="ai-pe-seg" data-pe-field="grid" data-pe-value="small" onclick="selectAiPromptEngineOption(this)">小</button>
+          <button class="ai-pe-seg active" data-pe-field="grid" data-pe-value="medium" onclick="selectAiPromptEngineOption(this)">中</button>
+          <button class="ai-pe-seg" data-pe-field="grid" data-pe-value="large" onclick="selectAiPromptEngineOption(this)">大</button>
+        </div>
+      </div>
+
+      <div class="ai-pe-section">
+        <div class="ai-pe-section-head">
+          <div class="ai-pe-section-title"><span class="ai-pe-icon">🧩</span>结构</div>
+          <div class="ai-pe-section-note">展示</div>
+        </div>
+        <div class="ai-pe-pill-row" style="margin-bottom:8px">
+          <button class="ai-pe-pill active" data-pe-field="structureAllow" data-pe-value="allow" onclick="selectAiPromptEngineOption(this)">允许变化</button>
+          <button class="ai-pe-pill" data-pe-field="structureAllow" data-pe-value="keep" onclick="selectAiPromptEngineOption(this)">尽量不变</button>
+        </div>
+        <div class="ai-pe-pill-row" id="ai-pe-structure-intensity-row" style="margin-bottom:9px">
+          <button class="ai-pe-pill" data-pe-field="intensity" data-pe-value="low" onclick="selectAiPromptEngineOption(this)">轻微</button>
+          <button class="ai-pe-pill active" data-pe-field="intensity" data-pe-value="medium" onclick="selectAiPromptEngineOption(this)">适度</button>
+          <button class="ai-pe-pill" data-pe-field="intensity" data-pe-value="high" onclick="selectAiPromptEngineOption(this)">明显</button>
+        </div>
+        <div id="ai-pe-structure-focus">
+          <div class="ai-pe-checks">
+            <label class="ai-pe-check"><input type="checkbox" value="expression" checked onchange="syncAiPromptEngineUi()">表情</label>
+            <label class="ai-pe-check"><input type="checkbox" value="background" checked onchange="syncAiPromptEngineUi()">背景</label>
+            <label class="ai-pe-check"><input type="checkbox" value="pose" checked onchange="syncAiPromptEngineUi()">姿势</label>
+            <label class="ai-pe-check"><input type="checkbox" value="position" checked onchange="syncAiPromptEngineUi()">位置/构图</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-pe-section">
+        <div class="ai-pe-section-head">
+          <div class="ai-pe-section-title"><span class="ai-pe-icon">🌫️</span>背景</div>
+          <div class="ai-pe-section-note">展示</div>
+        </div>
+        <div class="ai-pe-pill-row">
+          <button class="ai-pe-pill active" data-pe-field="background" data-pe-value="auto" onclick="selectAiPromptEngineOption(this)">自动判断</button>
+          <button class="ai-pe-pill" data-pe-field="background" data-pe-value="remove" onclick="selectAiPromptEngineOption(this)">去背景</button>
+          <button class="ai-pe-pill" data-pe-field="background" data-pe-value="keep" onclick="selectAiPromptEngineOption(this)">保留背景</button>
+        </div>
+      </div>
+
     </div>
 
-    <button class="btn-primary" id="ai-gen-btn" onclick="startAiGenerate()" disabled style="opacity:0.5;cursor:not-allowed">AI 生图 ✨</button>
+    <button class="btn-primary ai-gen-cta" id="ai-gen-btn" onclick="startAiGenerate()" disabled>
+      <span class="ai-gen-cta-icon">✨</span>
+      <span class="ai-gen-cta-label">生成拼豆图</span>
+    </button>
   </div>
 </div>
 
@@ -521,7 +867,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
       id="image-convert-frame"
       class="image-convert-embed-frame"
       title="图片转换"
-      src="./图像生成.html?embedded=1"
+      src="./图像生成.html?embedded=1&v=20260426-ai-ui-polish"
     ></iframe>
   </div>
 </div>
@@ -531,32 +877,29 @@ input:focus,textarea:focus{border-color:var(--primary)}
   <div class="nav-bar">
     <div class="back" onclick="goBack()">←</div>
     <span class="title">生成结果</span>
-    <span class="right-icon" onclick="showToast('已保存到云端')">💾</span>
+    <span class="right-icon" onclick="switchTab(0)" title="回首页" style="font-size:18px;cursor:pointer">🏠</span>
   </div>
   <div class="content" style="padding:16px">
     <div class="gen-result-sheet" id="gen-result-export-sheet">
       <div class="gen-result-preview" id="gen-result-preview-box">
-        <div id="gen-result-preview" style="font-size:80px">🐕</div>
+        <div id="gen-result-preview" style="width:120px;height:120px;border-radius:50%;background:var(--surface-soft);display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:var(--shadow-md)"><span style="font-size:48px">🐕</span></div>
       </div>
       <div class="gen-result-legend" id="gen-result-legend">
         <div class="gen-result-legend-grid" id="gen-result-legend-grid"></div>
       </div>
     </div>
-    <div id="gen-result-title" style="font-size:18px;font-weight:700;text-align:center;margin-bottom:6px">推荐成品版</div>
-    <div id="gen-result-desc" style="font-size:12px;color:var(--text2);text-align:center;line-height:1.6;margin:0 auto 12px;max-width:290px">系统已自动完成拼豆适配、颜色压缩和可制作性优化。</div>
-    <div class="gen-result-note">当前展示为最终生成结果图，可直接判断整体成品效果。</div>
-    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px">
+    <div id="gen-result-title" style="font-size:18px;font-weight:700;text-align:center;margin:4px 0 12px">推荐成品版</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px">
       <span class="info-badge purple" id="gen-result-size">📐 58×58</span>
-      <span class="info-badge pink" id="gen-result-colors">🎨 24种</span>
-      <span class="info-badge green" id="gen-result-beads">⚪ 2,156颗</span>
+      <span class="info-badge pink" id="gen-result-colors">🎨 24 色</span>
+      <span class="info-badge green" id="gen-result-beads">⚪ 2,156 颗</span>
+      <span class="info-badge orange" id="gen-result-price">💰 ¥45.9</span>
     </div>
-    <button class="btn-primary" style="margin-bottom:12px" onclick="goPage('page-material')">查看材料清单 🛒</button>
-    <div class="grid-2" style="padding:0;margin-bottom:12px">
+    <button class="btn-primary" style="margin-bottom:10px" onclick="goPage('page-material')">查看材料清单</button>
+    <div class="grid-3" style="padding:0">
       <button class="btn-secondary" onclick="goBack()">重新生成</button>
-<button class="btn-secondary" onclick="showSavePhotoModal()">保存图片</button>
-    </div>
-    <div style="text-align:center">
-      <button class="btn-ghost" onclick="goPage('page-workbench')">想修改？进入编辑 ></button>
+      <button class="btn-secondary" onclick="showSavePhotoModal()">保存图片</button>
+      <button class="btn-secondary" onclick="goPage('page-workbench')">手动微调</button>
     </div>
   </div>
 </div>
@@ -592,12 +935,12 @@ input:focus,textarea:focus{border-color:var(--primary)}
   <div class="nav-bar">
     <div class="back" onclick="goBack()">←</div>
     <span class="title">成品预览</span>
-    <span></span>
+    <span class="right-icon" onclick="switchTab(0)" title="回首页" style="font-size:18px;cursor:pointer">🏠</span>
   </div>
   <div class="content" style="padding:16px">
     <div class="final-export-sheet">
       <div class="final-export-preview">
-        <div style="font-size:100px;filter:blur(0px)">🐕</div>
+        <div style="width:120px;height:120px;border-radius:50%;background:var(--surface-soft);display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:var(--shadow-md)"><span style="font-size:48px">🐕</span></div>
       </div>
       <div class="final-export-legend">
         <div class="final-export-legend-title">色号图例（24色）</div>
@@ -699,35 +1042,59 @@ input:focus,textarea:focus{border-color:var(--primary)}
   <div class="content" style="padding:12px 0">
     <div class="grid-2" id="shop-product-grid" style="padding-bottom:16px">
       <div class="product-card" data-type="material" onclick="goPage('page-product-detail')">
-        <div class="img-area" style="background:linear-gradient(135deg,#f0e8f5,#e8d8f5)">🐕</div>
+        <div class="img-area" style="background:var(--surface-soft)">🐕</div>
         <div class="body">
-          <div style="font-size:13px;font-weight:500">柴犬图案材料包</div>
-          <div style="font-size:11px;color:var(--text2)">含24色 · 2156颗</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="price" style="color:var(--accent);font-weight:700">¥45.9</span><button class="mini-cart-btn" onclick="event.stopPropagation();addToCart(buildProductCartPayload('柴犬图案材料包','含24色 · 2156颗',45.9,'🐕',{source:'shop',dedupeKey:'product:shiba-material',metadata:{beads:2156,colors:24}}))">+</button></div>
+          <div class="pc-title">柴犬图案材料包</div>
+          <div class="pc-spec">含 24 色 · 2,156 颗</div>
+          <div class="pc-price-row">
+            <div class="pc-price-block">
+              <span class="pc-price">¥45.9</span>
+              <span class="pc-sales">已售 2.3k</span>
+            </div>
+            <button class="mini-cart-btn" onclick="event.stopPropagation();addToCart(buildProductCartPayload('柴犬图案材料包','含24色 · 2156颗',45.9,'🐕',{source:'shop',dedupeKey:'product:shiba-material',metadata:{beads:2156,colors:24}}))">+</button>
+          </div>
         </div>
       </div>
       <div class="product-card" data-type="material" onclick="goPage('page-product-detail')">
-        <div class="img-area" style="background:linear-gradient(135deg,#ffe8ee,#f5e8e8)">🐱</div>
+        <div class="img-area" style="background:var(--surface-soft)">🐱</div>
         <div class="body">
-          <div style="font-size:13px;font-weight:500">橘猫图案材料包</div>
-          <div style="font-size:11px;color:var(--text2)">含16色 · 841颗</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span style="color:var(--accent);font-weight:700">¥28.5</span><button class="mini-cart-btn" onclick="event.stopPropagation();addToCart(buildProductCartPayload('橘猫图案材料包','含16色 · 841颗',28.5,'🐱',{source:'shop',dedupeKey:'product:cat-material',metadata:{beads:841,colors:16}}))">+</button></div>
+          <div class="pc-title">橘猫图案材料包</div>
+          <div class="pc-spec">含 16 色 · 841 颗</div>
+          <div class="pc-price-row">
+            <div class="pc-price-block">
+              <span class="pc-price">¥28.5</span>
+              <span class="pc-sales">已售 1.5k</span>
+            </div>
+            <button class="mini-cart-btn" onclick="event.stopPropagation();addToCart(buildProductCartPayload('橘猫图案材料包','含16色 · 841颗',28.5,'🐱',{source:'shop',dedupeKey:'product:cat-material',metadata:{beads:841,colors:16}}))">+</button>
+          </div>
         </div>
       </div>
       <div class="product-card" data-type="material" onclick="goPage('page-product-detail')">
-        <div class="img-area" style="background:linear-gradient(135deg,#e8f5e8,#d8f0d8)">🌸</div>
+        <div class="img-area" style="background:var(--surface-soft)">🌸</div>
         <div class="body">
-          <div style="font-size:13px;font-weight:500">樱花图案材料包</div>
-          <div style="font-size:11px;color:var(--text2)">含32色 · 7569颗</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span style="color:var(--accent);font-weight:700">¥89.9</span><button class="mini-cart-btn" onclick="event.stopPropagation();addToCart(buildProductCartPayload('樱花图案材料包','含32色 · 7569颗',89.9,'🌸',{source:'shop',dedupeKey:'product:sakura-material',metadata:{beads:7569,colors:32}}))">+</button></div>
+          <div class="pc-title">樱花图案材料包</div>
+          <div class="pc-spec">含 32 色 · 7,569 颗</div>
+          <div class="pc-price-row">
+            <div class="pc-price-block">
+              <span class="pc-price">¥89.9</span>
+              <span class="pc-sales">已售 638</span>
+            </div>
+            <button class="mini-cart-btn" onclick="event.stopPropagation();addToCart(buildProductCartPayload('樱花图案材料包','含32色 · 7569颗',89.9,'🌸',{source:'shop',dedupeKey:'product:sakura-material',metadata:{beads:7569,colors:32}}))">+</button>
+          </div>
         </div>
       </div>
       <div class="product-card" data-type="accessory" onclick="goPage('page-product-detail')">
-        <div class="img-area" style="background:linear-gradient(135deg,#f5f0e8,#f0e8d8)">🔧</div>
+        <div class="img-area" style="background:var(--surface-soft)">🔧</div>
         <div class="body">
-          <div style="font-size:13px;font-weight:500">迷你熨斗</div>
-          <div style="font-size:11px;color:var(--text2)">入门推荐 · 温度可调</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span style="color:var(--accent);font-weight:700">¥29.9</span><button class="mini-cart-btn" onclick="event.stopPropagation();addToCart(buildProductCartPayload('迷你熨斗','入门推荐 · 温度可调',29.9,'🔧',{source:'shop',dedupeKey:'product:mini-iron'}))">+</button></div>
+          <div class="pc-title">迷你熨斗</div>
+          <div class="pc-spec">入门推荐 · 温度可调</div>
+          <div class="pc-price-row">
+            <div class="pc-price-block">
+              <span class="pc-price">¥29.9</span>
+              <span class="pc-sales">已售 4.1k</span>
+            </div>
+            <button class="mini-cart-btn" onclick="event.stopPropagation();addToCart(buildProductCartPayload('迷你熨斗','入门推荐 · 温度可调',29.9,'🔧',{source:'shop',dedupeKey:'product:mini-iron'}))">+</button>
+          </div>
         </div>
       </div>
     </div>
@@ -735,7 +1102,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
   <!-- Floating Cart Button -->
   <button class="fab-cart" onclick="goPage('page-cart')" id="shop-fab-cart">
     <span class="fab-icon">🛒</span>
-    <span class="fab-badge" id="fab-cart-count">2</span>
+    <span class="fab-badge" id="fab-cart-count" style="display:none">0</span>
   </button>
   <!-- Cart Added Toast -->
   <div class="cart-toast" id="cart-toast">
@@ -762,7 +1129,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
     <div id="cart-list"></div>
     <!-- Cart empty state -->
     <div id="cart-empty" style="display:none;text-align:center;padding:80px 20px">
-      <div style="font-size:64px;margin-bottom:16px">🛒</div>
+      <div style="font-size:var(--font-3xl);margin-bottom:var(--space-4)">🛒</div>
       <div style="font-size:16px;color:var(--text2);margin-bottom:8px">购物车空空如也</div>
       <div style="font-size:13px;color:var(--text3);margin-bottom:24px">快去逛逛，发现喜欢的拼豆吧</div>
       <button class="btn-primary" style="width:auto;padding:10px 32px;font-size:14px;display:inline-block" onclick="switchTab(2)">去逛逛</button>
@@ -812,8 +1179,29 @@ input:focus,textarea:focus{border-color:var(--primary)}
       </div>
     </div>
     <div class="card">
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-weight:600">商品信息</span><span style="color:var(--text2);font-size:13px">共2件</span></div>
-      <div style="display:flex;gap:8px"><div style="width:50px;height:50px;background:linear-gradient(135deg,#f0e8f5,#ffe8ee);border-radius:8px;display:flex;align-items:center;justify-content:center">🐕</div><div style="width:50px;height:50px;background:linear-gradient(135deg,#ffe8ee,#f5e8e8);border-radius:8px;display:flex;align-items:center;justify-content:center">🐱</div></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-weight:600">商品信息</span><span style="color:var(--text2);font-size:13px">共 2 件</span></div>
+      <div class="order-sku-row">
+        <div class="order-sku-thumb" style="background:linear-gradient(135deg,#f0e8f5,#ffe8ee)">🐕</div>
+        <div class="order-sku-meta">
+          <div class="order-sku-title">柴犬图案材料包</div>
+          <div class="order-sku-spec">含 24 色 · 2,156 颗</div>
+        </div>
+        <div class="order-sku-price">
+          <div class="order-sku-unit">¥45.9</div>
+          <div class="order-sku-qty">×1</div>
+        </div>
+      </div>
+      <div class="order-sku-row" style="margin-top:8px">
+        <div class="order-sku-thumb" style="background:linear-gradient(135deg,#ffe8ee,#f5e8e8)">🐱</div>
+        <div class="order-sku-meta">
+          <div class="order-sku-title">橘猫图案材料包</div>
+          <div class="order-sku-spec">含 16 色 · 841 颗</div>
+        </div>
+        <div class="order-sku-price">
+          <div class="order-sku-unit">¥28.5</div>
+          <div class="order-sku-qty">×1</div>
+        </div>
+      </div>
     </div>
     <div class="card">
       <div class="list-item" style="padding:8px 0;background:transparent"><span>配送方式</span><span style="color:var(--text2)">普通快递</span></div>
@@ -872,10 +1260,6 @@ input:focus,textarea:focus{border-color:var(--primary)}
       </div>
       <button class="btn-ghost" onclick="goPage('page-order-list')">查看订单 →</button>
     </div>
-    <!-- Toggle button for demo -->
-    <div style="margin-top:24px;position:relative;z-index:2">
-      <button class="btn-ghost" style="font-size:11px;color:var(--text2);border:1px dashed var(--border);padding:4px 12px;border-radius:8px" onclick="togglePayState()">🔄 切换成功/失败态（演示用）</button>
-    </div>
   </div>
 </div>
 <style>
@@ -891,19 +1275,30 @@ input:focus,textarea:focus{border-color:var(--primary)}
     <span style="position:absolute;top:48px;right:16px;font-size:20px;cursor:pointer" onclick="goPage('page-settings')">⚙️</span>
     <div class="avatar">👤</div>
     <div style="font-size:18px;font-weight:700">拼豆创作者8821</div>
-    <div style="font-size:12px;opacity:.8;margin-top:4px">创作让生活更美好</div>
+    <div class="profile-stats">
+      <div class="profile-stat" onclick="goPage('page-my-works')"><div class="profile-stat-num">12</div><div class="profile-stat-label">作品</div></div>
+      <div class="profile-stat" onclick="goPage('page-favorites')"><div class="profile-stat-num">38</div><div class="profile-stat-label">收藏</div></div>
+      <div class="profile-stat"><div class="profile-stat-num">156</div><div class="profile-stat-label">粉丝</div></div>
+      <div class="profile-stat"><div class="profile-stat-num">1.2k</div><div class="profile-stat-label">获赞</div></div>
+    </div>
   </div>
   <!-- Not-logged-in state (hidden by default) -->
-  <div id="profile-guest" class="profile-header" style="position:relative;display:none">
+    <div id="profile-guest" class="profile-header" style="position:relative;display:none">
     <span style="position:absolute;top:48px;right:16px;font-size:20px;cursor:pointer" onclick="goPage('page-settings')">⚙️</span>
-    <div class="avatar" style="opacity:.5">👤</div>
-    <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,.9)">未登录</div>
-    <button onclick="showLoginModal()" style="margin-top:10px;background:#fff;color:var(--primary);border:none;border-radius:20px;padding:8px 28px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1)">点击登录 →</button>
+    <div class="avatar" style="opacity:.6">👤</div>
+    <div style="font-size:18px;font-weight:700;color:var(--text)">未登录</div>
+    <button onclick="showLoginModal()" style="margin-top:10px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-pill);padding:8px 28px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:var(--shadow-purple-md)">点击登录 →</button>
   </div>
   <div class="content" style="background:var(--bg)">
-    <div class="card" style="margin-top:-12px;border-radius:var(--radius) var(--radius) 0 0">
-      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="goPage('page-order-list')">
+    <div class="card profile-orders" style="margin-top:-12px;border-radius:var(--radius) var(--radius) 0 0">
+      <div class="profile-orders-head" onclick="goPage('page-order-list')">
         <span style="font-weight:600">我的订单</span><span style="color:var(--text2);font-size:13px">全部 ›</span>
+      </div>
+      <div class="profile-orders-grid">
+        <div class="profile-order-item" onclick="goPage('page-order-list')"><div class="profile-order-icon">💳</div><div class="profile-order-label">待付款</div></div>
+        <div class="profile-order-item" onclick="goPage('page-order-list')"><div class="profile-order-icon">📦</div><div class="profile-order-label">待发货</div></div>
+        <div class="profile-order-item" onclick="goPage('page-order-list')"><div class="profile-order-icon">🚚</div><div class="profile-order-label">待收货</div></div>
+        <div class="profile-order-item" onclick="goPage('page-order-list')"><div class="profile-order-icon">⭐</div><div class="profile-order-label">待评价</div></div>
       </div>
     </div>
     <div style="background:var(--white);margin-top:1px">
@@ -978,7 +1373,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
 <!-- ==================== AI生成全屏等待层 ==================== -->
 <div id="ai-generating-overlay" class="modal-overlay" style="background:linear-gradient(135deg,rgba(184,169,201,.95),rgba(255,183,197,.95));flex-direction:column;gap:24px">
   <div style="text-align:center;color:#fff">
-    <div style="font-size:64px;animation:genPulse 2s ease-in-out infinite">✨</div>
+    <div style="font-size:var(--font-3xl);animation:genPulse 2s ease-in-out infinite">✨</div>
     <div style="font-size:20px;font-weight:700;margin:16px 0 8px">AI 正在创作中...</div>
     <div style="font-size:14px;opacity:.8" id="gen-progress-text">分析描述词，匹配风格模型</div>
     <div style="margin-top:24px;width:200px;height:4px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden;margin-left:auto;margin-right:auto">
@@ -991,7 +1386,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
         <span id="gen-candidate-status">0/0</span>
       </div>
       <div style="display:flex;justify-content:space-between;gap:12px;font-size:12px;opacity:.92;margin-bottom:8px">
-        <span>API 状态</span>
+        <span>生成状态</span>
         <span id="gen-api-status">等待开始</span>
       </div>
       <div id="gen-api-detail" style="font-size:12px;line-height:1.6;opacity:.78;margin-bottom:10px">准备建立生成任务...</div>
@@ -1062,7 +1457,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
 <!-- ==================== P1-15: 启动页 ==================== -->
 <div id="page-launch" class="page sub-page" style="background:linear-gradient(135deg,var(--primary),var(--pink))">
   <div class="content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#fff">
-    <div style="font-size:72px;margin-bottom:20px;animation:bounceIn .8s ease">🧩</div>
+    <div style="font-size:var(--font-3xl);margin-bottom:var(--space-5);animation:bounceIn .8s ease">🧩</div>
     <div style="font-size:28px;font-weight:700;margin-bottom:8px">拼豆创作</div>
     <div style="font-size:14px;opacity:.8;margin-bottom:48px">像素艺术，触手可及</div>
     <div style="display:flex;gap:6px">
@@ -1409,7 +1804,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
       <div style="flex:1"><div style="font-size:14px;font-weight:600">拼豆创作者3847</div><div style="font-size:11px;color:var(--text2)">2小时前</div></div>
       <button style="background:var(--primary);color:#fff;border:none;border-radius:20px;padding:4px 14px;font-size:12px;cursor:pointer">+ 关注</button>
     </div>
-    <div style="height:280px;background:linear-gradient(135deg,#98D8C8,#B8E6D8);display:flex;align-items:center;justify-content:center;font-size:80px">🐕</div>
+    <div style="height:280px;background:var(--surface-soft);display:flex;align-items:center;justify-content:center"><div style="width:140px;height:140px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md)"><span style="font-size:56px">🐕</span></div></div>
     <div style="padding:16px">
       <div style="font-size:18px;font-weight:700;margin-bottom:8px">我的第一个柴犬拼豆！</div>
       <div style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:12px">用了三个小时终于完成了~分享给大家看看！这是用AI生图功能生成的柴犬图案，58×58尺寸，24种颜色。第一次做拼豆就选了这个图案，难度适中，成品超级可爱！强烈推荐给新手朋友们试试~</div>
@@ -1518,7 +1913,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
       <div class="list-item" style="border:none" onclick="showToast('关于拼豆创作')"><span>关于我们</span><span style="color:var(--text2)">›</span></div>
     </div>
     <div style="padding:24px 16px">
-      <button class="btn-secondary" style="color:#FF3B30;border-color:#FF3B30" onclick="showLogin();goBack()">退出登录</button>
+      <button class="btn-secondary" style="color:#FF3B30;border-color:#FF3B30" onclick="confirmLogout()">退出登录</button>
     </div>
   </div>
 </div>
@@ -1671,7 +2066,7 @@ input:focus,textarea:focus{border-color:var(--primary)}
     <span class="right-icon" style="font-size:16px;background:rgba(255,255,255,.8);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center" onclick="sharePost()">↗</span>
   </div>
   <div class="content">
-    <div style="height:340px;background:linear-gradient(135deg,#f0e8f5,#e8d8f5);display:flex;align-items:center;justify-content:center;font-size:100px">🐕</div>
+    <div class="product-hero" style="aspect-ratio:1/1;background:var(--surface-soft);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -1px 0 rgba(0,0,0,.04)"><div style="width:140px;height:140px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md)"><span style="font-size:56px">🐕</span></div></div>
     <div style="padding:16px">
       <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">
         <span style="color:var(--accent);font-size:24px;font-weight:700">¥45.9</span>
@@ -1789,7 +2184,11 @@ let currentAiGenerationPayload = null;
 let currentAiPickTab = '';
 let imageConvertFrameReady = false;
 let pendingImageConvertMessages = [];
+const IMAGE_CONVERT_BRIDGE_VERSION = '20260426-p0p1';
+let imageConvertRequestSeq = 0;
+const activeImageConvertRequests = new Map();
 let currentGenResultCompositeUrl = '';
+let currentGenResultGenerationId = '';
 
 function getGenResultLegendItems() {
   return Array.from(document.querySelectorAll('#gen-result-legend-grid .gen-result-legend-item')).map((item) => {
@@ -1972,17 +2371,109 @@ function getBeadSystemLabel(channel) {
   return window.GodDouBeadRegistry?.getDisplayLabel?.(channel) || 'MARD（221色）';
 }
 
+const DEFAULT_ENDPOINTS = [
+  {
+    id: 'ep-default-1',
+    name: 'OpenRouter',
+    baseUrl: 'https://openrouter.ai/api',
+    apiKey: '',
+    model: 'google/gemini-3.1-flash-image-preview',
+    enabled: true
+  },
+  {
+    id: 'ep-default-2',
+    name: 'yunwu',
+    baseUrl: 'https://yunwu.ai',
+    apiKey: 'sk-rJNnTrudP8tawUFXevdjRTVEW5R8WjNaqynbdDWohKl9NBbK',
+    model: 'gemini-3.1-flash-image-preview',
+    enabled: true
+  },
+  {
+    id: 'ep-default-3',
+    name: '备用节点',
+    baseUrl: '',
+    apiKey: '',
+    model: '',
+    enabled: false
+  }
+];
+
 const defaultAiConfig = {
   baseUrl: 'https://yunwu.ai',
   model: 'gemini-3.1-flash-image-preview',
   candidateCount: 1,
   beadSystem: getBeadSystemDefaults('ai-generate'),
   apiKey: 'sk-rJNnTrudP8tawUFXevdjRTVEW5R8WjNaqynbdDWohKl9NBbK',
+  endpoints: DEFAULT_ENDPOINTS.map(ep => ({ ...ep })),
   textTemplate: '请根据用户输入，直接生成一张更接近目标拼豆网格图的图像，而不是普通高清 AI 插画。画面必须围绕目标格子数组织主体与色块，让主体在对应网格尺寸里仍然清楚可读。请优先使用大色块、清晰轮廓、有限层次、低频细节和明显块面关系，减少真实照片式纹理、连续渐变、细碎高频细节、脏点、噪点和复杂背景。请让图像本身就带有像素块/拼豆块面的感觉，便于后续工程转换只做轻量校正，而不是重新压缩整张图。避免文字、水印、复杂光影、半透明材质、超细发丝、密集花纹和无关装饰。整体观感要讨喜、稳定，并适合映射到 MARD 拼豆色板。',
-  refTemplate: '请基于参考图进行再创作，但目标不是生成普通高清 AI 图，而是生成一张更接近目标拼豆网格图的源图。请尽量保留主体最关键的识别特征、人物关系和主要表情，同时把画面重组为更适合目标格子数的块面结构。请优先保证主体完整、构图稳定、背景简化、轮廓边界清楚、颜色分区明确，并显著减少细碎纹理、连续渐变、杂色、噪点、脏背景和复杂材质。对于人物、情侣照、头像类图片，请尽量保证五官稳定、头发边界清楚、肩颈关系自然，不要出现主体裁切、人物重叠混乱、表情失真、肢体变形或额外人物。最终结果需要自带像素块/拼豆块面的感觉，便于后续工程转换只做映射和微调。',
+  refTemplate: `你是一个严格模拟复古游戏机渲染器的像素画引擎。你的硬件渲染缓冲区有绝对的物理限制：角色精灵图（sprite buffer）最多只能存储 60×60 个像素，超过这个尺寸硬件会崩溃。
+
+[TASK]
+根据参考图，在这个硬件限制下渲染一个 Q版角色精灵图。
+
+[RENDERING PIPELINE - 严格按顺序执行]
+Step 1: 分配精灵缓冲区 — 最多 60×60 像素（绝对不可突破，no exception, hard hardware limit）。
+Step 2: 缩放参考图主体，填满缓冲区，最长边 ≤ 60 像素，不得小于 40 像素。
+Step 3: 量化颜色到 4~12 色的调色板（palette），纯色填充，每个像素 1 种颜色。
+Step 4: 按像素网格渲染，每个像素是一个正方形色块，无抗锯齿，无渐变，无半透明，无描边。
+Step 5: 输出到 1024×1024 画布，用 nearest-neighbor 放大（必须是硬边、大块、锯齿状的像素块，不是高清图）。
+
+[VISUAL ANCHORS]
+Style: chunky 8-bit sprite, similar density to Game Boy Color sprite (≤60px), NOT detailed modern pixel art.
+The final image must look like it was rendered at MAXIMUM 60×60 pixel resolution, then scaled up. Every "pixel" must be a huge visible square block.
+
+[STRICT CONSTRAINTS]
+- 硬件上限：最长边 ≤ 60 像素（HARD LIMIT, 违反 = 渲染失败）
+- 色彩上限：≤ 12 种纯色
+- 背景：纯白，无文字，无网格线，无描边
+- 主体撑满缓冲区，四周边距 ≤ 2 像素
+- 优先保证"像原图"的程度，但绝不能通过增加像素数来实现
+
+[FAILURE CONDITIONS - 满足任一条即判定输出失败]
+- 最长边超过 60 像素 ❌
+- 单个色块内部出现多种颜色或更小的色块 ❌
+- 出现抗锯齿、渐变、软边缘 ❌
+- 像素大小不一或不是正方形 ❌`,
   styleMap: '卡通：clean cute illustration, clear silhouette, simple facial features, tidy color blocks, friendly expression, centered composition, minimal background distraction\n写实：semi-realistic portrait, stable facial structure, softened detail density, cleaner background, readable edges, gentle lighting, controlled texture for bead-friendly conversion\n极简：minimal composition, large clean color areas, very low background detail, simplified forms, strong readability, elegant and neat visual balance\n像素：pixel-art inspired composition, blocky shapes, simplified edges, strong silhouette, limited detail density, retro but clean and cute\n可爱：cute proportions, warm and soft expression, charming composition, clean pastel-friendly palette, simple readable details, collectible handcrafted feeling\n复古：retro illustration style, nostalgic palette, clean poster-like composition, simplified textures, classic but tidy visual hierarchy',
   strategyMap: '平衡还原：preserve recognizability while simplifying noisy details, keep main features readable, maintain clean edges, balanced color blocks, suitable for bead conversion and pleasing final product\n细节优先：keep important facial and identity details, preserve key expression and hairstyle features, but still reduce tiny noise and avoid messy texture that breaks bead readability\n容易制作：favor larger color regions, cleaner outlines, fewer isolated details, lower noise, reduced texture complexity, and stronger shape readability for real handmade bead production',
-  intentMap: '平衡还原：平衡识别度、成品感和后续拼豆可制作性。\n细节优先：优先保留五官、发型、表情和关键识别特征，但仍控制杂色和碎点。\n容易制作：优先保留大色块、清晰轮廓和更低复杂度，方便真实拼豆落地制作。'
+  intentMap: '平衡还原：平衡识别度、成品感和后续拼豆可制作性。\n细节优先：优先保留五官、发型、表情和关键识别特征，但仍控制杂色和碎点。\n容易制作：优先保留大色块、清晰轮廓和更低复杂度，方便真实拼豆落地制作。',
+  promptPresets: {
+    baseRules: '最终图像必须服务于拼豆落地：主体清楚、轮廓稳定、颜色分区明确、减少连续渐变和碎纹理，避免文字、水印、复杂光影和无关装饰。',
+    internalTemplate: '你是拼豆图生成助手。请根据内部自定义描述直接生成一张适合后续转换为拼豆图纸的拼豆图，而不是普通高清插画。必须优先保证主体完整、轮廓清楚、颜色分区明确、背景可控、低噪点，并让画面在缩小到目标网格后仍然容易识别。请直接返回图片结果，不要输出解释文字。',
+    styles: {
+      cute: { label: '可爱卡通', style: '卡通', prompt: '风格采用可爱卡通插画，比例讨喜，表情友好，轮廓干净，颜色温暖，适合做成手作拼豆成品。' },
+      pixel: { label: '像素块风', style: '像素', prompt: '风格采用像素块/拼豆块面感，边缘清晰，减少高频纹理，色块要有明确边界和复古游戏感。' },
+      minimal: { label: '极简清爽', style: '极简', prompt: '风格采用极简清爽构图，大色块优先，背景和细节高度简化，保证小尺寸网格下仍可读。' },
+      realistic: { label: '柔和写实', style: '写实', prompt: '风格采用柔和半写实表现，保留关键识别特征，但主动压缩细碎质感、复杂光影和连续渐变。' },
+      retro: { label: '复古海报', style: '复古', prompt: '风格采用复古海报感，构图稳定，色彩有层次但不脏，纹理简化为可映射的块面关系。' }
+    },
+    gridSizes: {
+      small: { label: '小', rows: 39, cols: 39, prompt: '目标为小尺寸拼豆图，优先极简轮廓和大色块，减少细节，只保留最关键识别信息，方便制作。' },
+      medium: { label: '中', rows: 58, cols: 58, prompt: '目标为中尺寸拼豆图，在识别度、细节和可制作性之间保持平衡，作为默认推荐尺寸。' },
+      large: { label: '大', rows: 87, cols: 87, prompt: '目标为大尺寸拼豆图，可以保留更多局部细节，但仍要避免噪点、杂色和过细纹理。' },
+      29: { label: '小 29×29', rows: 29, cols: 29, prompt: '目标网格为 29×29，小尺寸优先极简轮廓和大色块，只保留最关键识别信息。' },
+      58: { label: '中 58×58', rows: 58, cols: 58, prompt: '目标网格为 58×58，在识别度、细节和可制作性之间保持平衡。' },
+      87: { label: '大 87×87', rows: 87, cols: 87, prompt: '目标网格为 87×87，可以保留更多局部细节，但仍要避免噪点和过细纹理。' },
+      116: { label: '超大 116×116', rows: 116, cols: 116, prompt: '目标网格为 116×116，允许更完整的主体和层次，但颜色分区必须清楚，避免真实照片式杂色。' }
+    },
+    structureIntensity: {
+      keep: { key: 'low', prompt: '尽量不改变原图结构，保留主体、姿势、表情、背景关系和位置，只做拼豆友好化整理。' },
+      low: { key: 'low', prompt: '只允许轻微结构变化，重点优化轮廓、色块和背景干净度。' },
+      medium: { key: 'medium', prompt: '允许适度结构变化，可以调整表情、背景、姿势或位置，但必须保留主体身份和核心识别点。' },
+      high: { key: 'high', prompt: '允许明显结构变化，可以重新组织表情、背景、姿势、位置和镜头关系，但主体身份不能丢失。' }
+    },
+    structureFocus: {
+      expression: '允许优化表情，让情绪更清楚、更适合拼豆表达。',
+      background: '允许简化或重组背景，减少脏点、杂物和复杂层次。',
+      pose: '允许调整姿势、动作和朝向，使主体更完整、更适合成品展示。',
+      position: '允许调整位置、主体占比和构图镜头，让画面重心更稳定。'
+    },
+    background: {
+      auto: { removeBg: null, prompt: '背景根据主体自动处理，优先保证干净、不抢主体。' },
+      remove: { removeBg: true, prompt: '请去除复杂背景或改为纯净简化背景，让主体边界清楚，方便后续抠图和拼豆制作。' },
+      keep: { removeBg: false, prompt: '请保留背景关系，但必须简化背景细节，避免喧宾夺主和产生大量杂色。' }
+    }
+  }
 };
 let aiConfig = { ...defaultAiConfig };
 
@@ -2008,6 +2499,22 @@ function createDefaultAiGenerationUiState() {
 
 function renderAiGeneratingState() {
   const state = aiGenerationUiState || createDefaultAiGenerationUiState();
+  const candidateList = state.candidateStates || [];
+  const hasCandidates = candidateList.length > 0;
+  const allDone = hasCandidates && candidateList.every(c => c.status === 'success' || c.status === 'failed');
+  const aiPhaseDone = hasCandidates && candidateList.every(c => c.status === 'running' || c.status === 'success' || c.status === 'failed');
+  let progress = Math.max(0, Math.min(100, state.progress || 0));
+  if (!state.failed && progress >= 100 && !allDone) progress = 95;
+  const publicStatus = state.failed
+    ? '生成失败'
+    : (allDone ? '生成完成' : (aiPhaseDone || progress >= 95 ? '工程预览生成中' : 'AI 生图中'));
+  const publicDetail = state.failed
+    ? '生成遇到问题，请查看错误详情'
+    : (allDone
+        ? '全部候选已就绪，准备进入结果页'
+        : (aiPhaseDone || progress >= 95
+            ? 'AI 候选原图已返回，正在生成工程拼豆图'
+            : '正在生成拼豆图，请稍等'));
   const bars = ['gen-progress-bar', 'inline-gen-progress-bar'].map(id => document.getElementById(id)).filter(Boolean);
   const texts = ['gen-progress-text', 'inline-gen-progress-text'].map(id => document.getElementById(id)).filter(Boolean);
   const percents = ['gen-progress-percent', 'inline-gen-progress-percent'].map(id => document.getElementById(id)).filter(Boolean);
@@ -2021,11 +2528,11 @@ function renderAiGeneratingState() {
   const candidateLists = ['gen-candidate-list', 'inline-gen-candidate-list'].map(id => document.getElementById(id)).filter(Boolean);
   const logList = document.getElementById('gen-status-log');
   const actions = document.getElementById('gen-overlay-actions');
-  bars.forEach(bar => { bar.style.width = `${Math.max(0, Math.min(100, state.progress || 0))}%`; });
-  texts.forEach(text => { text.textContent = state.message || '正在生成中...'; });
-  percents.forEach(percent => { percent.textContent = `${Math.round(state.progress || 0)}%`; });
-  apiStatuses.forEach(apiStatus => { apiStatus.textContent = state.apiStatus || '等待开始'; });
-  apiDetails.forEach(apiDetail => { apiDetail.textContent = state.detail || '准备建立生成任务...'; });
+  bars.forEach(bar => { bar.style.width = `${progress}%`; });
+  texts.forEach(text => { text.textContent = publicStatus; });
+  percents.forEach(percent => { percent.textContent = `${Math.round(progress)}%`; });
+  apiStatuses.forEach(apiStatus => { apiStatus.textContent = publicStatus; });
+  apiDetails.forEach(apiDetail => { apiDetail.textContent = publicDetail; });
   candidateStatuses.forEach(candidateStatus => {
     const total = state.totalCandidates || 0;
     const done = Math.max(0, Math.min(total || 0, state.completedCandidates || 0));
@@ -2074,7 +2581,13 @@ function renderAiGeneratingState() {
       detail.style.fontSize = '11px';
       detail.style.lineHeight = '1.5';
       detail.style.opacity = '.82';
-      detail.textContent = item.detail || '等待发起请求';
+      detail.textContent = item.status === 'success'
+        ? '图片已生成'
+        : item.status === 'failed'
+          ? '生成失败，请查看错误详情'
+          : item.status === 'running'
+            ? 'AI 正在生成图片'
+            : '等待开始';
       row.appendChild(header);
       row.appendChild(detail);
       candidateList.appendChild(row);
@@ -2083,7 +2596,12 @@ function renderAiGeneratingState() {
   if (actions) actions.style.display = state.failed ? 'flex' : 'none';
   if (logList) {
     logList.innerHTML = '';
-    (state.logs || []).slice(-4).forEach(item => {
+    const publicLogs = state.failed
+      ? ['生成失败，请查看错误详情']
+      : progress >= 100
+        ? ['生成完成，正在整理候选方案']
+        : ['AI 生图中，请稍等'];
+    publicLogs.forEach(item => {
       const row = document.createElement('div');
       row.style.fontSize = '12px';
       row.style.lineHeight = '1.5';
@@ -2156,23 +2674,26 @@ function renderAiPickViewer(payload, candidates) {
   }
   const candidate = candidates.find(item => item.id === activeTab.id);
   if (!candidate) return;
-  // ★ 简化后：优先展示 AI 原图（previewUrl），再 fallback 到工程图
-  const previewUrl = candidate.previewUrl || candidate.convertedPreviewUrl || '';
+  const previewUrl = getAiCandidateDisplayUrl(candidate);
+  const engineeringPreviewUrl = getAiCandidateEngineeringPreviewUrl(candidate);
   if (previewUrl) {
     viewerMedia.innerHTML = `<img src="${previewUrl}" alt="${candidate.title}" style="width:100%;height:100%;object-fit:contain;background:#fff;display:block">`;
   } else {
     viewerMedia.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--text2)"><div style="font-size:30px">🎨</div><div style="font-size:13px">AI 生成中...</div></div>`;
   }
-  caption.textContent = previewUrl ? (candidate.title || 'AI 生成图') : `${candidate.title || ''} · 生成中`;
+  caption.textContent = previewUrl
+    ? `${candidate.title || 'AI 生成图'} · 当前展示和继续处理均使用 AI 原图`
+    : `${candidate.title || ''} · 生成中`;
   stats.innerHTML = `
     <span class="info-badge purple">📐 ${candidate.sizeLabel || ''}</span>
     <span class="info-badge pink">🎨 AI 原图</span>
+    ${engineeringPreviewUrl ? `<span class="info-badge purple">工程预览 ${candidate.convertedRows || '?'}×${candidate.convertedCols || '?'}</span>` : '<span class="info-badge">工程预览生成中</span>'}
   `;
   actions.innerHTML = `
-    <button class="btn-secondary" onclick="downloadAiImage('${candidate.id}')">⬇ 保存图片</button>
-    <button class="btn-secondary" onclick="previewAiCandidate('${candidate.id}')">查看说明</button>
-    <button class="btn-primary" onclick="applySelectedBeadCandidateById('${candidate.id}')" ${previewUrl ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>选这版继续</button>
-    <button class="btn-primary" onclick="applySelectedBeadCandidateByIdWithPerfectPixel('${candidate.id}')" ${previewUrl ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>图像处理</button>
+    <button class="btn-secondary" onclick="downloadAiImage('${candidate.id}')">保存</button>
+    <button class="btn-secondary" onclick="previewAiCandidate('${candidate.id}')">说明</button>
+    <button class="btn-primary" onclick="applySelectedBeadCandidateById('${candidate.id}')" ${previewUrl ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>继续</button>
+    <button class="btn-primary" onclick="applySelectedBeadCandidateByIdWithPerfectPixel('${candidate.id}')" ${previewUrl ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>精修</button>
   `;
 }
 
@@ -2189,12 +2710,36 @@ function buildAiCandidateSourcePreview(candidate, payload) {
 }
 
 function buildAiCandidateGeneratedPreview(candidate) {
-  // ★ 简化后：优先展示 AI 原图，不等工程拼豆图
-  const previewUrl = candidate.previewUrl || candidate.convertedPreviewUrl || '';
+  const previewUrl = getAiCandidateDisplayUrl(candidate);
   if (previewUrl) {
     return `<img class="candidate-image" src="${previewUrl}" alt="${candidate.title}" style="width:100%;height:100%;object-fit:cover;border-radius:14px">`;
   }
   return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text2);gap:8px;background:linear-gradient(135deg,#fff6fb,#f4ecff);border-radius:14px"><div style="font-size:26px">🎨</div><div style="font-size:12px">AI 生成中...</div></div>`;
+}
+
+function getAiCandidateDisplayUrl(candidate) {
+  return candidate?.aiImageUrl || candidate?.previewUrl || '';
+}
+
+function getAiCandidateEngineeringPreviewUrl(candidate) {
+  return candidate?.engineeringPreviewUrl || candidate?.convertedPreviewUrl || '';
+}
+
+function getAiCandidateProcessUrl(candidate) {
+  return candidate?.selectedInputUrl || getAiCandidateDisplayUrl(candidate);
+}
+
+function getAiCandidateDownloadUrl(candidate) {
+  return getAiCandidateDisplayUrl(candidate);
+}
+
+function createAiGenerationId() {
+  return `gen_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function createImageConvertRequestId(prefix = 'bridge') {
+  imageConvertRequestSeq += 1;
+  return `${prefix}_${Date.now()}_${imageConvertRequestSeq}`;
 }
 
 function initializeAiCandidatePlaceholders(payload) {
@@ -2203,11 +2748,14 @@ function initializeAiCandidatePlaceholders(payload) {
     id: spec.id,
     engineeringPresetId: resolveEngineeringPresetFromAiControls(payload, spec),
     engineeringOptions: resolveEngineeringOptionsFromAiControls(payload, spec),
+    generationId: payload.generationId || '',
     title: spec.title,
     description: spec.description,
     preview: '🖼️',
+    aiImageUrl: '',
     previewUrl: '',
     previewType: 'image',
+    engineeringPreviewUrl: '',
     convertedPreviewUrl: '',
     convertedColorCount: null,
     convertedBeadCount: null,
@@ -2222,7 +2770,8 @@ function initializeAiCandidatePlaceholders(payload) {
     intent: spec.intent,
     gradient: spec.gradient,
     prompt: payload.prompt,
-    sourceMode: payload.mode
+    sourceMode: payload.mode,
+    selectedInputUrl: ''
   }));
   renderAiGenerationSourcePanel(payload);
   renderAiBeadCandidates(aiBeadCandidates, payload);
@@ -2246,8 +2795,44 @@ function updateAiGenerationUiState(patch = {}, options = {}) {
   renderAiGeneratingState();
 }
 
+function resetAiPipelineState() {
+  aiReferenceImage = null;
+  aiReferenceName = '';
+  aiBeadCandidates = [];
+  selectedAiCandidate = null;
+  aiMockTask = null;
+  aiGenerationUiState = null;
+  currentAiGenerationPayload = null;
+  aiGenerationRunning = false;
+  const uploadBox = document.getElementById('ai-reference-upload');
+  const thumb = document.getElementById('ai-reference-thumb');
+  const name = document.getElementById('ai-reference-name');
+  const desc = document.getElementById('ai-reference-desc');
+  const input = document.getElementById('ai-reference-input');
+  if (uploadBox) uploadBox.classList.remove('has-image');
+  if (thumb) thumb.innerHTML = '📷';
+  if (name) name.textContent = '点击上传灵感图';
+  if (desc) desc.textContent = '主体清晰 · 背景简单 · 光线稳定';
+  if (input) input.value = '';
+  if (typeof checkAiGenBtn === 'function') checkAiGenBtn();
+}
+
+function startNewAiGeneration() {
+  resetAiPipelineState();
+  goPage('page-ai-gen');
+}
+
+function startNewImageConvert() {
+  if (typeof resetAiPipelineState === 'function') resetAiPipelineState();
+  if (activeImageConvertRequests && typeof activeImageConvertRequests.clear === 'function') {
+    activeImageConvertRequests.clear();
+  }
+  postImageConvertMessage('god-dou:image-convert:reset', {});
+  goPage('page-img-convert');
+}
+
 function resetAiGenerationUiState(payload) {
-  const totalCandidates = Math.max(1, Math.min(10, payload?.aiConfig?.candidateCount || 3));
+  const totalCandidates = buildCandidateSpecs(payload).length;
   aiGenerationUiState = createDefaultAiGenerationUiState();
   updateAiGenerationUiState({
     progress: 4,
@@ -2281,12 +2866,64 @@ function showAiGenerationFailure(errorMessage) {
   });
 }
 
+var __aiGeneratingTimerIds = [];
 function closeAiGeneratingOverlay() {
   document.getElementById('ai-generating-overlay')?.classList.remove('show');
+  if (Array.isArray(__aiGeneratingTimerIds)) {
+    __aiGeneratingTimerIds.forEach(function(id){ try { clearTimeout(id); } catch(e){} });
+    __aiGeneratingTimerIds.length = 0;
+  }
+}
+
+// ==================== C-08 Inflight Lock ====================
+var __inflightLocks = new Set();
+function withInflightLock(key, fn, holdMs) {
+  if (__inflightLocks.has(key)) return undefined;
+  __inflightLocks.add(key);
+  var hold = typeof holdMs === 'number' ? holdMs : 800;
+  var btnEl = null;
+  try {
+    if (typeof key === 'string' && key.charAt(0) === '#') btnEl = document.querySelector(key);
+  } catch (e) {}
+  if (btnEl) btnEl.disabled = true;
+  var release = function() {
+    __inflightLocks.delete(key);
+    if (btnEl) btnEl.disabled = false;
+  };
+  var result;
+  try { result = fn(); }
+  catch (e) { release(); throw e; }
+  if (result && typeof result.then === 'function') {
+    return Promise.resolve(result).finally(release);
+  }
+  setTimeout(release, hold);
+  return result;
+}
+
+// ==================== C-07 Close All Modals ====================
+function closeAllModals() {
+  document.querySelectorAll('.modal-overlay.show').forEach(function(m){
+    m.classList.remove('show');
+  });
+  if (typeof closeAiGeneratingOverlay === 'function') closeAiGeneratingOverlay();
+}
+
+// ==================== C-01 Reset Cross-Tab State ====================
+function resetCrossTabState() {
+  try { cartEditMode = false; } catch (e) {}
+  try { currentAiPickTab = ''; } catch (e) {}
+  try { currentTool = 'brush'; } catch (e) {}
+  try { currentColor = '#B8A9C9'; } catch (e) {}
+  try { orderFromPage = false; } catch (e) {}
+  // Note: currentGenResultCompositeUrl handled by C-06 (bento guard)
+  // Note: AI generation state owned by startNewAiGeneration (do NOT clear here)
 }
 
 // ==================== Navigation ====================
 function switchTab(idx) {
+  if (typeof closeAllModals === 'function') closeAllModals();
+  if (typeof closeAiGeneratingOverlay === 'function') closeAiGeneratingOverlay();
+  if (typeof resetCrossTabState === 'function') resetCrossTabState();
   currentTab = idx;
   pageStack = [];
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -2431,9 +3068,181 @@ function toggleAiConfigPanel(forceOpen) {
 
 function syncAiConfigSummary() {
   const summary = document.getElementById('ai-config-summary');
-  if (!summary) return;
-  summary.textContent = `${aiConfig.model} · ${getBeadSystemLabel('ai-generate')} · ${aiConfig.baseUrl.replace(/^https?:\/\//, '')} · ${aiConfig.candidateCount} 个候选`;
+  if (summary) summary.textContent = '';
   syncAiEngineeringMapping();
+}
+
+// ==================== AI Endpoints UI ====================
+function renderAiEndpointList() {
+  const host = document.getElementById('ai-endpoint-list');
+  if (!host) return;
+  const endpoints = aiConfig.endpoints || [];
+  host.innerHTML = '';
+  endpoints.forEach((ep, idx) => {
+    const card = document.createElement('div');
+    card.className = `ai-endpoint-card${ep.enabled ? '' : ' disabled'}`;
+    card.dataset.epId = ep.id;
+    card.innerHTML = `
+      <div class="ep-head">
+        <span class="ep-index">#${idx + 1}</span>
+        <input class="ep-name-input" data-field="name" value="${escapeHtml(ep.name || '')}" placeholder="节点名称">
+        <div class="ep-toggle ${ep.enabled ? 'on' : ''}" data-action="toggle" title="启用/禁用"></div>
+        <div class="ep-actions">
+          <button class="ep-btn" data-action="up" ${idx === 0 ? 'disabled' : ''} title="上移">↑</button>
+          <button class="ep-btn" data-action="down" ${idx === endpoints.length - 1 ? 'disabled' : ''} title="下移">↓</button>
+          <button class="ep-btn danger" data-action="remove" title="删除">✕</button>
+        </div>
+      </div>
+      <div class="ep-fields">
+        <div>
+          <div class="ep-field-label">Base URL</div>
+          <input class="ep-input" data-field="baseUrl" value="${escapeHtml(ep.baseUrl || '')}" placeholder="https://openrouter.ai/api">
+        </div>
+        <div>
+          <div class="ep-field-label">Model</div>
+          <input class="ep-input" data-field="model" value="${escapeHtml(ep.model || '')}" placeholder="google/gemini-3.1-flash-image-preview">
+        </div>
+        <div>
+          <div class="ep-field-label">API Key</div>
+          <input class="ep-input" data-field="apiKey" type="password" value="${escapeHtml(ep.apiKey || '')}" placeholder="sk-...">
+        </div>
+      </div>
+      <div class="ep-test-bar">
+        <button class="ep-btn" data-action="test">测试连通性</button>
+        <span class="ep-test-status" data-role="test-status">未测试</span>
+      </div>
+    `;
+    host.appendChild(card);
+
+    card.querySelectorAll('input[data-field]').forEach(input => {
+      input.addEventListener('input', e => {
+        const field = e.target.dataset.field;
+        ep[field] = e.target.value;
+        syncAiConfigSummary();
+      });
+      input.addEventListener('click', e => e.stopPropagation());
+    });
+    card.querySelector('[data-action="toggle"]').addEventListener('click', e => {
+      e.stopPropagation();
+      ep.enabled = !ep.enabled;
+      renderAiEndpointList();
+      syncAiConfigSummary();
+    });
+    card.querySelector('[data-action="up"]').addEventListener('click', e => {
+      e.stopPropagation();
+      if (idx === 0) return;
+      const arr = aiConfig.endpoints;
+      [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
+      renderAiEndpointList();
+      syncAiConfigSummary();
+    });
+    card.querySelector('[data-action="down"]').addEventListener('click', e => {
+      e.stopPropagation();
+      const arr = aiConfig.endpoints;
+      if (idx >= arr.length - 1) return;
+      [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]];
+      renderAiEndpointList();
+      syncAiConfigSummary();
+    });
+    card.querySelector('[data-action="remove"]').addEventListener('click', e => {
+      e.stopPropagation();
+      if ((aiConfig.endpoints || []).length <= 1) {
+        showToast('至少保留一个节点');
+        return;
+      }
+      aiConfig.endpoints.splice(idx, 1);
+      renderAiEndpointList();
+      syncAiConfigSummary();
+    });
+    card.querySelector('[data-action="test"]').addEventListener('click', e => {
+      e.stopPropagation();
+      testAiEndpoint(ep, card);
+    });
+  });
+}
+
+function escapeHtml(str) {
+  return String(str || '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[ch]));
+}
+
+function addAiEndpoint() {
+  if (!Array.isArray(aiConfig.endpoints)) aiConfig.endpoints = [];
+  aiConfig.endpoints.push({
+    id: `ep-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    name: `节点 ${aiConfig.endpoints.length + 1}`,
+    baseUrl: '',
+    apiKey: '',
+    model: '',
+    enabled: true
+  });
+  renderAiEndpointList();
+  syncAiConfigSummary();
+}
+
+async function testAiEndpoint(ep, card) {
+  const status = card.querySelector('[data-role="test-status"]');
+  if (!ep.baseUrl || !ep.apiKey || !ep.model) {
+    status.className = 'ep-test-status fail';
+    status.textContent = '请先填全 baseUrl / model / apiKey';
+    return;
+  }
+  status.className = 'ep-test-status testing';
+  const capability = describeAiEndpointCapability(ep);
+  status.textContent = `测试中...${capability.label ? ` ${capability.label}` : ''}`;
+  try {
+    const url = `${normalizeBaseUrl(ep.baseUrl)}/v1/chat/completions`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${ep.apiKey}`
+      },
+      body: JSON.stringify({
+        model: ep.model,
+        messages: [{ role: 'user', content: 'ping' }],
+        max_tokens: 1
+      })
+    });
+    if (response.ok || response.status === 400) {
+      status.className = 'ep-test-status ok';
+      status.textContent = `✓ 鉴权可用 (HTTP ${response.status})；${capability.testNote}`;
+    } else if (response.status === 401 || response.status === 403) {
+      status.className = 'ep-test-status fail';
+      status.textContent = `✗ 鉴权失败 (HTTP ${response.status})`;
+    } else if (response.status === 404) {
+      status.className = 'ep-test-status fail';
+      status.textContent = `✗ 端点不存在 (HTTP 404)，检查 baseUrl`;
+    } else {
+      status.className = 'ep-test-status fail';
+      status.textContent = `✗ HTTP ${response.status}`;
+    }
+  } catch (err) {
+    status.className = 'ep-test-status fail';
+    status.textContent = `✗ 网络错误: ${err.message || err}`;
+  }
+}
+
+function describeAiEndpointCapability(ep) {
+  const baseUrl = normalizeBaseUrl(ep?.baseUrl || '');
+  const model = ep?.model || '';
+  if (isGeminiImageModel(model, baseUrl)) {
+    return {
+      label: 'Gemini 原生图像链路',
+      testNote: '当前只测鉴权，真实生图走 Gemini generateContent'
+    };
+  }
+  if (/openrouter\.ai/i.test(baseUrl)) {
+    return {
+      label: 'OpenRouter 图像链路',
+      testNote: '当前只测鉴权，真实生图需走 image 接口验证'
+    };
+  }
+  return {
+    label: 'OpenAI 兼容图像链路',
+    testNote: '当前只测鉴权，真实生图需走 images 接口验证'
+  };
 }
 
 function syncAiEngineeringMapping() {
@@ -2462,49 +3271,88 @@ function syncAiEngineeringMapping() {
 }
 
 function fillAiConfigForm() {
-  const map = {
-    'ai-config-base-url': aiConfig.baseUrl,
-    'ai-config-model': aiConfig.model,
-    'ai-config-candidate-count': aiConfig.candidateCount,
-    'ai-config-api-key': aiConfig.apiKey,
-    'ai-config-text-template': aiConfig.textTemplate,
-    'ai-config-ref-template': aiConfig.refTemplate,
-    'ai-config-style-map': aiConfig.styleMap,
-    'ai-config-strategy-map': aiConfig.strategyMap,
-    'ai-config-intent-map': aiConfig.intentMap
-  };
-  Object.entries(map).forEach(([id, value]) => {
-    const el = document.getElementById(id);
-    if (el) el.value = value;
-  });
+  const cc = document.getElementById('ai-config-candidate-count');
+  if (cc) cc.value = aiConfig.candidateCount;
+  const rt = document.getElementById('ai-config-ref-template');
+  if (rt) rt.value = aiConfig.refTemplate;
+  renderAiEndpointList();
   syncAiConfigSummary();
 }
 
 function readAiConfigForm() {
   aiConfig = {
-    baseUrl: document.getElementById('ai-config-base-url')?.value?.trim() || defaultAiConfig.baseUrl,
-    model: document.getElementById('ai-config-model')?.value?.trim() || defaultAiConfig.model,
+    ...aiConfig,
     candidateCount: Math.max(1, Math.min(5, parseInt(document.getElementById('ai-config-candidate-count')?.value || String(defaultAiConfig.candidateCount), 10) || defaultAiConfig.candidateCount)),
     beadSystem: getBeadSystemDefaults('ai-generate'),
-    apiKey: document.getElementById('ai-config-api-key')?.value?.trim() || defaultAiConfig.apiKey,
-    textTemplate: document.getElementById('ai-config-text-template')?.value?.trim() || defaultAiConfig.textTemplate,
     refTemplate: document.getElementById('ai-config-ref-template')?.value?.trim() || defaultAiConfig.refTemplate,
-    styleMap: document.getElementById('ai-config-style-map')?.value?.trim() || defaultAiConfig.styleMap,
-    strategyMap: document.getElementById('ai-config-strategy-map')?.value?.trim() || defaultAiConfig.strategyMap,
-    intentMap: document.getElementById('ai-config-intent-map')?.value?.trim() || defaultAiConfig.intentMap
+    endpoints: aiConfig.endpoints || []
   };
+  const primary = (aiConfig.endpoints || []).find(ep => ep.enabled) || aiConfig.endpoints?.[0];
+  if (primary) {
+    aiConfig.baseUrl = primary.baseUrl;
+    aiConfig.model = primary.model;
+    aiConfig.apiKey = primary.apiKey;
+  }
   syncAiConfigSummary();
 }
 
-function loadAiConfig() {
+function migrateAiConfig(cfg) {
+  const merged = { ...defaultAiConfig, ...cfg };
+  if (!Array.isArray(merged.endpoints) || merged.endpoints.length === 0) {
+    merged.endpoints = [
+      {
+        id: `ep-mig-${Date.now()}`,
+        name: '迁移节点',
+        baseUrl: merged.baseUrl || '',
+        apiKey: merged.apiKey || '',
+        model: merged.model || '',
+        enabled: true
+      },
+      ...DEFAULT_ENDPOINTS.slice(1).map(ep => ({ ...ep, id: `${ep.id}-${Date.now()}` }))
+    ];
+  } else {
+    merged.endpoints = merged.endpoints.map((ep, idx) => ({
+      id: ep.id || `ep-${Date.now()}-${idx}`,
+      name: ep.name || `节点 ${idx + 1}`,
+      baseUrl: ep.baseUrl || '',
+      apiKey: ep.apiKey || '',
+      model: ep.model || '',
+      enabled: ep.enabled !== false
+    }));
+  }
+  return merged;
+}
+
+// 外部默认配置文件路径（与 index.html 同目录）
+const AI_CONFIG_JSON_URL = './ai-config.json';
+
+async function fetchExternalAiConfig() {
+  try {
+    const resp = await fetch(`${AI_CONFIG_JSON_URL}?_=${Date.now()}`, { cache: 'no-store' });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    Object.keys(data).filter(k => k.startsWith('_')).forEach(k => delete data[k]);
+    console.info('[AI Config] 已加载外部配置 ai-config.json');
+    return data;
+  } catch (error) {
+    console.warn('[AI Config] 外部配置 ai-config.json 加载失败，将使用内置默认值：', error.message || error);
+    return null;
+  }
+}
+
+async function loadAiConfig() {
   try {
     const raw = localStorage.getItem(AI_CONFIG_STORAGE_KEY);
     if (raw) {
-      aiConfig = { ...defaultAiConfig, ...JSON.parse(raw) };
+      aiConfig = migrateAiConfig(JSON.parse(raw));
+      console.info('[AI Config] 已从 localStorage 加载（用户保存过的配置）');
+    } else {
+      const external = await fetchExternalAiConfig();
+      aiConfig = migrateAiConfig(external || {});
     }
   } catch (error) {
     console.warn('加载 AI 配置失败', error);
-    aiConfig = { ...defaultAiConfig };
+    aiConfig = migrateAiConfig({});
   }
   fillAiConfigForm();
 }
@@ -2515,11 +3363,12 @@ function saveAiConfig() {
   showToast('模型配置已保存');
 }
 
-function resetAiConfig() {
-  aiConfig = { ...defaultAiConfig };
-  fillAiConfigForm();
+async function resetAiConfig() {
   localStorage.removeItem(AI_CONFIG_STORAGE_KEY);
-  showToast('已恢复默认配置');
+  const external = await fetchExternalAiConfig();
+  aiConfig = migrateAiConfig(external || {});
+  fillAiConfigForm();
+  showToast(external ? '已恢复 ai-config.json 默认值' : '已恢复内置默认值（外部 JSON 不可用）');
 }
 
 function appendPrompt(text) {
@@ -2587,6 +3436,133 @@ function syncReferenceVariationTip() {
   tip.textContent = getReferenceVariationMeta(getActiveTagText('ai-reference-variation-tags') || '动作姿势').tip;
 }
 
+function getAiPromptPresets() {
+  return aiConfig.promptPresets || defaultAiConfig.promptPresets;
+}
+
+function getAiPeActiveValue(field, fallback) {
+  return document.querySelector(`[data-pe-field="${field}"].active`)?.dataset.peValue || fallback;
+}
+
+function selectAiPromptEngineOption(el) {
+  const field = el?.dataset?.peField;
+  if (!field) return;
+  document.querySelectorAll(`[data-pe-field="${field}"]`).forEach(item => {
+    item.classList.toggle('active', item === el);
+  });
+  syncAiPromptEngineUi();
+}
+
+function toggleAiInternalPromptPanel(forceOpen) {
+  const panel = document.getElementById('ai-pe-internal-toggle');
+  if (!panel) return;
+  panel.classList.toggle('open', typeof forceOpen === 'boolean' ? forceOpen : !panel.classList.contains('open'));
+}
+
+function getAiPromptEngineSelection() {
+  const presets = getAiPromptPresets();
+  const mode = getAiPeActiveValue('mode', 'reference');
+  const styleKey = getAiPeActiveValue('style', 'cute');
+  const gridKey = getAiPeActiveValue('grid', 'medium');
+  const structureAllow = getAiPeActiveValue('structureAllow', 'allow');
+  const intensityKey = structureAllow === 'keep' ? 'keep' : getAiPeActiveValue('intensity', 'medium');
+  const backgroundKey = getAiPeActiveValue('background', 'auto');
+  const focusHost = document.getElementById('ai-pe-structure-focus');
+  const focus = focusHost
+    ? Array.from(focusHost.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.value)
+    : ['expression', 'background', 'pose', 'position'];
+  const internalPrompt = (document.getElementById('ai-pe-internal-prompt')?.value || '').trim();
+  const style = presets.styles?.[styleKey] || presets.styles?.cute;
+  const grid = presets.gridSizes?.[gridKey] || presets.gridSizes?.medium || presets.gridSizes?.[58];
+  const structure = presets.structureIntensity?.[intensityKey] || presets.structureIntensity?.medium;
+  const background = presets.background?.[backgroundKey] || presets.background?.auto;
+  return {
+    mode,
+    styleKey,
+    style,
+    gridKey,
+    grid,
+    structureAllow,
+    intensityKey,
+    structure,
+    backgroundKey,
+    background,
+    focus,
+    internalPrompt
+  };
+}
+
+function getPromptEngineVariationMeta(selection) {
+  const presets = getAiPromptPresets();
+  const focusRules = (selection.focus || [])
+    .map(key => presets.structureFocus?.[key])
+    .filter(Boolean);
+  const key = selection.focus?.includes('pose')
+    ? 'pose'
+    : selection.focus?.includes('position')
+      ? 'composition'
+      : selection.focus?.includes('background')
+        ? 'composition'
+        : 'style';
+  return {
+    key,
+    tip: focusRules.join(' '),
+    promptRule: focusRules.length ? focusRules.join(' ') : '请在不破坏主体识别度的前提下优化结构。'
+  };
+}
+
+function buildPromptEngineFragments(selection) {
+  const presets = getAiPromptPresets();
+  const fragments = [
+    presets.baseRules,
+    selection.style?.prompt,
+    selection.grid?.prompt,
+    selection.structure?.prompt,
+    getPromptEngineVariationMeta(selection).promptRule,
+    selection.background?.prompt
+  ].filter(Boolean);
+  if (selection.mode === 'internal-text' && selection.internalPrompt) {
+    fragments.push(`内部自定义需求：${selection.internalPrompt}`);
+  }
+  return fragments;
+}
+
+function updateAiPromptEngineSummary(selection) {
+  const el = document.getElementById('ai-pe-summary');
+  if (!el) return;
+  const mode = selection.mode === 'internal-text' ? '内部文字生图' : '参考图改造';
+  const structure = selection.structureAllow === 'keep'
+    ? '尽量不变'
+    : ({ low: '轻微变化', medium: '适度变化', high: '明显变化' }[selection.intensityKey] || '适度变化');
+  const bg = ({ auto: '背景自动', remove: '去背景', keep: '保留背景' }[selection.backgroundKey] || '背景自动');
+  el.textContent = `${mode} · ${selection.style?.label || '可爱'} · ${selection.grid?.label || '中'} · ${bg}`;
+}
+
+function syncAiPromptEngineUi() {
+  const selection = getAiPromptEngineSelection();
+  const internalBox = document.getElementById('ai-pe-internal-box');
+  const refPanel = document.getElementById('ai-reference-panel');
+  const inputTitle = document.getElementById('ai-input-zone-title');
+  const helper = document.getElementById('ai-helper-text');
+  const focusBox = document.getElementById('ai-pe-structure-focus');
+  const intensity = document.getElementById('ai-pe-structure-intensity-row');
+  const isInternal = selection.mode === 'internal-text';
+  aiMode = isInternal ? 'text' : 'reference';
+  if (internalBox) internalBox.classList.toggle('show', isInternal);
+  if (isInternal) toggleAiInternalPromptPanel(true);
+  if (refPanel) refPanel.style.display = isInternal ? 'none' : '';
+  if (inputTitle) inputTitle.textContent = isInternal ? '内部文字生图' : '上传图片';
+  if (helper) {
+    helper.textContent = isInternal
+      ? '内部模式：用自然语言直接生成拼豆图。'
+      : '上传图片，生成拼豆图。';
+  }
+  if (focusBox) focusBox.style.opacity = selection.structureAllow === 'keep' ? '0.55' : '1';
+  if (intensity) intensity.style.opacity = selection.structureAllow === 'keep' ? '0.45' : '1';
+  updateAiPromptEngineSummary(selection);
+  checkAiGenBtn();
+}
+
 function startGenerate() {
   showGeneratingOverlay();
 }
@@ -2627,7 +3603,7 @@ function handleAiReferenceUpload(event) {
   const desc = document.getElementById('ai-reference-desc');
   if (uploadBox) uploadBox.classList.add('has-image');
   if (name) name.textContent = file.name;
-  if (desc) desc.textContent = '参考图已添加。后续可替换图片，系统会围绕这张图生成更适合拼豆的新方案。';
+  if (desc) desc.textContent = '已添加，可点击重新上传';
   if (thumb) {
     const objectUrl = URL.createObjectURL(file);
     thumb.innerHTML = `<img src="${objectUrl}" alt="参考图">`;
@@ -2704,24 +3680,29 @@ function commitAiCustomSize() {
 
 function buildAiGenerationPayload() {
   readAiConfigForm();
-  // 简化后：固定为 reference 模式，无需用户填写提示词
-  const referenceFreedom = getReferenceFreedomMeta(getActiveTagText('ai-reference-freedom-tags') || '中');
-  const referenceVariation = getReferenceVariationMeta(getActiveTagText('ai-reference-variation-tags') || '动作姿势');
+  const promptEngine = getAiPromptEngineSelection();
+  const isInternalText = promptEngine.mode === 'internal-text';
   return {
-    mode: 'reference',
-    prompt: '',
-    style: getActiveTagText('style-tags') || '卡通',
-    intent: getActiveTagText('ai-intent-tags') || '平衡还原',
-    size: parseAiSizeTag(getActiveTagText('ai-size-tags') || '中 58×58'),
+    mode: isInternalText ? 'text' : 'reference',
+    prompt: isInternalText ? promptEngine.internalPrompt : '',
+    style: '卡通',
+    intent: '平衡还原',
+    size: {
+      label: '中 58×58',
+      rows: 58,
+      cols: 58
+    },
     referenceGoal: '',
-    referenceFreedom: referenceFreedom,
-    referenceVariation: referenceVariation,
+    referenceFreedom: getReferenceFreedomMeta('中'),
+    referenceVariation: getReferenceVariationMeta('动作姿势'),
+    promptEngineDisplay: promptEngine,
     aiConfig: {
       baseUrl: aiConfig.baseUrl,
       model: aiConfig.model,
       candidateCount: aiConfig.candidateCount,
       beadSystem: aiConfig.beadSystem,
       apiKey: aiConfig.apiKey,
+      textTemplate: aiConfig.textTemplate,
       template: aiConfig.refTemplate,
       intentMap: aiConfig.intentMap
     },
@@ -2737,12 +3718,17 @@ function buildAiGenerationPayload() {
 async function startAiGenerate() {
   if (aiGenerationRunning) return;
   const payload = buildAiGenerationPayload();
-  if (!payload.referenceImage) {
+  if (payload.mode === 'reference' && !payload.referenceImage) {
     showToast('请先上传图片');
+    return;
+  }
+  if (payload.mode === 'text' && !payload.prompt) {
+    showToast('请先填写内部自定义描述');
     return;
   }
   aiGenerationRunning = true;
   try {
+    payload.generationId = createAiGenerationId();
     if (payload.referenceFile) {
       payload.sourcePreviewUrl = await fileToDataUrl(payload.referenceFile);
     } else {
@@ -2856,8 +3842,9 @@ function parsePromptMap(mapText) {
 
 function buildCandidateSpecs(payload) {
   // 简化后：固定生戛1张，不再为不同候选拼豆派教不同的 promptSuffix
+  const generationId = payload?.generationId || 'pending';
   return [{
-    id: 'result',
+    id: `${generationId}_result_1`,
     title: 'AI 生成图',
     badge: '',
     intent: '',
@@ -2871,8 +3858,14 @@ function buildCandidateSpecs(payload) {
 }
 
 function composeAiPrompt(payload, spec) {
-  // 简化后：只使用固定提示词模板，删除所有额外拼接
-  return (payload.aiConfig?.template || '').trim();
+  const presets = getAiPromptPresets();
+  const baseTemplate = payload.mode === 'text'
+    ? (presets.internalTemplate || payload.aiConfig?.textTemplate || defaultAiConfig.textTemplate)
+    : (payload.aiConfig?.template || '').trim();
+  const userPrompt = payload.mode === 'text' ? payload.prompt : '';
+  return [baseTemplate, userPrompt ? `内部自定义需求：${userPrompt}` : '']
+    .filter(Boolean)
+    .join('\n\n');
 }
 
 
@@ -2880,8 +3873,58 @@ function normalizeBaseUrl(url) {
   return (url || '').replace(/\/+$/, '');
 }
 
-function isGeminiImageModel(model) {
+function isGeminiImageModel(model, baseUrl) {
+  if (baseUrl && /openrouter\.ai/i.test(baseUrl)) return false;
   return /gemini/i.test(String(model || ''));
+}
+
+function getActiveEndpoints() {
+  return (aiConfig.endpoints || []).filter(ep => ep.enabled && ep.baseUrl && ep.apiKey && ep.model);
+}
+
+async function callWithFailover(payload, spec, callerFn) {
+  const endpoints = getActiveEndpoints();
+  if (!endpoints.length) {
+    if (payload.aiConfig?.baseUrl && payload.aiConfig?.apiKey && payload.aiConfig?.model) {
+      return callerFn(payload, spec);
+    }
+    throw new Error('未配置任何启用且填全的节点（请在 AI 设置中至少启用一个）');
+  }
+  const errors = [];
+  for (let i = 0; i < endpoints.length; i++) {
+    const ep = endpoints[i];
+    updateAiGenerationUiState({
+      apiStatus: `节点 ${i + 1}/${endpoints.length}: ${ep.name}`,
+      detail: `${spec.title} · 尝试节点 [${ep.name}] (${ep.model})`
+    }, {
+      logMessage: `${spec.title}：尝试节点 [${ep.name}] baseUrl=${ep.baseUrl} model=${ep.model}`
+    });
+    const epPayload = {
+      ...payload,
+      aiConfig: {
+        ...payload.aiConfig,
+        baseUrl: ep.baseUrl,
+        apiKey: ep.apiKey,
+        model: ep.model
+      }
+    };
+    try {
+      const result = await callerFn(epPayload, spec);
+      if (i > 0) {
+        updateAiGenerationUiState({}, {
+          logMessage: `${spec.title}：节点 [${ep.name}] 成功（前 ${i} 个节点已 failover）`
+        });
+      }
+      return result;
+    } catch (err) {
+      const msg = err?.message || String(err);
+      errors.push(`[${ep.name}] ${msg}`);
+      updateAiGenerationUiState({}, {
+        logMessage: `节点 [${ep.name}] 失败：${msg}`
+      });
+    }
+  }
+  throw new Error(`所有 ${endpoints.length} 个节点已尝试失败：\n${errors.join('\n---\n')}`);
 }
 
 function fileToDataUrl(file) {
@@ -3057,7 +4100,7 @@ async function callGeminiImage(payload, spec) {
 }
 
 async function callTextToImage(payload, spec) {
-  if (isGeminiImageModel(payload.aiConfig.model)) {
+  if (isGeminiImageModel(payload.aiConfig.model, payload.aiConfig.baseUrl)) {
     return callGeminiImage(payload, spec);
   }
   updateAiGenerationUiState({
@@ -3094,7 +4137,7 @@ async function callTextToImage(payload, spec) {
 }
 
 async function callImageToImage(payload, spec) {
-  if (isGeminiImageModel(payload.aiConfig.model)) {
+  if (isGeminiImageModel(payload.aiConfig.model, payload.aiConfig.baseUrl)) {
     return callGeminiImage(payload, spec);
   }
   updateAiGenerationUiState({
@@ -3170,8 +4213,8 @@ async function requestAiBeadCandidates(payload) {
     let b64 = '';
     try {
       b64 = payload.mode === 'reference'
-        ? await callImageToImage(payload, spec)
-        : await callTextToImage(payload, spec);
+        ? await callWithFailover(payload, spec, callImageToImage)
+        : await callWithFailover(payload, spec, callTextToImage);
     } catch (error) {
       const message = error?.message || '接口返回未知错误';
       failed = true;
@@ -3193,8 +4236,10 @@ async function requestAiBeadCandidates(payload) {
     if (aiBeadCandidates[index]) {
       aiBeadCandidates[index] = {
         ...aiBeadCandidates[index],
+        aiImageUrl: b64,
         previewUrl: b64,
         previewType: 'image',
+        generationId: payload.generationId || aiBeadCandidates[index].generationId || '',
         prompt: payload.prompt,
         sourceMode: payload.mode
       };
@@ -3222,8 +4267,10 @@ async function requestAiBeadCandidates(payload) {
       title: spec.title,
       description: spec.description,
       preview: '🖼️',
+      aiImageUrl: b64,
       previewUrl: b64,
       previewType: 'image',
+      generationId: payload.generationId || '',
       targetShortSide: payload.size.rows,
       sizeLabel: spec.sizeLabel,
       colorCount: Math.max(10, baseColors + spec.colorDelta),
@@ -3232,7 +4279,8 @@ async function requestAiBeadCandidates(payload) {
       intent: spec.intent,
       gradient: spec.gradient,
       prompt: payload.prompt,
-      sourceMode: payload.mode
+      sourceMode: payload.mode,
+      selectedInputUrl: b64
     };
   });
 
@@ -3366,7 +4414,17 @@ function buildMockAiBeadResult(payload) {
       sourceMode: payload.mode
     }
   ];
-  return { candidates: candidates.slice(0, payload.aiConfig?.candidateCount || 3) };
+  const generationId = payload.generationId || createAiGenerationId();
+  return {
+    candidates: candidates.slice(0, payload.aiConfig?.candidateCount || 3).map((candidate, index) => ({
+      ...candidate,
+      id: `${generationId}_${candidate.id}_${index + 1}`,
+      generationId,
+      aiImageUrl: candidate.previewUrl || '',
+      engineeringPreviewUrl: '',
+      selectedInputUrl: candidate.previewUrl || ''
+    }))
+  };
 }
 
 function renderAiBeadCandidates(candidates, payload) {
@@ -3388,7 +4446,7 @@ function renderAiBeadCandidates(candidates, payload) {
 
 function downloadAiImage(candidateId) {
   const candidate = (aiBeadCandidates || []).find(c => c.id === candidateId);
-  const url = candidate?.previewUrl || candidate?.convertedPreviewUrl || '';
+  const url = getAiCandidateDownloadUrl(candidate);
   if (!url) { showToast('图片还未生成，请稍等'); return; }
   const a = document.createElement('a');
   a.href = url;
@@ -3415,9 +4473,10 @@ function applySelectedBeadCandidateByIdWithPerfectPixel(candidateId) {
 }
 
 function applySelectedBeadCandidateWithPerfectPixel(candidate) {
-  selectedAiCandidate = candidate;
+  selectedAiCandidate = { ...candidate, selectedInputUrl: getAiCandidateProcessUrl(candidate), selectedAt: Date.now() };
   const payload = buildImageConvertPayloadFromAiCandidate(candidate);
   payload.usePerfectPixel = true;
+  payload.jobType = 'active-import';
   postImageConvertMessage('god-dou:image-convert:import-ai-candidate', payload);
   goPage('page-img-convert');
 }
@@ -3454,9 +4513,12 @@ function buildImageConvertPayloadFromAiCandidate(candidate) {
   const gridMeta = resolveEngineeringTargetGridFromAiCandidate(candidate);
   const targetShortSide = Number.isInteger(candidate?.targetShortSide) ? candidate.targetShortSide : resolveEngineeringSizeFromAiCandidate(candidate);
   const engineeringOptions = candidate?.engineeringOptions || {};
+  const selectedInputUrl = getAiCandidateProcessUrl(candidate);
   return {
     source: 'god-dou-home-ai',
-    imageDataUrl: candidate?.previewUrl || '',
+    imageDataUrl: selectedInputUrl,
+    selectedInputUrl,
+    generationId: candidate?.generationId || currentAiGenerationPayload?.generationId || '',
     profileId: resolveEngineeringProfileFromAiCandidate(candidate),
     actualPresetId: resolveEngineeringPresetFromAiCandidate(candidate),
     pixN: resolveEngineeringSizeFromAiCandidate(candidate),
@@ -3469,21 +4531,51 @@ function buildImageConvertPayloadFromAiCandidate(candidate) {
     targetRows: gridMeta.targetRows,
     targetCols: gridMeta.targetCols,
     targetShortSide,
-    engineeringOptions
+    engineeringOptions,
+    solutionSnapshot: {
+      candidateId: candidate?.id || '',
+      generationId: candidate?.generationId || currentAiGenerationPayload?.generationId || '',
+      aiImageUrl: getAiCandidateDisplayUrl(candidate),
+      engineeringPreviewUrl: getAiCandidateEngineeringPreviewUrl(candidate),
+      selectedInputUrl,
+      convertedRows: candidate?.convertedRows || null,
+      convertedCols: candidate?.convertedCols || null,
+      convertedColorCount: candidate?.convertedColorCount || null,
+      createdAt: Date.now()
+    }
   };
 }
 
-function postImageConvertMessage(type, payload) {
+function postImageConvertMessage(type, payload, options = {}) {
+  const requestId = options.requestId || payload?.requestId || createImageConvertRequestId(type.split(':').pop() || 'bridge');
+  const generationId = options.generationId || payload?.generationId || currentAiGenerationPayload?.generationId || '';
+  const message = {
+    source: 'god-dou-home',
+    version: IMAGE_CONVERT_BRIDGE_VERSION,
+    type,
+    requestId,
+    generationId,
+    payload: {
+      ...(payload || {}),
+      bridgeVersion: IMAGE_CONVERT_BRIDGE_VERSION,
+      requestId,
+      generationId
+    }
+  };
   const frameWindow = getImageConvertFrameWindow();
   if (!frameWindow || !imageConvertFrameReady) {
-    pendingImageConvertMessages.push({ type, payload });
+    pendingImageConvertMessages.push(message);
     return false;
   }
-  frameWindow.postMessage({
-    source: 'god-dou-home',
-    type,
-    payload
-  }, '*');
+  frameWindow.postMessage(message, '*');
+  if (type !== 'god-dou:image-convert:ready') {
+    activeImageConvertRequests.set(requestId, {
+      type,
+      generationId,
+      candidateId: payload?.candidateId || '',
+      sentAt: Date.now()
+    });
+  }
   return true;
 }
 
@@ -3491,23 +4583,47 @@ function flushPendingImageConvertMessages() {
   if (!imageConvertFrameReady || pendingImageConvertMessages.length === 0) return;
   const queue = [...pendingImageConvertMessages];
   pendingImageConvertMessages = [];
-  queue.forEach(message => postImageConvertMessage(message.type, message.payload));
+  queue.forEach(message => {
+    const frameWindow = getImageConvertFrameWindow();
+    if (!frameWindow) {
+      pendingImageConvertMessages.push(message);
+      return;
+    }
+    frameWindow.postMessage(message, '*');
+    if (message.type !== 'god-dou:image-convert:ready') {
+      activeImageConvertRequests.set(message.requestId, {
+        type: message.type,
+        generationId: message.generationId,
+        candidateId: message.payload?.candidateId || '',
+        sentAt: Date.now()
+      });
+    }
+  });
 }
 
 function syncAiCandidateToImageConvert(candidate) {
   const payload = buildImageConvertPayloadFromAiCandidate(candidate);
+  payload.jobType = 'active-import';
   postImageConvertMessage('god-dou:image-convert:import-ai-candidate', payload);
 }
 
 function requestConvertedPreviewForCandidate(candidate) {
-  if (!candidate?.previewUrl) return;
+  const imageDataUrl = getAiCandidateDisplayUrl(candidate);
+  if (!imageDataUrl) return;
   const gridMeta = resolveEngineeringTargetGridFromAiCandidate(candidate);
   const targetShortSide = Number.isInteger(candidate?.targetShortSide) ? candidate.targetShortSide : resolveEngineeringSizeFromAiCandidate(candidate);
   const engineeringOptions = candidate?.engineeringOptions || {};
+  const generationId = candidate?.generationId || currentAiGenerationPayload?.generationId || '';
+  const requestId = createImageConvertRequestId('preview');
+  candidate.previewRequestId = requestId;
+  candidate.previewGenerationId = generationId;
   postImageConvertMessage('god-dou:image-convert:convert-preview', {
     candidateId: candidate.id,
+    requestId,
+    generationId,
+    jobType: 'preview',
     candidateTitle: candidate.title,
-    imageDataUrl: candidate.previewUrl,
+    imageDataUrl,
     profileId: resolveEngineeringProfileFromAiCandidate(candidate),
     actualPresetId: resolveEngineeringPresetFromAiCandidate(candidate),
     pixN: resolveEngineeringSizeFromAiCandidate(candidate),
@@ -3515,7 +4631,7 @@ function requestConvertedPreviewForCandidate(candidate) {
     targetCols: gridMeta.targetCols,
     targetShortSide,
     engineeringOptions
-  });
+  }, { requestId, generationId });
 }
 
 function requestConvertedPreviews(candidates) {
@@ -3523,7 +4639,7 @@ function requestConvertedPreviews(candidates) {
 }
 
 function applySelectedBeadCandidate(candidate) {
-  selectedAiCandidate = candidate;
+  selectedAiCandidate = { ...candidate, selectedInputUrl: getAiCandidateProcessUrl(candidate), selectedAt: Date.now() };
   syncAiCandidateToImageConvert(candidate);
   goPage('page-img-convert');
 }
@@ -3532,11 +4648,11 @@ function applySelectedBeadCandidate(candidate) {
 function checkAiGenBtn() {
   const btn = document.getElementById('ai-gen-btn');
   if (!btn) return;
-  // 简化后：只需要有图片就可以生成
-  const canGenerate = !!aiReferenceImage;
+  const selection = getAiPromptEngineSelection();
+  const canGenerate = selection.mode === 'internal-text'
+    ? !!selection.internalPrompt
+    : !!aiReferenceImage;
   btn.disabled = !canGenerate;
-  btn.style.opacity = canGenerate ? '1' : '0.5';
-  btn.style.cursor = canGenerate ? 'pointer' : 'not-allowed';
 }
 
 var imageUploaded = false;
@@ -3785,14 +4901,16 @@ function initializeCartStore() {
 }
 
 function addToCart(payload) {
-  const store = getCartStore();
-  if (!store) {
-    showToast('购物车未初始化');
-    return null;
-  }
-  const item = store.addItem(normalizeCartPayload(payload));
-  showCartAddedFeedback(payload?.source === 'image-convert' ? '图片转换方案已加入购物车' : '已加入购物车');
-  return item;
+  return withInflightLock('addToCart', function() {
+    const store = getCartStore();
+    if (!store) {
+      showToast('购物车未初始化');
+      return null;
+    }
+    const item = store.addItem(normalizeCartPayload(payload));
+    showCartAddedFeedback(payload?.source === 'image-convert' ? '图片转换方案已加入购物车' : '已加入购物车');
+    return item;
+  }, 600);
 }
 
 function switchShopTab(el, type) {
@@ -3972,31 +5090,54 @@ function handleImageConvertBridgeMessage(event) {
   }
   if (data.type === 'god-dou:image-convert:preview-result') {
     const payload = data.payload || {};
+    const requestId = data.requestId || payload.requestId || '';
+    const generationId = data.generationId || payload.generationId || '';
+    const requestMeta = activeImageConvertRequests.get(requestId);
+    if (!requestId || !requestMeta || requestMeta.type !== 'god-dou:image-convert:convert-preview') return;
+    if (generationId && currentAiGenerationPayload?.generationId && generationId !== currentAiGenerationPayload.generationId) {
+      activeImageConvertRequests.delete(requestId);
+      return;
+    }
     const candidate = aiBeadCandidates.find(item => item.id === payload.candidateId);
     if (candidate) {
+      if (candidate.previewRequestId && candidate.previewRequestId !== requestId) {
+        activeImageConvertRequests.delete(requestId);
+        return;
+      }
+      if (generationId && candidate.generationId && candidate.generationId !== generationId) {
+        activeImageConvertRequests.delete(requestId);
+        return;
+      }
       const candidateIndex = aiBeadCandidates.findIndex(item => item.id === payload.candidateId);
+      candidate.engineeringPreviewUrl = payload.previewUrl || candidate.engineeringPreviewUrl;
       candidate.convertedPreviewUrl = payload.previewUrl || candidate.convertedPreviewUrl;
       candidate.convertedColorCount = payload.colorCount ?? candidate.convertedColorCount;
       candidate.convertedBeadCount = payload.beadCount ?? candidate.convertedBeadCount;
       candidate.convertedLegendItems = Array.isArray(payload.legendItems) ? payload.legendItems : candidate.convertedLegendItems;
       candidate.convertedRows = payload.rows ?? candidate.convertedRows;
       candidate.convertedCols = payload.cols ?? candidate.convertedCols;
-      if (Number.isInteger(payload.rows) && Number.isInteger(payload.cols)) {
-        candidate.sizeLabel = `${payload.rows}×${payload.cols}`;
-      }
       candidate.engineeringPresetId = payload.actualPresetId || candidate.engineeringPresetId;
       if (candidateIndex >= 0) {
         updateAiCandidateState(candidateIndex, {
           status: 'success',
-          detail: '工程拼豆图已生成完成'
+          detail: `工程预览已生成${Number.isInteger(payload.rows) && Number.isInteger(payload.cols) ? ` (${payload.rows}×${payload.cols})` : ''}`
         });
       }
       renderAiBeadCandidates(aiBeadCandidates, currentAiGenerationPayload || { mode: candidate.sourceMode || aiMode, prompt: candidate.prompt || '' });
     }
+    activeImageConvertRequests.delete(requestId);
     return;
   }
   if (data.type === 'god-dou:image-convert:go-back') {
     goBack();
+    return;
+  }
+  if (data.type === 'god-dou:image-convert:back-to-ai-picks') {
+    goPage('page-ai-bead-picks');
+    return;
+  }
+  if (data.type === 'god-dou:image-convert:go-home') {
+    switchTab(0);
     return;
   }
   if (data.type === 'god-dou:image-convert:open-cart') {
@@ -4010,6 +5151,16 @@ function handleImageConvertBridgeMessage(event) {
   if (data.type === 'god-dou:image-convert:toast' && data.payload?.message) {
     showToast(data.payload.message);
   }
+  if (data.type === 'god-dou:image-convert:imported') {
+    const requestId = data.requestId || (data.payload && data.payload.requestId) || '';
+    if (requestId) activeImageConvertRequests.delete(requestId);
+    return;
+  }
+  if (data.type === 'god-dou:image-convert:reset-ack') {
+    const requestId = data.requestId || (data.payload && data.payload.requestId) || '';
+    if (requestId) activeImageConvertRequests.delete(requestId);
+    return;
+  }
 }
 
 window.addEventListener('message', handleImageConvertBridgeMessage);
@@ -4020,6 +5171,19 @@ document.getElementById('image-convert-frame')?.addEventListener('load', functio
     flushPendingImageConvertMessages();
   }, 120);
 });
+
+// ==================== C-03 GC: drop stale activeImageConvertRequests entries ====================
+setInterval(function() {
+  if (!activeImageConvertRequests || typeof activeImageConvertRequests.forEach !== 'function') return;
+  var now = Date.now();
+  var staleIds = [];
+  activeImageConvertRequests.forEach(function(meta, requestId) {
+    if (meta && typeof meta.sentAt === 'number' && (now - meta.sentAt) > 300000) {
+      staleIds.push(requestId);
+    }
+  });
+  staleIds.forEach(function(id){ activeImageConvertRequests.delete(id); });
+}, 10000);
 
 // ==================== Login ====================
 function showLogin() { document.getElementById('login-modal').classList.add('show'); }
@@ -4053,6 +5217,21 @@ function openCustomerService() {
   setTimeout(function() { showToast('客服已连接，请描述您的问题'); }, 1500);
 }
 
+// ==================== C-05 Logout ====================
+function confirmLogout() {
+  return withInflightLock('confirmLogout', function() {
+    // TODO: clear additional user state if introduced later
+    try { localStorage.removeItem('user_token'); } catch (e) {}
+    try { if (typeof state !== 'undefined' && state) state.user = null; } catch (e) {}
+    var g = document.getElementById('profile-guest');
+    var l = document.getElementById('profile-logged');
+    if (g) g.style.display = '';
+    if (l) l.style.display = 'none';
+    showToast('已退出');
+    if (typeof switchTab === 'function') switchTab(0);
+  }, 800);
+}
+
 // ==================== Address Form ====================
 function showAddressForm() { goPage('page-address-form'); }
 function toggleAddrDefault(el) {
@@ -4066,15 +5245,18 @@ function toggleAddrDefault(el) {
   }
 }
 function saveAddress() {
-  const name = document.getElementById('addr-name').value;
-  const phone = document.getElementById('addr-phone').value;
-  if (!name || !phone) { showToast('请填写完整信息'); return; }
-  showToast('地址保存成功');
-  setTimeout(() => goBack(), 800);
+  return withInflightLock('saveAddress', function() {
+    const name = document.getElementById('addr-name').value;
+    const phone = document.getElementById('addr-phone').value;
+    if (!name || !phone) { showToast('请填写完整信息'); return; }
+    showToast('地址保存成功');
+    setTimeout(() => goBack(), 800);
+  }, 1000);
 }
 
 // ==================== AI Generating Overlay ====================
 function showGeneratingOverlay() {
+  if (typeof closeAiGeneratingOverlay === 'function') closeAiGeneratingOverlay();
   const overlay = document.getElementById('ai-generating-overlay');
   overlay.classList.add('show');
   const bar = document.getElementById('gen-progress-bar');
@@ -4088,12 +5270,14 @@ function showGeneratingOverlay() {
     {w:'100%',t:'即将完成！'}
   ];
   steps.forEach((s,i) => {
-    setTimeout(() => { bar.style.width = s.w; text.textContent = s.t; }, (i+1)*600);
+    var tid = setTimeout(() => { bar.style.width = s.w; text.textContent = s.t; }, (i+1)*600);
+    __aiGeneratingTimerIds.push(tid);
   });
-  setTimeout(() => {
+  var finalTid = setTimeout(() => {
     overlay.classList.remove('show');
     goPage('page-gen-result');
   }, 3500);
+  __aiGeneratingTimerIds.push(finalTid);
 }
 
 // ==================== Order Confirm: Address Logic ====================
@@ -4125,13 +5309,14 @@ function toggleOrderAddress(hasAddr) {
 }
 
 function submitOrder() {
-  // Check if address exists
-  var addrEmpty = document.getElementById('order-addr-empty');
-  if (addrEmpty && addrEmpty.style.display !== 'none') {
-    showToast('请先添加收货地址');
-    return;
-  }
-  goPage('page-pay-result');
+  return withInflightLock('submitOrder', function() {
+    var addrEmpty = document.getElementById('order-addr-empty');
+    if (addrEmpty && addrEmpty.style.display !== 'none') {
+      showToast('请先添加收货地址');
+      return;
+    }
+    goPage('page-pay-result');
+  }, 1500);
 }
 
 // ==================== Remark Modal ====================
@@ -4166,19 +5351,36 @@ function rejectPrivacy() {
   showToast('需要同意隐私政策才能使用');
 }
 
+// ==================== C-06 Gen Result Bento Guard ====================
+function openGenResultBento() {
+  if (!currentGenResultCompositeUrl) {
+    showToast('暂无生成结果，先去生成一张吧');
+    if (typeof startNewAiGeneration === 'function') startNewAiGeneration();
+    return;
+  }
+  goPage('page-gen-result');
+}
+
 // ==================== Save Photo Modal ====================
 function showSavePhotoModal() { document.getElementById('save-photo-modal').classList.add('show'); }
 function hideSavePhotoModal() { document.getElementById('save-photo-modal').classList.remove('show'); }
 function confirmSavePhoto() {
   hideSavePhotoModal();
-  if (currentGenResultCompositeUrl) {
-    const a = document.createElement('a');
-    a.href = currentGenResultCompositeUrl;
-    a.download = '拼豆结果图.png';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+  if (!currentGenResultCompositeUrl) {
+    showToast('暂无可保存的图像');
+    return;
   }
+  var liveGenId = currentAiGenerationPayload && currentAiGenerationPayload.generationId;
+  if (currentGenResultGenerationId && liveGenId && currentGenResultGenerationId !== liveGenId) {
+    showToast('结果已过期，请重新生成');
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = currentGenResultCompositeUrl;
+  a.download = '拼豆结果图.png';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
   showToast('✅ 已保存到相册');
 }
 
@@ -4312,10 +5514,11 @@ function cancelOrder(btn) {
 }
 
 // ==================== Init ====================
-window.addEventListener('load', function() {
+window.addEventListener('load', async function() {
   initializeCartStore();
   updateGreeting();
-  loadAiConfig();
+  await loadAiConfig();
+  syncAiPromptEngineUi();
   // 简化后：固定 reference 模式，不再切换
   checkAiGenBtn();
   syncAiCustomSize();

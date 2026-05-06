@@ -6241,12 +6241,29 @@ function refineGridForBeads(gridData, rawGrid, rows, cols, strength) {
 }
 const HOST_BRIDGE = {
   embedded: window.self !== window.top || new URLSearchParams(window.location.search).get('embedded') === '1',
-  source: 'god-dou-image-convert'
+  source: 'god-dou-image-convert',
+  version: '20260426-p0p1'
 };
+let activeImportRequestId = '';
+let activeImportGenerationId = '';
 
-function postHostMessage(type, payload) {
+function postHostMessage(type, payload, meta) {
   if (!HOST_BRIDGE.embedded || !window.parent || window.parent === window) return false;
-  window.parent.postMessage({ source: HOST_BRIDGE.source, type, payload }, '*');
+  const requestId = meta?.requestId || payload?.requestId || '';
+  const generationId = meta?.generationId || payload?.generationId || '';
+  window.parent.postMessage({
+    source: HOST_BRIDGE.source,
+    version: HOST_BRIDGE.version,
+    type,
+    requestId,
+    generationId,
+    payload: {
+      ...(payload || {}),
+      bridgeVersion: HOST_BRIDGE.version,
+      requestId,
+      generationId
+    }
+  }, '*');
   return true;
 }
 
@@ -6303,12 +6320,57 @@ function applyIncomingEngineeringOptions(options) {
   syncFinalQualityChip();
 }
 
+function captureImageConvertStateSnapshot() {
+  return {
+    pixN: appState.pixN,
+    profileId: appState.profileId,
+    activePresetId: appState.activePresetId,
+    smartResolvedForFile: appState.smartResolvedForFile,
+    userSimplifyLevel: appState.userSimplifyLevel,
+    ditherStrength: appState.ditherStrength,
+    internalMergeLevel: appState.internalMergeLevel,
+    beadRefineStrength: appState.beadRefineStrength,
+    showGrid: appState.showGrid,
+    showLabels: appState.showLabels,
+    showMirror: appState.showMirror,
+    finalShowLabels: appState.finalShowLabels,
+    finalQuality: appState.finalQuality,
+    removeBgOn: !!document.getElementById('removeBgToggle')?.classList.contains('on')
+  };
+}
+
+function restoreImageConvertStateSnapshot(snapshot) {
+  if (!snapshot) return;
+  Object.assign(appState, snapshot);
+  const sizeSelect = document.getElementById('sizePresetSelect');
+  const customInput = document.getElementById('customSizeInput');
+  if (sizeSelect) sizeSelect.value = String(appState.pixN);
+  if (customInput) customInput.value = String(appState.pixN);
+  const smSlider = document.getElementById('smLevelSlider');
+  const ditherSlider = document.getElementById('ditherSlider');
+  const ditherVal = document.getElementById('ditherVal');
+  if (smSlider) smSlider.value = String(appState.userSimplifyLevel || 0);
+  if (ditherSlider) ditherSlider.value = String(appState.ditherStrength || 0);
+  if (ditherVal) ditherVal.textContent = String(appState.ditherStrength || 0);
+  const removeBgToggle = document.getElementById('removeBgToggle');
+  if (removeBgToggle) removeBgToggle.classList.toggle('on', !!snapshot.removeBgOn);
+  updateProfileTagState(appState.profileId);
+  updateSizeQuickInfo(String(appState.pixN));
+  renderCustomSizeDetail(appState.pixN);
+  updateSizeInfo();
+  refreshColorSimplifyIndicator();
+  syncFinalLabelChip();
+  syncFinalQualityChip();
+}
+
 function applyImportedAiCandidate(payload) {
   const dataUrl = payload?.imageDataUrl;
   if (!dataUrl || typeof dataUrl !== 'string') {
     showToast('AI 候选图无效，请重新选择');
     return;
   }
+  activeImportRequestId = payload?.requestId || '';
+  activeImportGenerationId = payload?.generationId || '';
   if (payload?.pixN) {
     const nextSize = Math.max(10, Math.min(200, Number(payload.pixN)));
     appState.pixN = nextSize;
@@ -6352,6 +6414,7 @@ function applyImportedAiCandidate(payload) {
   if (uploadPlaceholder) uploadPlaceholder.style.display = 'none';
   const uploadArea = document.getElementById('uploadArea');
   if (uploadArea) uploadArea.classList.add('has-image');
+  appState.fromAiCandidate = true;
   navigateTo('page-convert');
   if (payload?.usePerfectPixel === true) {
     runPerfectPixelPipelineForAiCandidate(payload);
@@ -6361,8 +6424,64 @@ function applyImportedAiCandidate(payload) {
   postHostMessage('god-dou:image-convert:imported', {
     candidateId: payload?.candidateId || '',
     actualPresetId: payload?.actualPresetId || appState.activePresetId
+  }, {
+    requestId: activeImportRequestId,
+    generationId: activeImportGenerationId
   });
   showToast(`已导入「${payload?.candidateTitle || 'AI 拼豆方案'}」`);
+}
+
+function restartConvertOrBackToAiPicks() {
+  if (appState.fromAiCandidate === true) {
+    postHostMessage('god-dou:image-convert:back-to-ai-picks', {});
+    return;
+  }
+  navigateTo('page-convert');
+}
+
+function goHostHome() {
+  postHostMessage('god-dou:image-convert:go-home', {});
+}
+
+function resetImageConvertPipeline() {
+  appState.fromAiCandidate = false;
+  appState.cropImageSrc = '';
+  appState.file = null;
+  appState.cachedImg = null;
+  appState.cachedImageData = null;
+  appState.bgMask = null;
+  appState.fullGridData = null;
+  appState.gridData = null;
+  appState.editGridData = null;
+  appState.editBaseGridData = null;
+  appState.smartResolvedForFile = false;
+  appState.currentSolutionKey = '';
+  appState.targetGridRows = null;
+  appState.targetGridCols = null;
+  appState.targetShortSide = null;
+  appState.scale = 1;
+  appState.offsetX = 0;
+  appState.offsetY = 0;
+  appState.editScale = 1;
+  appState.editOffsetX = 0;
+  appState.editOffsetY = 0;
+  appState.previewScale = 0;
+  appState.previewOffsetX = 0;
+  appState.previewOffsetY = 0;
+  appState.previewNeedsReset = true;
+  appState.hideOriginalPreview = false;
+  appState.undoStack = [];
+  appState.pendingStrokeAction = null;
+  appState.liveJobId = (appState.liveJobId || 0) + 1;
+  const previewImg = document.getElementById('previewImg');
+  if (previewImg) { previewImg.src = ''; previewImg.style.display = 'none'; }
+  const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+  if (uploadPlaceholder) uploadPlaceholder.style.display = '';
+  const uploadArea = document.getElementById('uploadArea');
+  if (uploadArea) uploadArea.classList.remove('has-image');
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput) fileInput.value = '';
+  navigateTo('page-convert');
 }
 
 function showPerfectPixelLoadingToast(text) {
@@ -6448,62 +6567,82 @@ async function buildConvertedPreviewForCandidate(payload) {
   if (!dataUrl || typeof dataUrl !== 'string') {
     throw new Error('候选图数据无效');
   }
-  if (payload?.pixN) {
-    appState.pixN = Math.max(10, Math.min(200, Number(payload.pixN)));
+  const stateSnapshot = captureImageConvertStateSnapshot();
+  try {
+    if (payload?.pixN) {
+      appState.pixN = Math.max(10, Math.min(200, Number(payload.pixN)));
+    }
+    if (payload?.profileId || payload?.actualPresetId) {
+      applyIncomingPreset(payload?.profileId || 'smart', payload?.actualPresetId, true);
+    }
+    applyIncomingEngineeringOptions(payload?.engineeringOptions);
+    const img = await loadImageFromSrc(dataUrl);
+    const imageData = getPixelData(img);
+    if (!payload?.actualPresetId && appState.profileId === 'smart') {
+      appState.smartResolvedForFile = false;
+      const auto = resolveSmartProfile(imageData);
+      appState.activePresetId = auto.id;
+      applyProfileDefaults(PROFILE_PRESETS[auto.id], '智能推荐：' + auto.reason);
+      appState.smartResolvedForFile = true;
+    }
+    const actualPresetId = payload?.actualPresetId || appState.activePresetId;
+    const profileId = payload?.profileId || appState.profileId;
+    const targetGrid = resolveTargetGridByAspect(imageData.width, imageData.height, payload?.targetShortSide, payload?.targetRows, payload?.targetCols);
+    const targetRows = targetGrid.rows;
+    const targetCols = targetGrid.cols;
+    const { rawGrid, gridData, rows, cols } = buildBeadDesign(imageData, appState.pixN, targetRows, targetCols);
+    const colorStats = buildColorStats(gridData, rows, cols);
+    const beadCount = countForegroundBeads(gridData, rows, cols);
+    return {
+      previewUrl: renderGridPreviewDataUrl(gridData, rows, cols),
+      rows,
+      cols,
+      colorCount: colorStats.length,
+      beadCount,
+      legendItems: colorStats.slice(0, 18).map((item) => ({
+        code: item.id,
+        color: `rgb(${item.r},${item.g},${item.b})`,
+        count: item.count
+      })),
+      profileId,
+      actualPresetId
+    };
+  } finally {
+    restoreImageConvertStateSnapshot(stateSnapshot);
   }
-  if (payload?.profileId || payload?.actualPresetId) {
-    applyIncomingPreset(payload?.profileId || 'smart', payload?.actualPresetId, true);
-  }
-  applyIncomingEngineeringOptions(payload?.engineeringOptions);
-  const img = await loadImageFromSrc(dataUrl);
-  const imageData = getPixelData(img);
-  if (!payload?.actualPresetId && appState.profileId === 'smart') {
-    appState.smartResolvedForFile = false;
-    const auto = resolveSmartProfile(imageData);
-    appState.activePresetId = auto.id;
-    applyProfileDefaults(PROFILE_PRESETS[auto.id], '智能推荐：' + auto.reason);
-    appState.smartResolvedForFile = true;
-  }
-  const targetGrid = resolveTargetGridByAspect(imageData.width, imageData.height, payload?.targetShortSide, payload?.targetRows, payload?.targetCols);
-  const targetRows = targetGrid.rows;
-  const targetCols = targetGrid.cols;
-  const { rawGrid, gridData, rows, cols } = buildBeadDesign(imageData, appState.pixN, targetRows, targetCols);
-  const colorStats = buildColorStats(gridData, rows, cols);
-  const beadCount = countForegroundBeads(gridData, rows, cols);
-  return {
-    previewUrl: renderGridPreviewDataUrl(gridData, rows, cols),
-    rows,
-    cols,
-    colorCount: colorStats.length,
-    beadCount,
-    legendItems: colorStats.slice(0, 18).map((item) => ({
-      code: item.id,
-      color: `rgb(${item.r},${item.g},${item.b})`,
-      count: item.count
-    })),
-    profileId: payload?.profileId || appState.profileId,
-    actualPresetId: payload?.actualPresetId || appState.activePresetId
-  };
 }
 
 function handleHostImportMessage(event) {
   const data = event.data || {};
   if (data.source !== 'god-dou-home') return;
+  const payload = data.payload || {};
+  const requestId = data.requestId || payload.requestId || '';
+  const generationId = data.generationId || payload.generationId || '';
   if (data.type === 'god-dou:image-convert:import-ai-candidate') {
-    applyImportedAiCandidate(data.payload || {});
+    applyImportedAiCandidate({ ...payload, requestId, generationId });
+    return;
+  }
+  if (data.type === 'god-dou:image-convert:reset') {
+    resetImageConvertPipeline();
     return;
   }
   if (data.type === 'god-dou:image-convert:convert-preview') {
-    buildConvertedPreviewForCandidate(data.payload || {})
+    buildConvertedPreviewForCandidate({ ...payload, requestId, generationId })
       .then(result => {
         postHostMessage('god-dou:image-convert:preview-result', {
-          candidateId: data.payload?.candidateId || '',
+          candidateId: payload?.candidateId || '',
           ...result
+        }, {
+          requestId,
+          generationId
         });
       })
       .catch(error => {
         postHostMessage('god-dou:image-convert:toast', {
           message: `候选预览生成失败：${error?.message || '未知错误'}`
+        }, {
+          requestId,
+          generationId
         });
       });
   }
@@ -6651,11 +6790,18 @@ function setFinalQuality(level) {
   appState.finalQuality = level;
   syncFinalQualityChip();
   renderFinalArtwork();
+  const plan = resolveSafeFinalExportPlan(level);
+  if (plan.requested && !isFinalExportEstimateSafe(plan.requested)) {
+    showToast(`${plan.requested.label} 可能超过浏览器导出限制，保存时会自动降级`);
+  }
 }
 function renderFinalLegend() {
   const container = document.getElementById('finalCanvasLegend');
   if (!container) return;
-  const chips = [...(appState.colorStats || [])].sort((a, b) => a.idx - b.idx);
+  const chips = [...(appState.colorStats || [])].sort((a, b) => {
+    const countDiff = (b.count || 0) - (a.count || 0);
+    return countDiff || a.idx - b.idx;
+  });
   if (!chips.length) {
     container.innerHTML = '';
     container.style.display = 'none';
@@ -6837,11 +6983,111 @@ function getExportCellSize(rows, cols) {
 
 function getFinalQualityConfig() {
   const quality = appState.finalQuality || 'hd';
-  if (quality === 'standard') return { label: '标准', exportMultiplier: 1 };
-  if (quality === 'ultra') return { label: '4K', exportMultiplier: 4 };
-  if (quality === '8k') return { label: '8K', exportMultiplier: 8 };
-  if (quality === '16k') return { label: '16K', exportMultiplier: 16 };
-  return { label: '2K', exportMultiplier: 2 };
+  if (quality === 'standard') return { label: '普通', exportMultiplier: 1 };
+  if (quality === 'ultra') return { label: '超清', exportMultiplier: 4 };
+  if (quality === '8k') return { label: '臻清', exportMultiplier: 8 };
+  if (quality === '16k') return { label: '印刷级', exportMultiplier: 16 };
+  return { label: '高清', exportMultiplier: 2 };
+}
+
+function getFinalExportLegendLayout(chipCount, legendWidth, uiScale) {
+  const count = Math.max(0, Number(chipCount) || 0);
+  if (!count) {
+    return {
+      columns: 0,
+      rows: 0,
+      chipWidth: 0,
+      chipHeight: 0,
+      swatchSize: 0,
+      chipGapX: 0,
+      chipGapY: 0,
+      showText: false
+    };
+  }
+  const maxChipWidth = 18 * uiScale;
+  const chipGapX = count > 1
+    ? Math.max(1, Math.min(6 * uiScale, (legendWidth / count) * 0.18))
+    : 0;
+  const availableWidth = Math.max(1, legendWidth - chipGapX * Math.max(0, count - 1));
+  const chipWidth = Math.max(1, Math.min(maxChipWidth, availableWidth / count));
+  const swatchSize = Math.max(1, Math.floor(chipWidth));
+  const showText = swatchSize >= 10 * uiScale;
+  return {
+    columns: count,
+    rows: 1,
+    chipWidth: swatchSize,
+    chipHeight: showText ? swatchSize + 10 * uiScale : swatchSize,
+    swatchSize,
+    chipGapX,
+    chipGapY: 0,
+    showText
+  };
+}
+
+const FINAL_EXPORT_BUDGET = {
+  maxSide: 12000,
+  maxPixels: 64000000,
+  maxEstimatedBytes: 256 * 1024 * 1024
+};
+
+function getFinalQualityConfigByLevel(level) {
+  const previous = appState.finalQuality;
+  appState.finalQuality = level;
+  const config = getFinalQualityConfig();
+  appState.finalQuality = previous;
+  return config;
+}
+
+function estimateFinalArtworkExport(level, includeLegend) {
+  if (!appState.gridData || !appState.metadata) return null;
+  const rows = appState.metadata.rows;
+  const cols = appState.metadata.cols;
+  const config = getFinalQualityConfigByLevel(level);
+  const uiScale = Math.max(1, Number(config.exportMultiplier || 1));
+  const cellSize = (350 * uiScale) / Math.max(cols, 1);
+  const gridWidth = cols * cellSize;
+  const gridHeight = rows * cellSize;
+  const paddingX = 2 * uiScale;
+  const chips = (appState.colorStats || []);
+  const legendLayout = getFinalExportLegendLayout(chips.length, gridWidth, uiScale);
+  const legendHeight = legendLayout.rows * legendLayout.chipHeight + Math.max(0, legendLayout.rows - 1) * legendLayout.chipGapY;
+  const footerH = includeLegend ? (4 * uiScale) + (4 * uiScale) + legendHeight + (8 * uiScale) : 0;
+  const width = Math.round(gridWidth + paddingX * 2);
+  const height = Math.round(gridHeight + footerH);
+  const pixelCount = width * height;
+  return {
+    level,
+    label: config.label,
+    exportMultiplier: uiScale,
+    width,
+    height,
+    pixelCount,
+    estimatedBytes: pixelCount * 4
+  };
+}
+
+function isFinalExportEstimateSafe(estimate) {
+  return !!estimate
+    && estimate.width <= FINAL_EXPORT_BUDGET.maxSide
+    && estimate.height <= FINAL_EXPORT_BUDGET.maxSide
+    && estimate.pixelCount <= FINAL_EXPORT_BUDGET.maxPixels
+    && estimate.estimatedBytes <= FINAL_EXPORT_BUDGET.maxEstimatedBytes;
+}
+
+function resolveSafeFinalExportPlan(level) {
+  const order = ['standard', 'hd', 'ultra', '8k', '16k'];
+  const requestedIndex = Math.max(0, order.indexOf(level || 'hd'));
+  const requested = estimateFinalArtworkExport(order[requestedIndex], true);
+  if (isFinalExportEstimateSafe(requested)) {
+    return { requested, selected: requested, downgraded: false };
+  }
+  for (let i = requestedIndex - 1; i >= 0; i--) {
+    const candidate = estimateFinalArtworkExport(order[i], true);
+    if (isFinalExportEstimateSafe(candidate)) {
+      return { requested, selected: candidate, downgraded: true };
+    }
+  }
+  return { requested, selected: null, downgraded: false };
 }
 
 function drawFinalAxisLabels(ctx, rows, cols, cellSize, originX, originY, gridWidth, gridHeight, axisBand) {
@@ -6882,14 +7128,21 @@ function renderFinalArtwork(targetCanvas, options) {
   var gridOriginX = paddingX + axisBand;
   var gridOriginY = topHeaderH + topGap + axisBand;
   var exportWidth = gridWidth + paddingX * 2 + axisBand;
-  var chips = (appState.colorStats || []).slice().sort(function(a, b) { return a.idx - b.idx; }).map(function(item) {
+  var chips = (appState.colorStats || []).slice().sort(function(a, b) {
+    var countDiff = (b.count || 0) - (a.count || 0);
+    return countDiff || a.idx - b.idx;
+  }).map(function(item) {
     return { label: item.id, rgb: [item.r, item.g, item.b], count: item.count, text: String(item.id) };
   });
   var legendOriginX = gridOriginX;
   var legendWidth = gridWidth;
-  var legendColumns = 6;
-  var chipWidth = 18 * uiScale;
-  var chipRowsCount = Math.max(1, Math.ceil(chips.length / legendColumns));
+  var legendLayout = getFinalExportLegendLayout(chips.length, legendWidth, uiScale);
+  var legendColumns = legendLayout.columns || 1;
+  var chipWidth = legendLayout.chipWidth;
+  chipHeight = legendLayout.chipHeight || chipHeight;
+  chipGapX = legendLayout.chipGapX;
+  chipGapY = legendLayout.chipGapY;
+  var chipRowsCount = legendLayout.rows;
   var legendHeight = chipRowsCount * chipHeight + Math.max(0, chipRowsCount - 1) * chipGapY;
   var footerH = includeLegend ? legendTopGap + legendTitleH + legendListTop + legendHeight + legendBottomPad : 0;
   var logicalWidth = exportWidth;
@@ -6930,19 +7183,21 @@ function renderFinalArtwork(targetCanvas, options) {
       var chipY = y + row * (chipHeight + chipGapY);
       ctx.fillStyle = 'rgb(' + chip.rgb[0] + ',' + chip.rgb[1] + ',' + chip.rgb[2] + ')';
       ctx.beginPath();
-      ctx.roundRect(x, chipY, chipWidth, 12 * uiScale, 3 * uiScale);
+      var swatchSize = legendLayout.swatchSize || chipWidth;
+      ctx.roundRect(x, chipY, swatchSize, swatchSize, Math.max(1, Math.min(3 * uiScale, swatchSize * 0.25)));
       ctx.fill();
       ctx.strokeStyle = 'rgba(0,0,0,.08)';
       ctx.lineWidth = Math.max(0.6, uiScale * 0.5);
       ctx.stroke();
+      if (!legendLayout.showText) return;
       var lum = (chip.rgb[0] * 0.299 + chip.rgb[1] * 0.587 + chip.rgb[2] * 0.114) / 255;
       ctx.fillStyle = lum < 0.58 ? '#fff' : '#333';
       ctx.textAlign = 'center';
       ctx.font = 'bold ' + Math.max(6, 6 * uiScale) + 'px "SFMono-Regular", Consolas, monospace';
-      ctx.fillText(chip.text, x + chipWidth / 2, chipY + 7.2 * uiScale);
+      ctx.fillText(chip.text, x + swatchSize / 2, chipY + swatchSize * 0.62);
       ctx.fillStyle = '#666';
       ctx.font = Math.max(6, 6 * uiScale) + 'px "SFMono-Regular", Consolas, monospace';
-      ctx.fillText(String(chip.count), x + chipWidth / 2, chipY + 18 * uiScale);
+      ctx.fillText(String(chip.count), x + swatchSize / 2, chipY + swatchSize + 7 * uiScale);
     });
   }
   if (!targetCanvas) {
@@ -7140,6 +7395,7 @@ function handleFileSelect(e) {
   appState.targetShortSide = null;
   appState.cachedImg = null; appState.cachedImageData = null;
   appState.bgMask = null; appState.fullGridData = null; appState.smartResolvedForFile = false;
+  appState.fromAiCandidate = false;
   const reader = new FileReader();
   reader.onload = ev => {
     if (!ev.target || !ev.target.result) {
@@ -8055,6 +8311,7 @@ function applyPreviewTransform() {
     let dragging = false;
     let lastX = 0, lastY = 0;
     let isPinch = false, pinchDist = 0, pinchScale = 1;
+    let pinchStartOffsetX = 0, pinchStartOffsetY = 0, pinchCenterX = 0, pinchCenterY = 0;
     function getDistance(touches) {
       const dx = touches[0].clientX - touches[1].clientX;
       const dy = touches[0].clientY - touches[1].clientY;
@@ -8077,7 +8334,17 @@ function applyPreviewTransform() {
     viewport.addEventListener('wheel', e => {
       e.preventDefault();
       const delta = e.deltaY > 0 ? 0.92 : 1.08;
-      appState.previewScale = Math.max(0.75, Math.min(6, appState.previewScale * delta));
+      const oldScale = appState.previewScale;
+      const newScale = Math.max(0.75, Math.min(6, oldScale * delta));
+      if (newScale !== oldScale) {
+        const rect = viewport.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const ratio = newScale / oldScale;
+        appState.previewOffsetX = mx - (mx - appState.previewOffsetX) * ratio;
+        appState.previewOffsetY = my - (my - appState.previewOffsetY) * ratio;
+        appState.previewScale = newScale;
+      }
       applyPreviewTransform();
     }, { passive: false });
     viewport.addEventListener('touchstart', e => {
@@ -8087,14 +8354,26 @@ function applyPreviewTransform() {
         lastY = e.touches[0].clientY;
       } else if (e.touches.length === 2) {
         isPinch = true;
+        const rect = viewport.getBoundingClientRect();
         pinchDist = getDistance(e.touches);
         pinchScale = appState.previewScale;
+        pinchStartOffsetX = appState.previewOffsetX;
+        pinchStartOffsetY = appState.previewOffsetY;
+        pinchCenterX = (e.touches[0].clientX + e.touches[1].clientX)/2 - rect.left;
+        pinchCenterY = (e.touches[0].clientY + e.touches[1].clientY)/2 - rect.top;
       }
     }, { passive: true });
     viewport.addEventListener('touchmove', e => {
       if (isPinch && e.touches.length === 2) {
+        const rect = viewport.getBoundingClientRect();
         const dist = getDistance(e.touches);
-        appState.previewScale = Math.max(0.75, Math.min(6, pinchScale * dist / Math.max(1, pinchDist)));
+        const newScale = Math.max(0.75, Math.min(6, pinchScale * dist / Math.max(1, pinchDist)));
+        const newCenterX = (e.touches[0].clientX + e.touches[1].clientX)/2 - rect.left;
+        const newCenterY = (e.touches[0].clientY + e.touches[1].clientY)/2 - rect.top;
+        const ratio = newScale / pinchScale;
+        appState.previewOffsetX = newCenterX - (pinchCenterX - pinchStartOffsetX) * ratio;
+        appState.previewOffsetY = newCenterY - (pinchCenterY - pinchStartOffsetY) * ratio;
+        appState.previewScale = newScale;
         applyPreviewTransform();
       } else if (dragging && e.touches.length === 1) {
         const x = e.touches[0].clientX;
@@ -8367,7 +8646,74 @@ function toggleChip(el, key) {
   if (key === 'mirror') appState.showMirror = el.classList.contains('on');
   renderResult();
 }
-function saveImage(target) {
+function downloadCanvasPng(canvas, filename) {
+  return new Promise((resolve, reject) => {
+    if (!canvas || !canvas.width || !canvas.height) {
+      reject(new Error('当前没有可保存的图片'));
+      return;
+    }
+    function triggerDownload(url, meta) {
+      let ownerDocument = document;
+      try {
+        if (window.top && window.top.document) {
+          ownerDocument = window.top.document;
+        }
+      } catch (error) {
+        ownerDocument = document;
+      }
+      const link = ownerDocument.createElement('a');
+      link.download = filename;
+      link.href = url;
+      link.style.display = 'none';
+      (ownerDocument.body || ownerDocument.documentElement).appendChild(link);
+      setTimeout(() => link.click(), 0);
+      setTimeout(() => {
+        link.remove();
+        if (url.startsWith('blob:')) URL.revokeObjectURL(url);
+      }, 60000);
+      resolve(meta || null);
+    }
+    if (canvas.toBlob) {
+      console.info('[douleme-export] start', {
+        version: '20260426-0434',
+        filename,
+        width: canvas.width,
+        height: canvas.height
+      });
+      canvas.toBlob(blob => {
+        console.info('[douleme-export] blob', {
+          version: '20260426-0434',
+          filename,
+          size: blob ? blob.size : 0,
+          type: blob ? blob.type : ''
+        });
+        if (!blob || blob.size <= 0) {
+          reject(new Error('图片导出失败，可能超过浏览器画布限制'));
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        triggerDownload(url, {
+          size: blob.size,
+          width: canvas.width,
+          height: canvas.height
+        });
+      }, 'image/png');
+      return;
+    }
+    try {
+      const url = canvas.toDataURL('image/png');
+      if (!url || url === 'data:,') throw new Error('图片导出失败，可能超过浏览器画布限制');
+      triggerDownload(url, {
+        size: Math.max(0, Math.round((url.length - 'data:image/png;base64,'.length) * 0.75)),
+        width: canvas.width,
+        height: canvas.height
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+async function saveImage(target) {
   const activeTarget = target || (document.getElementById('page-final-art')?.classList.contains('active') ? 'final' : 'result');
   let canvas = activeTarget === 'final' ? document.getElementById('finalCanvas') : document.getElementById('resultCanvas');
   if (!canvas) {
@@ -8375,98 +8721,62 @@ function saveImage(target) {
     return;
   }
   if (activeTarget === 'final') {
-    const scale = Math.max(1, Number(getFinalQualityConfig().exportMultiplier || 1));
-    const pageCanvas = document.getElementById('finalCanvas');
-    const legend = document.getElementById('finalCanvasLegend');
-    const pageCanvasRect = pageCanvas.getBoundingClientRect();
-    const legendRect = legend ? legend.getBoundingClientRect() : { width: 0, height: 0 };
-    const exportCanvas = document.createElement('canvas');
-    const scaleX = (pageCanvas.width * scale) / Math.max(1, pageCanvasRect.width);
-    const pageCanvasExportHeight = Math.round(pageCanvas.height * scale);
-    const legendExportHeight = Math.round((legendRect.height || 0) * scaleX);
-    exportCanvas.width = Math.round(pageCanvas.width * scale);
-    exportCanvas.height = pageCanvasExportHeight + legendExportHeight;
-    const ectx = exportCanvas.getContext('2d');
-    ectx.imageSmoothingEnabled = false;
-    ectx.fillStyle = '#fff';
-    ectx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
-    ectx.drawImage(pageCanvas, 0, 0, exportCanvas.width, pageCanvasExportHeight);
-
-    if (legend && legend.children.length) {
-      const itemNodes = Array.from(legend.querySelectorAll('.final-legend-item'));
-      const legendScale = scaleX;
-      const baseX = 0;
-      const baseY = pageCanvasExportHeight;
-      const usableWidth = Math.round((legendRect.width || pageCanvasRect.width) * legendScale);
-      ectx.fillStyle = '#eef0f5';
-      ectx.fillRect(baseX, baseY, usableWidth, legendExportHeight);
-      ectx.strokeStyle = 'rgba(0,0,0,.06)';
-      ectx.lineWidth = Math.max(1, scale);
-      ectx.beginPath();
-      ectx.moveTo(baseX, baseY + 0.5 * scale);
-      ectx.lineTo(baseX + usableWidth, baseY + 0.5 * scale);
-      ectx.stroke();
-
-      let flowX = 0;
-      let flowY = baseY + Math.max(2, Math.round(2 * legendScale));
-      itemNodes.forEach((node) => {
-        const swatch = node.querySelector('.final-legend-swatch');
-        const count = node.querySelector('.final-legend-count');
-        if (!swatch || !count) return;
-        const swatchRect = swatch.getBoundingClientRect();
-        const scaleBoost = 0.625;
-        const swatchW = Math.max(5, Math.round(swatchRect.width * legendScale * scaleBoost));
-        const swatchH = Math.max(5, Math.round(swatchRect.height * legendScale * scaleBoost));
-        const codeFont = Math.max(4, Math.round(parseFloat(getComputedStyle(swatch).fontSize || '6') * legendScale * scaleBoost));
-        const countFont = Math.max(4, Math.round(parseFloat(getComputedStyle(count).fontSize || '6') * legendScale * scaleBoost));
-        const itemWidth = swatchW + Math.max(2, Math.round(2 * legendScale));
-        const itemHeight = swatchH + countFont + Math.max(3, Math.round(2 * legendScale));
-        if (flowX + itemWidth > usableWidth && flowX > 0) {
-          flowX = 0;
-          flowY += itemHeight + Math.max(2, Math.round(2 * legendScale));
-        }
-        const swatchX = flowX + Math.round((itemWidth - swatchW) / 2);
-        const swatchY = flowY;
-        const bg = bgFromComputed(getComputedStyle(swatch).backgroundColor);
-        const fg = getComputedStyle(swatch).color || '#333';
-        ectx.fillStyle = bg;
-        ectx.beginPath();
-        ectx.roundRect(swatchX, swatchY, swatchW, swatchH, Math.max(2, Math.round(2 * legendScale)));
-        ectx.fill();
-        ectx.strokeStyle = 'rgba(0,0,0,.08)';
-        ectx.lineWidth = Math.max(0.6, legendScale * 0.4);
-        ectx.stroke();
-        ectx.fillStyle = fg;
-        ectx.font = `900 ${codeFont}px monospace`;
-        ectx.textAlign = 'center';
-        ectx.textBaseline = 'middle';
-        ectx.fillText(swatch.textContent || '', swatchX + swatchW / 2, swatchY + swatchH / 2);
-        ectx.fillStyle = '#666';
-        ectx.font = `700 ${countFont}px monospace`;
-        const countX = flowX + itemWidth / 2;
-        const countY = swatchY + swatchH + Math.max(3, Math.round(2 * legendScale));
-        ectx.fillText(count.textContent || '', countX, countY);
-        flowX += itemWidth + Math.max(1, Math.round(1 * legendScale));
-      });
+    const requestedQuality = appState.finalQuality || 'hd';
+    const plan = resolveSafeFinalExportPlan(requestedQuality);
+    if (!plan.selected) {
+      showToast('最终图尺寸过大，请减少颜色或降低清晰度后重试');
+      return;
     }
-
+    if (plan.downgraded) {
+      appState.finalQuality = plan.selected.level;
+      syncFinalQualityChip();
+      renderFinalArtwork();
+      showToast(`${plan.requested.label} 超出浏览器限制，已自动降级为 ${plan.selected.label}`);
+    }
+    const scale = Math.max(1, Number(plan.selected.exportMultiplier || 1));
+    const exportCanvas = document.createElement('canvas');
+    renderFinalArtwork(exportCanvas, { includeLegend: true, exportMultiplier: scale });
     canvas = exportCanvas;
+    console.info('[douleme-export] final canvas ready', {
+      version: '20260426-0434',
+      quality: appState.finalQuality || 'hd',
+      scale,
+      width: canvas.width,
+      height: canvas.height,
+      pixelCount: plan.selected.pixelCount,
+      estimatedBytes: plan.selected.estimatedBytes
+    });
   }
-  const link = document.createElement('a');
   const suffix = activeTarget === 'final' ? 'final' : 'preview';
-  link.download = `pindou_${appState.metadata.cols}x${appState.metadata.rows}_${suffix}.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-  showToast('图片已保存');
+  const filename = `pindou_${appState.metadata.cols}x${appState.metadata.rows}_${suffix}.png`;
+  try {
+    const exportInfo = await downloadCanvasPng(canvas, filename);
+    const sizeText = exportInfo && exportInfo.size ? `，约 ${(exportInfo.size / 1024 / 1024).toFixed(2)}MB` : '';
+    showToast(`图片已保存${sizeText}`);
+  } catch (error) {
+    console.error(error);
+    showToast(error?.message || '图片保存失败，请降低清晰度后重试');
+  }
 }
 (function() {
   const container = document.getElementById('resultCanvasContainer');
   const canvas = document.getElementById('resultCanvas');
   let isPinching = false, startDist = 0, startScale = 1;
+  let startOffsetX = 0, startOffsetY = 0, startCenterX = 0, startCenterY = 0;
   container.addEventListener('wheel', e => {
     e.preventDefault();
     const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    appState.scale = Math.max(0.2, Math.min(10, appState.scale * delta));
+    const oldScale = appState.scale;
+    const newScale = Math.max(0.2, Math.min(10, oldScale * delta));
+    if (newScale !== oldScale) {
+      const rect = container.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      const ratio = newScale / oldScale;
+      appState.offsetX = mx - (mx - appState.offsetX) * ratio;
+      appState.offsetY = my - (my - appState.offsetY) * ratio;
+      appState.scale = newScale;
+    }
     renderResult(true);
   }, {passive: false});
   container.addEventListener('mousedown', e => {
@@ -8483,8 +8793,13 @@ function saveImage(target) {
   container.addEventListener('touchstart', e => {
     if (e.touches.length === 2) {
       isPinching = true;
+      const rect = container.getBoundingClientRect();
       startDist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
       startScale = appState.scale;
+      startOffsetX = appState.offsetX;
+      startOffsetY = appState.offsetY;
+      startCenterX = (e.touches[0].clientX + e.touches[1].clientX)/2 - rect.left;
+      startCenterY = (e.touches[0].clientY + e.touches[1].clientY)/2 - rect.top;
     } else if (e.touches.length === 1) {
       appState.dragging = true;
       appState.lastX = e.touches[0].clientX; appState.lastY = e.touches[0].clientY;
@@ -8492,8 +8807,15 @@ function saveImage(target) {
   }, {passive:true});
   container.addEventListener('touchmove', e => {
     if (isPinching && e.touches.length === 2) {
+      const rect = container.getBoundingClientRect();
       const dist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
-      appState.scale = Math.max(0.2, Math.min(10, startScale * dist / startDist));
+      const newScale = Math.max(0.2, Math.min(10, startScale * dist / Math.max(1, startDist)));
+      const newCenterX = (e.touches[0].clientX + e.touches[1].clientX)/2 - rect.left;
+      const newCenterY = (e.touches[0].clientY + e.touches[1].clientY)/2 - rect.top;
+      const ratio = newScale / startScale;
+      appState.offsetX = newCenterX - (startCenterX - startOffsetX) * ratio;
+      appState.offsetY = newCenterY - (startCenterY - startOffsetY) * ratio;
+      appState.scale = newScale;
       renderResult(true);
     } else if (appState.dragging && e.touches.length === 1) {
       appState.offsetX += e.touches[0].clientX - appState.lastX;
@@ -8623,6 +8945,7 @@ function setupEditCanvasEvents() {
   const canvas = document.getElementById('editCanvas');
   let painting = false;
   let isPinch = false, pinchDist = 0, pinchScale = 1;
+  let pinchStartOffsetX = 0, pinchStartOffsetY = 0, pinchCenterX = 0, pinchCenterY = 0;
   function getCellFromEvent(e) {
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX - rect.left) / (rect.width / canvas.width);
@@ -8716,14 +9039,26 @@ function setupEditCanvasEvents() {
       handleEditClick(touch);
     } else if (e.touches.length === 2) {
       isPinch = true;
+      const rect = container.getBoundingClientRect();
       pinchDist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
       pinchScale = appState.editScale;
+      pinchStartOffsetX = appState.editOffsetX;
+      pinchStartOffsetY = appState.editOffsetY;
+      pinchCenterX = (e.touches[0].clientX + e.touches[1].clientX)/2 - rect.left;
+      pinchCenterY = (e.touches[0].clientY + e.touches[1].clientY)/2 - rect.top;
     }
   }, {passive:true});
   canvas.addEventListener('touchmove', e => {
     if (isPinch && e.touches.length === 2) {
+      const rect = container.getBoundingClientRect();
       const dist = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
-      appState.editScale = Math.max(0.2, Math.min(10, pinchScale * dist / pinchDist));
+      const newScale = Math.max(0.2, Math.min(10, pinchScale * dist / Math.max(1, pinchDist)));
+      const newCenterX = (e.touches[0].clientX + e.touches[1].clientX)/2 - rect.left;
+      const newCenterY = (e.touches[0].clientY + e.touches[1].clientY)/2 - rect.top;
+      const ratio = newScale / pinchScale;
+      appState.editOffsetX = newCenterX - (pinchCenterX - pinchStartOffsetX) * ratio;
+      appState.editOffsetY = newCenterY - (pinchCenterY - pinchStartOffsetY) * ratio;
+      appState.editScale = newScale;
       canvas.style.transform = `translate(${appState.editOffsetX}px, ${appState.editOffsetY}px) scale(${appState.editScale})`;
     } else if (painting && e.touches.length === 1) {
       handleEditClick(e.touches[0]);
@@ -8736,7 +9071,17 @@ function setupEditCanvasEvents() {
   container.addEventListener('wheel', e => {
     e.preventDefault();
     const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    appState.editScale = Math.max(0.2, Math.min(10, appState.editScale * delta));
+    const oldScale = appState.editScale;
+    const newScale = Math.max(0.2, Math.min(10, oldScale * delta));
+    if (newScale !== oldScale) {
+      const rect = container.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      const ratio = newScale / oldScale;
+      appState.editOffsetX = mx - (mx - appState.editOffsetX) * ratio;
+      appState.editOffsetY = my - (my - appState.editOffsetY) * ratio;
+      appState.editScale = newScale;
+    }
     canvas.style.transform = `translate(${appState.editOffsetX}px, ${appState.editOffsetY}px) scale(${appState.editScale})`;
   }, {passive:false});
 }

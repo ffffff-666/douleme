@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>图片转拼豆图纸</title>
-<link rel="stylesheet" href="./ui.css">
+<link rel="stylesheet" href="./ui.css?v=20260426-ai-ui-polish">
 </head>
 <body>
 <div class="app" id="app">
@@ -208,12 +208,15 @@
 </div>
 <div id="page-result" class="page">
   <div class="nav-bar result-nav-bar">
-    <span style="width:36px" id="resultNavSpacer"></span>
+    <span class="back" id="resultNavSpacer" onclick="postHostMessage('god-dou:image-convert:go-back',{})" title="返回"></span>
     <div class="workspace-switch workspace-switch-nav">
       <button class="workspace-tab active" id="workspaceTabPreview" type="button" onclick="setWorkspaceMode('preview')">查看</button>
       <button class="workspace-tab" id="workspaceTabEdit" type="button" onclick="setWorkspaceMode('edit')">编辑</button>
     </div>
-    <button class="btn-secondary" type="button" style="width:auto;padding:6px 12px;font-size:12px" onclick="saveImage()">保存</button>
+    <span style="display:flex;gap:8px;align-items:center">
+      <button class="btn-secondary" type="button" style="width:auto;padding:6px 12px;font-size:12px" onclick="saveImage()">保存</button>
+      <span onclick="goHostHome()" title="回首页" style="font-size:18px;cursor:pointer;width:32px;text-align:center">🏠</span>
+    </span>
   </div>
   <div class="workspace-panel result-preview-panel active" id="workspacePreviewPanel">
     <div class="canvas-container result-canvas-container" id="resultCanvasContainer">
@@ -245,7 +248,7 @@
       </div>
     </div>
     <div class="action-bar">
-      <button class="btn-secondary" type="button" onclick="navigateTo('page-convert')">重新转换</button>
+      <button class="btn-secondary" type="button" onclick="restartConvertOrBackToAiPicks()">重新转换</button>
       <button class="btn-primary" type="button" onclick="setWorkspaceMode('edit')">二次编辑</button>
     </div>
   </div>
@@ -306,7 +309,7 @@
   <div class="nav-bar">
     <span class="back" onclick="navigateTo('page-result')"></span>
     <span class="title">最终效果图</span>
-    <span style="width:32px"></span>
+    <span class="right-icon" onclick="goHostHome()" title="回首页" style="font-size:18px;cursor:pointer;width:32px;text-align:center">🏠</span>
   </div>
   <div class="content final-scroll">
     <div class="final-canvas-card">
@@ -317,7 +320,7 @@
       <div class="final-setting-row">
         <div>
           <div class="final-setting-title">添加编号</div>
-          <div class="final-setting-desc">默认开启。关闭后主图会实时隐藏格子内色号，导出结果也会同步生效。</div>
+          <div class="final-setting-desc">控制格子内色号显示，导出同步生效。</div>
         </div>
         <button class="toggle-chip on" id="finalLabelChip" type="button" onclick="toggleFinalLabel()">已开启</button>
       </div>
@@ -325,19 +328,19 @@
       <div class="final-setting-row final-setting-row-quality">
         <div>
           <div class="final-setting-title">图片清晰度</div>
-          <div class="final-setting-desc">默认高清。清晰度越高，图纸越清楚，也更适合保存或打印。</div>
+          <div class="final-setting-desc">越高越清楚，超限会自动降级保存。</div>
         </div>
         <div class="final-quality-group">
-          <button class="toggle-chip" id="finalQualityStandard" type="button" onclick="setFinalQuality('standard')">标准</button>
-          <button class="toggle-chip on" id="finalQualityHd" type="button" onclick="setFinalQuality('hd')">2K</button>
-          <button class="toggle-chip" id="finalQualityUltra" type="button" onclick="setFinalQuality('ultra')">4K</button>
-          <button class="toggle-chip" id="finalQuality8k" type="button" onclick="setFinalQuality('8k')">8K</button>
-          <button class="toggle-chip" id="finalQuality16k" type="button" onclick="setFinalQuality('16k')">16K</button>
+          <button class="toggle-chip" id="finalQualityStandard" type="button" onclick="setFinalQuality('standard')">普通</button>
+          <button class="toggle-chip on" id="finalQualityHd" type="button" onclick="setFinalQuality('hd')">高清</button>
+          <button class="toggle-chip" id="finalQualityUltra" type="button" onclick="setFinalQuality('ultra')">超清</button>
+          <button class="toggle-chip" id="finalQuality8k" type="button" onclick="setFinalQuality('8k')">臻清</button>
+          <button class="toggle-chip" id="finalQuality16k" type="button" onclick="setFinalQuality('16k')">印刷</button>
         </div>
       </div>
     </div>
     <div class="final-note">
-      当前预览会实时反映“编号”和“清晰度”设置；保存相册时将按你当前看到的版本导出。
+      当前预览会实时反映“编号”和“清晰度”设置；保存相册前会自动检查浏览器导出上限，8K/16K 超限时会降级保存。
     </div>
     <div class="final-actions">
       <button class="btn-primary" type="button" onclick="saveImage('final')">保存相册</button>
@@ -370,6 +373,6 @@
   </div>
 </div>
 </div>
-<script src="./pindou-bundle.js"></script>
+<script src="./pindou-bundle.js?v=20260426-ai-ui-polish"></script>
 </body>
 </html>

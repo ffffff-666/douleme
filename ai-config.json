@@ -1,0 +1,31 @@
+{
+  "_comment": "douleme-branch AI 配置 - 你直接编辑这个文件来管理默认 API 节点。保存后浏览器刷新生效（前提：UI 上点过'恢复默认'或浏览器 localStorage 里没有此配置）。注意：apiKey 是明文，请勿提交到公开仓库。",
+  "candidateCount": 1,
+  "refTemplate": "你是一个严格模拟复古游戏机渲染器的像素画引擎。你的硬件渲染缓冲区有绝对的物理限制：角色精灵图（sprite buffer）最多只能存储 60×60 个像素，超过这个尺寸硬件会崩溃。\n\n[TASK]\n根据参考图，在这个硬件限制下渲染一个 Q版角色精灵图。\n\n[RENDERING PIPELINE - 严格按顺序执行]\nStep 1: 分配精灵缓冲区 — 最多 60×60 像素（绝对不可突破，no exception, hard hardware limit）。\nStep 2: 缩放参考图主体，填满缓冲区，最长边 ≤ 60 像素，不得小于 40 像素。\nStep 3: 量化颜色到 4~12 色的调色板（palette），纯色填充，每个像素 1 种颜色。\nStep 4: 按像素网格渲染，每个像素是一个正方形色块，无抗锯齿，无渐变，无半透明，无描边。\nStep 5: 输出到 1024×1024 画布，用 nearest-neighbor 放大（必须是硬边、大块、锯齿状的像素块，不是高清图）。\n\n[VISUAL ANCHORS]\nStyle: chunky 8-bit sprite, similar density to Game Boy Color sprite (≤60px), NOT detailed modern pixel art.\nThe final image must look like it was rendered at MAXIMUM 60×60 pixel resolution, then scaled up. Every \"pixel\" must be a huge visible square block.\n\n[STRICT CONSTRAINTS]\n- 硬件上限：最长边 ≤ 60 像素（HARD LIMIT, 违反 = 渲染失败）\n- 色彩上限：≤ 12 种纯色\n- 背景：纯白，无文字，无网格线，无描边\n- 主体撑满缓冲区，四周边距 ≤ 2 像素\n- 优先保证\"像原图\"的程度，但绝不能通过增加像素数来实现\n\n[FAILURE CONDITIONS - 满足任一条即判定输出失败]\n- 最长边超过 60 像素 ❌\n- 单个色块内部出现多种颜色或更小的色块 ❌\n- 出现抗锯齿、渐变、软边缘 ❌\n- 像素大小不一或不是正方形 ❌",
+  "endpoints": [
+    {
+      "id": "ep-default-1",
+      "name": "OpenRouter",
+      "baseUrl": "https://openrouter.ai/api",
+      "apiKey": "",
+      "model": "google/gemini-3.1-flash-image-preview",
+      "enabled": true
+    },
+    {
+      "id": "ep-default-2",
+      "name": "yunwu",
+      "baseUrl": "https://yunwu.ai",
+      "apiKey": "",
+      "model": "gemini-3.1-flash-image-preview",
+      "enabled": true
+    },
+    {
+      "id": "ep-default-3",
+      "name": "备用节点",
+      "baseUrl": "",
+      "apiKey": "",
+      "model": "",
+      "enabled": false
+    }
+  ]
+}
